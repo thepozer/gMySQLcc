@@ -1,5 +1,5 @@
 gmysqlcc
-.tm*
-*.prj
 *.bak
-*.pws
+.deps
+Makefile
+Makefile.in
