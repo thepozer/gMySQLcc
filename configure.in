@@ -28,7 +28,7 @@ AC_PATH_PROG(MYSQLCFG, mysql_config, [no])
 if test "$MYSQLCFG" = "no"; then
 	AC_MSG_ERROR([Sorry, can't found MySQL client library])
 fi
-MySQLc_CFLAGS=`$MYSQLCFG --include`
+MySQLc_CFLAGS=`$MYSQLCFG --cflags`
 MySQLc_LIBS=`$MYSQLCFG --libs`
 AC_SUBST([MySQLc_CFLAGS])
 AC_SUBST([MySQLc_LIBS])
