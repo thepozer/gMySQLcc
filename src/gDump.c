@@ -22,9 +22,11 @@ void initDump (p_dumpWnd p_wnd) {
 	p_wnd->dumpFormat = DUMP_FORMAT_NULL;
 
 	/* Fill format combo box */
+	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("SQL"));
+	/*
 	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("CSV"));
 	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("SQL"));
+	*/
 	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbDataFormat), cmbDataFormat_items);
   g_list_free (cmbDataFormat_items);
 	
@@ -283,7 +285,6 @@ void dumpSql (p_dumpWnd p_wnd, gchar * sqlFilename) {
 			break;
 	}
 
-	g_free(sqlFilename);
 	g_free(dump_param_srv.base_directory);
 	g_free(dump_param_srv.group_directory);
 }
