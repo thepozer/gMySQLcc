@@ -16,6 +16,8 @@ typedef struct _listServWnd {
 	  GtkWidget * txtPort;
 		GtkWidget * txtLogin;
 	  GtkWidget * txtPasswd;
+	  GtkWidget * txtAllowedDb;
+	  GtkWidget * txtLocalSock;
 		GtkWidget * cmbListHosts;
 		GtkWidget * lstListHosts;
 		GtkWidget * wndListServer;

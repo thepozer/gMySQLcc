@@ -16,8 +16,8 @@ typedef gmysql_config * p_gmysql_config;
 p_gmysql_config gmysql_config_new ();
 gboolean gmysql_config_delete (p_gmysql_config gmsql_conf);
 
-gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList);
-gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList);
+gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock);
+gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock);
 gboolean gmysql_config_del_server (p_gmysql_config gmsql_conf, const gchar * name);
 p_mysql_server gmysql_config_get_server (p_gmysql_config gmsql_conf, const gchar * name);
 

@@ -13,6 +13,7 @@ typedef struct _s_mysql_server {
 	gchar * user;
 	gchar * passwd;
 	gchar * allowedDbs;
+	gchar * localSock;
 	GList * lstDbs;
 	GHashTable * hshDbs;
 } s_mysql_server;

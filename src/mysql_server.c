@@ -19,6 +19,7 @@ p_mysql_server mysql_server_new () {
 	mysql_srv->user = (gchar *) NULL;
 	mysql_srv->passwd = (gchar *) NULL;
 	mysql_srv->allowedDbs = (gchar *) NULL;
+	mysql_srv->localSock = (gchar *) NULL;
 	mysql_srv->hshDbs = g_hash_table_new(&g_str_hash, &g_str_equal);
 	
 	return mysql_srv;
@@ -35,6 +36,7 @@ gboolean mysql_server_delete (p_mysql_server mysql_srv) {
 	g_free(mysql_srv->user);
 	g_free(mysql_srv->passwd);
 	g_free(mysql_srv->allowedDbs);
+	g_free(mysql_srv->localSock);
 	
 	mysql_server_clean_database_list(mysql_srv, FALSE);
 	g_hash_table_destroy(mysql_srv->hshDbs);
