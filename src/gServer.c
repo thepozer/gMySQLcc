@@ -302,16 +302,21 @@ static void mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
 
 static void mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
-	execSqlWnd * psqlWnd;
-	GString * sqlQuery;
+	p_textWnd p_txtWnd;
+	GString * sqlFilename, * structDump;
 	p_mysql_query mysql_qry;
 	
 	if (pSrvWnd->curr_mysql_tbl != (p_mysql_table)NULL) {
 		mysql_qry = mysql_table_query(pSrvWnd->curr_mysql_tbl);
-		sqlQuery = g_string_new("");
-		g_string_printf(sqlQuery, "SHOW CREATE TABLE `%s`.`%s`", pSrvWnd->curr_mysql_db->name, pSrvWnd->curr_mysql_tbl->name);
-		psqlWnd = create_wndSQL(TRUE, mysql_qry, sqlQuery->str, TRUE);
-		g_string_free(sqlQuery, TRUE);
+		
+		sqlFilename = g_string_new("");
+		g_string_printf(sqlFilename, "%s-%s-struct.sql", pSrvWnd->curr_mysql_tbl->mysql_db->name, pSrvWnd->curr_mysql_tbl->name);
+		structDump = mysql_dump_table_struct(mysql_qry, pSrvWnd->curr_mysql_tbl->name, FALSE);
+		
+		p_txtWnd = create_wndText(TRUE, structDump->str, sqlFilename->str);
+		
+		g_string_free(structDump, TRUE);
+		g_string_free(sqlFilename, TRUE);
 	}
 }
 
