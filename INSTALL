@@ -10,18 +10,37 @@ To download gmysqlcc via CVS, type these commands in a terminal :
 
 $ export CVSROOT=:pserver:anonymous@pozer.ath.cx/disk/data/cvs_depot
 $ cvs login
-$ cvs checkout gmysqlcc
+$ cvs checkout -r GMYSQLCC_CURRENT gmysqlcc
 
- * Compile
+ * Compile and Install (version < 0.2.0)
 
 To generate binary of gmysqlcc, type this command in gmysqlcc directory :
 
 $ make nodbg
-
- * Install
 
 To install gmysqlcc, you need to be root. These 2 commands have the same effect :
 
 $ make install
 or
 $ cp gmysqlcc /usr/local/bin
+
+ * Compile and Install (version >= 0.2.0)
+
+If you have got source from CVS, you need to do some steps before in gmysqlcc directory :
+
+$ aclocale
+$ automake -a -c
+$ autoconf
+
+These steps generate the configure script.
+
+If you have downloaded the source package, start here.
+
+Now it's generics configure's steps :
+
+$ ./configure
+$ make
+
+To install gmysqlcc, you need to be root. Just type : 
+$ make install
+

@@ -48,7 +48,8 @@ void showListServer (p_listServWnd pLstSrvWnd, p_mysql_server currSrvr) {
 	GtkTreeViewColumn * currCol;
 	GtkCellRenderer * renderer;
 	GtkTreeSelection* selection;
-
+	GtkTreePath * pathToSelRow;
+	
 	itSel = (GtkTreeIter *)NULL;
 	lstStrBase = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	items = g_list_first(pLstSrvWnd->gmsql_conf->lstServers);
@@ -71,7 +72,6 @@ void showListServer (p_listServWnd pLstSrvWnd, p_mysql_server currSrvr) {
 	}
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(pLstSrvWnd->lstListHosts), GTK_TREE_MODEL(lstStrBase));
-	g_object_unref (G_OBJECT (lstStrBase));
 		
 	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(pLstSrvWnd->lstListHosts), 0);
 	if (currCol != (GtkTreeViewColumn *)NULL) {
@@ -85,8 +85,15 @@ void showListServer (p_listServWnd pLstSrvWnd, p_mysql_server currSrvr) {
 	if (itSel != (GtkTreeIter *)NULL) {
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pLstSrvWnd->lstListHosts));
 		gtk_tree_selection_select_iter(GTK_TREE_SELECTION(selection), itSel);
+		
+		pathToSelRow = gtk_tree_model_get_path (GTK_TREE_MODEL(lstStrBase), itSel);
+		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(pLstSrvWnd->lstListHosts), pathToSelRow, (GtkTreeViewColumn *)NULL, TRUE, 0.5, 0.0);
+		
+		gtk_tree_path_free (pathToSelRow);
 		gtk_tree_iter_free (itSel);
 	}
+
+	g_object_unref (G_OBJECT (lstStrBase));
 	
 	pLstSrvWnd->selSrvr = currSrvr;
 	displayCurrentDB(pLstSrvWnd);
