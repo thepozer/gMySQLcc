@@ -110,6 +110,12 @@ typedef struct _s_mysql_multi_query {
 	void (* status_callback) (struct _s_mysql_multi_query * mysql_mlt_qry, gboolean error, gpointer user_data);
 	gpointer status_user_data;
 	
+	/* Thread params */
+	const gchar * content;
+	gboolean stop_error;
+	gboolean finished;
+	gboolean finish_ok;
+	
 	/* Report Infos */
 	GString *				report;
 	gint 						nbr_query;
