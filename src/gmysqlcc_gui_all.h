@@ -171,8 +171,9 @@ typedef struct _s_gmysqlcc_gui_dump {
 	GtkWidget * rdoDumpStruct;
   GtkWidget * rdoDumpStructData;
   GtkWidget * rdoDumpData;
-	GtkWidget * cmbDataFormat;
+	GtkWidget * cmbOutputFormat;
 	GtkWidget * cmbOutputCharset;
+	GtkWidget * txtOutputFilename;
 
 	p_mysql_server mysql_srv;
 	p_mysql_database mysql_db;
