@@ -147,6 +147,10 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 GArray * mysql_server_get_status (p_mysql_server mysql_srv);
 gboolean mysql_server_flush_status (p_mysql_server mysql_srv);
 
+gboolean mysql_server_clean_user_list (p_mysql_server mysql_srv, gboolean only_not_found);
+void mysql_server_mark_found_all_users (p_mysql_server mysql_srv, gboolean found);
+gboolean mysql_server_refresh_user_list (p_mysql_server mysql_srv);
+
 /***** Database functions *****/
 
 p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_name);
@@ -217,12 +221,12 @@ gboolean mysql_dump_table_struct_direct (p_mysql_query mysql_qry, const gchar * 
 gboolean mysql_dump_table_data_direct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean complete_insert, GIOChannel * file);
 
 /*
-GString * mysql_dump_query_xml (p_mysql_query mysql_qry);
+GString * mysql_dump_query_xml (p_mysql_query mysql_qry, gboolean bGlobal, gboolean bDatabase, gboolean bTable);
 GString * mysql_dump_query_csv (p_mysql_query mysql_qry);
 GString * mysql_dump_query_sql (p_mysql_query mysql_qry, gboolean complete_insert);
 */
 
-gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file);
+gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file, gboolean bGlobal, gboolean bDatabase, gboolean bTable, gboolean cdata);
 gboolean mysql_dump_query_csv_direct (p_mysql_query mysql_qry, GIOChannel * file);
 gboolean mysql_dump_query_sql_direct (p_mysql_query mysql_qry, gboolean complete_insert, GIOChannel * file);
 
