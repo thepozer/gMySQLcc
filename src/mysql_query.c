@@ -155,7 +155,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry) {
 	return mysql_server_get_database (mysql_qry->mysql_srv, mysql_qry->db_name);
 }
-gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean user_query) {
+gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean force_write) {
 	int errcode;
 	
 	if (mysql_qry == NULL) {
@@ -173,6 +173,20 @@ gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query,
 	
 	/* Clear old query infos */
 	mysql_query_free_query(mysql_qry);
+	
+	if (mysql_qry->mysql_srv->read_only && !mysql_query_is_read_query(mysql_qry, query)) {
+		mysql_qry->errCode = -1000;
+		mysql_qry->errMsg = g_strdup("gmysqlcc : Server in Read-only mode");
+		return FALSE;
+	}
+	
+	if (mysql_qry->mysql_srv->write_warning && !mysql_query_is_read_query(mysql_qry, query)) {
+		if (!force_write) {
+			mysql_qry->errCode = -1001;
+			mysql_qry->errMsg = g_strdup("gmysqlcc : Server in write warning mode");
+			return FALSE;
+		}
+	}
 	
 	/* Execute Query */
 	errcode = mysql_real_query(mysql_qry->mysql_link, mysql_qry->query, strlen(mysql_qry->query));
@@ -419,7 +433,7 @@ gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) 
 }
 
 gboolean mysql_query_is_editable (p_mysql_query mysql_qry) {
-	return (mysql_qry->abs_tbl_name != NULL) && mysql_qry->can_edit && !mysql_qry->mysql_srv->read_only;
+	return mysql_qry->abs_tbl_name != NULL && mysql_qry->can_edit && !mysql_qry->mysql_srv->read_only && !mysql_qry->mysql_srv->write_warning ;
 }
 
 gboolean mysql_query_set_can_edit (p_mysql_query mysql_qry, gboolean new_value) {
@@ -481,4 +495,26 @@ gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * char
 	mysql_qry->iconv_to = iconv_to;
 	
 	return TRUE;
+}
+gboolean mysql_query_is_read_query(p_mysql_query mysql_qry, const gchar * query) {
+	gchar * pc_query_up;
+	
+	pc_query_up = g_ascii_strup(query, -1);
+	
+	if (pc_query_up == NULL) {
+		return FALSE;
+	}
+	
+	if (g_ascii_strncasecmp(pc_query_up, "SHOW", 4) == 0) {
+		g_free (pc_query_up);
+		return TRUE;
+	}
+	
+	if (g_ascii_strncasecmp(pc_query_up, "SELECT", 6) == 0) {
+		g_free (pc_query_up);
+		return TRUE;
+	}
+	
+	g_free (pc_query_up);
+	return FALSE;
 }

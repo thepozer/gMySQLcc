@@ -312,7 +312,7 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkTreeViewColumn * currCol;
 
-	gmysqlcc_gui_server_fill_user_list(gui_server);
+	/*gmysqlcc_gui_server_fill_user_list(gui_server);*/
 	gmysqlcc_gui_server_fill_database_list(gui_server);
 
 	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(gui_server->lstTable), 0);
