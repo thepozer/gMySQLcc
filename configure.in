@@ -24,9 +24,14 @@ AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
 dnl Check MySQL client library
-AC_CHECK_LIB([mysqlclient], [mysql_get_client_info],,[AC_MSG_ERROR([Sorry, can't found MySQL client library])])
-AC_SUBST([MySQLc_LIB], [-lmysqlclient])
-AC_CHECK_HEADER([mysql/mysql.h],,[AC_MSG_ERROR([Sorry, can't found MySQL hedaer])])
+AC_PATH_PROG(MYSQLCFG, mysql_config, [no])
+if test "$MYSQLCFG" = "no"; then
+	AC_MSG_ERROR([Sorry, can't found MySQL client library])
+fi
+MySQLc_CFLAGS=`$MYSQLCFG --include`
+MySQLc_LIBS=`$MYSQLCFG --libs`
+AC_SUBST([MySQLc_CFLAGS])
+AC_SUBST([MySQLc_LIBS])
 
 dnl Check Gtk+ Source view control
 AC_ARG_WITH(gtksourceview,

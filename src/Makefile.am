@@ -2,7 +2,8 @@
 
 INCLUDES = \
 	$(GTK_CFLAGS) \
-	$(GTKSourceView_CFLAGS)
+	$(GTKSourceView_CFLAGS) \
+	$(MySQLc_CFLAGS)
 
 AM_CFLAGS =\
 	 -Wall 
@@ -37,5 +38,5 @@ gmysqlcc_LDFLAGS =
 gmysqlcc_LDADD =  \
 	$(GTK_LIBS) \
 	$(GTKSourceView_LIBS) \
-	$(MySQLc_LIB)
+	$(MySQLc_LIBS)
 
