@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-22 09:09+0200\n"
+"POT-Creation-Date: 2004-06-28 09:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,31 +138,35 @@ msgstr ""
 msgid "Execute"
 msgstr ""
 
-#: src/gExecSql.c:612
+#: src/gExecSql.c:613
 msgid "Execute SQL query"
 msgstr ""
 
-#: src/gExecSql.c:630
+#: src/gExecSql.c:628
+msgid "Select output charset"
+msgstr ""
+
+#: src/gExecSql.c:632
 msgid "Duplicate"
 msgstr ""
 
-#: src/gExecSql.c:634
+#: src/gExecSql.c:637
 msgid "Duplicate SQL Windows"
 msgstr ""
 
-#: src/gExecSql.c:638 src/gServer.c:482
+#: src/gExecSql.c:641 src/gServer.c:498
 msgid "Dump"
 msgstr ""
 
-#: src/gExecSql.c:642
+#: src/gExecSql.c:646
 msgid "Dump with current query"
 msgstr ""
 
-#: src/gExecSql.c:646 src/gListServer.c:426 src/gServer.c:407
+#: src/gExecSql.c:650 src/gListServer.c:433 src/gServer.c:420
 msgid "Close"
 msgstr ""
 
-#: src/gExecSql.c:650 src/gListServer.c:426 src/gServer.c:407
+#: src/gExecSql.c:655 src/gListServer.c:438 src/gServer.c:425
 msgid "Close window"
 msgstr ""
 
@@ -203,72 +207,71 @@ msgstr ""
 msgid "Can't move down more !!!"
 msgstr ""
 
-#. gtk_container_set_border_width (GTK_CONTAINER (p_lstsvr->wndListServer), 5);
-#: src/gListServer.c:406
+#: src/gListServer.c:409
 msgid "Servers list"
 msgstr ""
 
-#: src/gListServer.c:421
+#: src/gListServer.c:424
 msgid "Connection"
 msgstr ""
 
-#: src/gListServer.c:421
+#: src/gListServer.c:429
 msgid "Connect to a server"
 msgstr ""
 
-#: src/gListServer.c:455
+#: src/gListServer.c:465
 msgid "_Up"
 msgstr ""
 
-#: src/gListServer.c:459
+#: src/gListServer.c:469
 msgid "_Down"
 msgstr ""
 
-#: src/gListServer.c:471 src/gServer.c:512
+#: src/gListServer.c:481 src/gServer.c:528
 msgid "Server"
 msgstr ""
 
-#: src/gListServer.c:486
+#: src/gListServer.c:496
 msgid "Name :"
 msgstr ""
 
-#: src/gListServer.c:500
+#: src/gListServer.c:510
 msgid "Host :"
 msgstr ""
 
-#: src/gListServer.c:514
+#: src/gListServer.c:524
 msgid "Port :"
 msgstr ""
 
-#: src/gListServer.c:529
+#: src/gListServer.c:539
 msgid "User name :"
 msgstr ""
 
-#: src/gListServer.c:543
+#: src/gListServer.c:553
 msgid "Password :"
 msgstr ""
 
-#: src/gListServer.c:557
+#: src/gListServer.c:567
 msgid "Local socket file :"
 msgstr ""
 
-#: src/gListServer.c:571
+#: src/gListServer.c:581
 msgid "_New"
 msgstr ""
 
-#: src/gListServer.c:576
+#: src/gListServer.c:586
 msgid "_Add"
 msgstr ""
 
-#: src/gListServer.c:581
+#: src/gListServer.c:591
 msgid "_Modify"
 msgstr ""
 
-#: src/gListServer.c:586
+#: src/gListServer.c:596
 msgid "D_elete"
 msgstr ""
 
-#: src/gServer.c:62 src/gServer.c:492
+#: src/gServer.c:62 src/gServer.c:508
 msgid "Databases"
 msgstr ""
 
@@ -311,47 +314,47 @@ msgstr ""
 msgid "Table '%s'.'%s' deleted !"
 msgstr ""
 
-#: src/gServer.c:381
+#: src/gServer.c:385
 #, c-format
 msgid "Server : %s"
 msgstr ""
 
-#: src/gServer.c:397
+#: src/gServer.c:402
 msgid "SQL"
 msgstr ""
 
-#: src/gServer.c:397
+#: src/gServer.c:407
 msgid "Exec SQL Query"
 msgstr ""
 
-#: src/gServer.c:402
+#: src/gServer.c:411
 msgid "SQL File"
 msgstr ""
 
-#: src/gServer.c:402
+#: src/gServer.c:416
 msgid "Exec SQL File"
 msgstr ""
 
-#: src/gServer.c:441 src/gServer.c:472
+#: src/gServer.c:457 src/gServer.c:488
 msgid "Add"
 msgstr ""
 
-#: src/gServer.c:446 src/gServer.c:487
+#: src/gServer.c:462 src/gServer.c:503
 msgid "Delete"
 msgstr ""
 
-#: src/gServer.c:477
+#: src/gServer.c:493
 msgid "Modify"
 msgstr ""
 
-#: src/gServer.c:497 src/gServer.c:507
+#: src/gServer.c:513 src/gServer.c:523
 msgid "In construction"
 msgstr ""
 
-#: src/gServer.c:502
+#: src/gServer.c:518
 msgid "Users"
 msgstr ""
 
-#: src/gServer.c:526
+#: src/gServer.c:542
 msgid "Refresh"
 msgstr ""
