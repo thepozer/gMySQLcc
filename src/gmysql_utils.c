@@ -168,3 +168,37 @@ gchar * gmysql_alloc_iconv(GIConv icv, const char * source) {
 	
 	return tmpstr;
 }
+
+GString * addSlashes (const gchar * str) {
+	GString * pgstr;
+	int i;
+	
+	pgstr = g_string_new(str);
+	
+	for (i = 0; i < pgstr->len; i++) {
+		if (pgstr->str[i] == '\'' || pgstr->str[i] == '\"') {
+			g_string_insert_c(pgstr, i, '\\');
+			i++;
+		}
+	}
+	
+	return pgstr;
+}
+
+GString * protectUnderscore (const gchar * str) {
+	GString * pgstr;
+	int i;
+	
+	pgstr = g_string_new(str);
+	
+	for (i = 0; i < pgstr->len; i++) {
+		if (pgstr->str[i] == '_') {
+			g_string_insert_c(pgstr, i, '_');
+			i++;
+		}
+	}
+	
+	return pgstr;
+}
+
+

@@ -7,91 +7,91 @@
 
 typedef struct _s_mysql_server {
 /* Connection infos */
-	gchar * name;
-	gchar * host;
-	unsigned int port;
-	gchar * user;
-	gchar * passwd;
-	gchar * allowedDbs;
-	gchar * localSock;
-	GList * lstDbs;
-	GHashTable * hshDbs;
-	GHashTable * hshUsers;
+	gchar *				name;
+	gchar *				host;
+	unsigned int	port;
+	gchar *				user;
+	gchar *				passwd;
+	gchar *				allowedDbs;
+	gchar *				localSock;
+	GList *				lstDbs;
+	GHashTable *	hshDbs;
+	GHashTable *	hshUsers;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
 
 typedef struct _s_mysql_user {
 /* User Infos */
-	gchar * login;
-	gchar * host;
-	GHashTable * hshRights;
+	gchar *					login;
+	gchar *					host;
+	GHashTable *		hshRights;
 /* Connection Infos */
-	p_mysql_server mysql_srv;
+	p_mysql_server	mysql_srv;
 /* Update user list informations */
-	gboolean found;
+	gboolean				found;
 } s_mysql_user;
 
 typedef s_mysql_user * p_mysql_user;
 
 typedef struct _s_mysql_database {
 /* Connection Infos */
-	gchar * name;
-	p_mysql_server mysql_srv;
+	gchar *					name;
+	p_mysql_server	mysql_srv;
 /* Tables Informations */
-	GList * lstTables;
-	GHashTable * hshTables;
+	GList *					lstTables;
+	GHashTable *		hshTables;
 /* Update database list informations */
-	gboolean found;
+	gboolean				found;
 } s_mysql_database;
 
 typedef s_mysql_database * p_mysql_database;
 
 typedef struct _s_mysql_table {
 /* Connection Infos */
-	gchar * name;
-	p_mysql_database mysql_db;
+	gchar *						name;
+	p_mysql_database	mysql_db;
 /* Status infos */
-	gchar * nbrRow;
-	gchar * size;
-	gchar * type;
+	gchar *						nbrRow;
+	gchar *						size;
+	gchar *						type;
 } s_mysql_table;
 
 typedef s_mysql_table * p_mysql_table;
 
 typedef struct _s_mysql_query {
 /* Query Infos */
-	gchar * query;
+	gchar *					query;
 /* Result Infos */
-	int nbrField;
-	int editResult;
-	int errCode;
-	gchar * errMsg;
-	GArray * rawHeaders;
-	gboolean can_edit;
+	int							nbrField;
+	int							editResult;
+	int							errCode;
+	gchar *					errMsg;
+	GArray *				rawHeaders;
+	gboolean				can_edit;
 /* Connection Infos */
-	p_mysql_server mysql_srv;
-	gchar * db_name;
-	gchar * abs_tbl_name;
+	p_mysql_server	mysql_srv;
+	gchar *					db_name;
+	gchar *					abs_tbl_name;
 /* Mysql Infos */
-	MYSQL * mysql_link;
-	MYSQL_RES * mysql_result;
+	MYSQL *					mysql_link;
+	MYSQL_RES *			mysql_result;
 /* Charset Infos */
-	gchar * charset;
-	GIConv iconv_from;
-	GIConv iconv_to;
+	gchar *					charset;
+	GIConv					iconv_from;
+	GIConv					iconv_to;
 } s_mysql_query;
 
 typedef s_mysql_query * p_mysql_query;
 
 typedef struct _s_mysql_row {
 /* Data infos */
-	GArray * results;
+	GArray *			results;
 /* Connection infos */
-	p_mysql_query mysql_qry;
+	p_mysql_query	mysql_qry;
 /* Request for update infos */
-	gchar * abs_tbl_name;
-	gchar * primary_where_part;
+	gchar *				abs_tbl_name;
+	gchar *				primary_where_part;
 } s_mysql_row;
 
 typedef s_mysql_row * p_mysql_row;
@@ -99,11 +99,28 @@ typedef s_mysql_row * p_mysql_row;
 
 /***** Dump informations *****/
 
+typedef enum _e_dumpFormat {
+	DumpFormat_Null = 0,
+	DumpFormat_Sql,
+	DumpFormat_Csv,
+	DumpFormat_Xml
+} e_dumpFormat;
+
+typedef enum _e_dumpLevel {
+	DumpLevel_Null = 0,
+	DumpLevel_Server,
+	DumpLevel_Database,
+	DumpLevel_Table,
+	DumpLevel_Query
+} e_dumpLevel;
+
+/*
 typedef struct _s_dump_table_params {
 	gboolean drop_table;
 	gboolean structure;
 	gboolean data;
 	gboolean data_complete_insert;
+	e_dumpFormat format;
 	gchar * sql_filename;
 } s_dump_table_params;
 
@@ -113,6 +130,7 @@ typedef struct _s_dump_database_params {
 	gboolean drop_database;
 	gboolean use_database;
 	gchar * sql_filename;
+	e_dumpFormat format;
 	s_dump_table_params table;
 } s_dump_database_params;
 
@@ -124,10 +142,47 @@ typedef struct _s_dump_server_params {
 	gchar * base_directory;
 	gboolean group_in_directory;
 	gchar * group_directory;
+	e_dumpFormat format;
 	s_dump_database_params database;
 } s_dump_server_params;
 
 typedef s_dump_server_params * p_dump_server_params;
+*/
+typedef struct _s_mysql_dump {
+	/* General informations */
+	e_dumpFormat			format;
+	e_dumpLevel				level;
+	
+	/* File informations */
+	gchar *						filename;
+	gchar *						charset;
+	GIOChannel * 			file;
+	
+	/* Server informations */
+	p_mysql_server		mysql_svr;
+	gboolean					svr_separate_file;
+	gchar *						svr_base_directory;
+	gboolean					svr_group_in_directory;
+	gchar *						svr_group_directory;
+	
+	/* Database informations */
+	p_mysql_database	mysql_db;
+	gboolean					db_drop_database;
+	gboolean					db_use_database;
+	
+	/* Table informations */
+	p_mysql_table			mysql_tbl;
+	gboolean					tbl_drop_table;
+	gboolean					tbl_structure;
+	gboolean					tbl_data;
+	gboolean					tbl_data_complete_insert;
+	
+	/* Query informations */
+	p_mysql_query			mysql_qry;
+	gchar *						qry_string;
+} s_mysql_dump;
+
+typedef s_mysql_dump * p_mysql_dump;
 
 /***** Server functions *****/
 
@@ -140,9 +195,6 @@ gboolean mysql_server_clean_database_list (p_mysql_server mysql_srv, gboolean on
 void mysql_server_mark_found_all_databases (p_mysql_server mysql_srv, gboolean found);
 gboolean mysql_server_refresh_database_list (p_mysql_server mysql_srv);
 p_mysql_database mysql_server_get_database (p_mysql_server mysql_srv, const gchar * db_name);
-
-GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_params params);
-gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server_params params, GIOChannel * file, const gchar * charset);
 
 GArray * mysql_server_get_status (p_mysql_server mysql_srv);
 gboolean mysql_server_flush_status (p_mysql_server mysql_srv);
@@ -162,18 +214,13 @@ gboolean mysql_database_clean_table_list (p_mysql_database mysql_db);
 gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db);
 p_mysql_table mysql_database_get_table (p_mysql_database mysql_db, const gchar * tbl_name);
 
-GString * mysql_database_dump (p_mysql_database mysql_db, const p_dump_database_params params);
-gboolean mysql_database_dump_direct (p_mysql_database mysql_db, const p_dump_database_params params, GIOChannel * file, const gchar * charset);
-
 /***** Table functions *****/
 
 p_mysql_table mysql_table_new(p_mysql_database mysql_db, const gchar * tbl_name);
 gboolean mysql_table_delete(p_mysql_table mysql_tbl);
 
 p_mysql_query mysql_table_query (p_mysql_table mysql_tbl);
-
-GString * mysql_table_dump (p_mysql_table mysql_tbl, const p_dump_table_params params);
-gboolean mysql_table_dump_direct (p_mysql_table mysql_tbl, const p_dump_table_params params, GIOChannel * file, const gchar * charset);
+GString * mysql_table_get_sql_structure (p_mysql_table mysql_tbl);
 
 /***** Query functions *****/
 
@@ -212,23 +259,22 @@ gboolean mysql_row_delete(p_mysql_row mysql_rw);
 
 /***** Dump functions ******/
 
-GString * mysql_dump_database_struct (const gchar * db_name, gboolean drop_database, gboolean use_database);
-GString * mysql_dump_table_struct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean drop_table);
-GString * mysql_dump_table_data (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean complete_insert);
+p_mysql_dump mysql_dump_new (e_dumpFormat format, e_dumpLevel level);
+gboolean mysql_dump_free (p_mysql_dump mysql_dmp);
+gboolean mysql_dump_set_filename (p_mysql_dump mysql_dmp, const gchar * sql_filename, const gchar * charset);
+gboolean mysql_dump_set_params_server (p_mysql_dump mysql_dmp, p_mysql_server mysql_svr, gboolean separate_file, const gchar * base_directory, gboolean group_in_directory, const gchar * group_directory);
+gboolean mysql_dump_set_params_database (p_mysql_dump mysql_dmp, p_mysql_database mysql_db, gboolean drop_database, gboolean use_database);
+gboolean mysql_dump_set_database (p_mysql_dump mysql_dmp, p_mysql_database mysql_db);
+gboolean mysql_dump_set_params_table (p_mysql_dump mysql_dmp, p_mysql_table mysql_tbl, gboolean drop_table, gboolean structure, gboolean data, gboolean data_complete_insert);
+gboolean mysql_dump_set_table (p_mysql_dump mysql_dmp, p_mysql_table mysql_tbl);
+gboolean mysql_dump_set_query (p_mysql_dump mysql_dmp, p_mysql_query mysql_qry);
+gboolean mysql_dump_set_query_string (p_mysql_dump mysql_dmp, const gchar * qry_string);
+gboolean mysql_dump_do_to_disk (p_mysql_dump mysql_dmp);
+gchar * mysql_dump_do_to_memory (p_mysql_dump mysql_dmp);
 
-gboolean mysql_dump_database_struct_direct (const gchar * db_name, gboolean drop_database, gboolean use_database, GIOChannel * file);
-gboolean mysql_dump_table_struct_direct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean drop_table, GIOChannel * file);
-gboolean mysql_dump_table_data_direct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean complete_insert, GIOChannel * file);
-
-/*
-GString * mysql_dump_query_xml (p_mysql_query mysql_qry, gboolean bGlobal, gboolean bDatabase, gboolean bTable);
-GString * mysql_dump_query_csv (p_mysql_query mysql_qry);
-GString * mysql_dump_query_sql (p_mysql_query mysql_qry, gboolean complete_insert);
-*/
-
-gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file, gboolean bGlobal, gboolean bDatabase, gboolean bTable, gboolean cdata);
-gboolean mysql_dump_query_csv_direct (p_mysql_query mysql_qry, GIOChannel * file);
-gboolean mysql_dump_query_sql_direct (p_mysql_query mysql_qry, gboolean complete_insert, GIOChannel * file);
+gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp);
+gboolean mysql_dump_xml_do_to_disk (p_mysql_dump mysql_dmp);
+gboolean mysql_dump_csv_do_to_disk (p_mysql_dump mysql_dmp);
 
 /***** User functions *****/
 

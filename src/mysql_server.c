@@ -122,7 +122,7 @@ gboolean mysql_server_refresh_database_list (p_mysql_server mysql_srv) {
 p_mysql_database mysql_server_get_database (p_mysql_server mysql_srv, const gchar * db_name){
 	return (p_mysql_database)g_hash_table_lookup(mysql_srv->hshDbs, db_name);
 }
-
+/*
 typedef struct _s_dump_svr_info {
 	p_dump_server_params params;
 	GString * strRet;
@@ -179,7 +179,7 @@ GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_param
 	g_hash_table_foreach(mysql_srv->hshDbs, &ht_dump_database, (gpointer)&dumpInfo);
 	
 	if (!params->separate_file) {
-		/* all databases in the same file */
+		* all databases in the same file *
 		g_print("Write unique file : %s\n", params->sql_filename);
 		sqlFile = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(sqlFile, (gchar *)NULL, &err);
@@ -228,7 +228,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	dumpInfo.charset = (gchar *)charset;
 
 	if (!params->separate_file && file == (GIOChannel *)NULL) {
-		/* all databases in the same file */
+		* all databases in the same file *
 		g_print("Write unique file : %s\n", params->sql_filename);
 		dumpInfo.file = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(dumpInfo.file, charset, &err);
@@ -247,7 +247,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	}
 	
 	if (!params->separate_file) {
-		/* all databases in the same file */
+		* all databases in the same file *
 		g_print("Write unique file : %s\n", params->sql_filename);
 		dumpInfo.file = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(dumpInfo.file, charset, &err);
@@ -261,7 +261,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	
 	return TRUE;
 }
-
+*/
 GArray * mysql_server_get_status (p_mysql_server mysql_srv) {
 	p_mysql_query mysql_qry;
 	GArray * arStatus = (GArray *)NULL;
