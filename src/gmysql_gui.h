@@ -1,9 +1,18 @@
 #ifndef __GMYSQL_GUI_H__
 #define __GMYSQL_GUI_H__
 
+#include "../config.h"
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <libintl.h>
+
+#ifdef USE_GTKSOURCEVIEW
+	#include <gtksourceview/gtksourceview.h>
+	#include <gtksourceview/gtksourcebuffer.h>
+	#include <gtksourceview/gtksourcelanguage.h>
+	#include <gtksourceview/gtksourcelanguagesmanager.h>
+#endif /* USE_GTKSOURCEVIEW */
 
 #include "mysql_db_all.h"
 #include "gmysql_conf.h"
@@ -17,11 +26,13 @@
 extern int NbrWnd;
 extern p_gmysql_config gmysql_conf;
 
-#endif
+#ifdef USE_GTKSOURCEVIEW
+extern GtkSourceLanguagesManager * LangManager;
+#endif /* USE_GTKSOURCEVIEW */
 
+#endif /* __GMYSQL_MAIN_PART__ */
 
 /* List server window */
-
 
 typedef struct _listServWnd {
 	  GtkWidget * txtName;
@@ -41,9 +52,7 @@ typedef listServWnd * p_listServWnd;
 
 listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf);
 
-
 /* Server window */
-
 
 typedef struct _servWnd {
 	GtkWidget * lstBase;
@@ -51,9 +60,11 @@ typedef struct _servWnd {
 	GtkWidget * wndServer;
 	GtkWidget * mnuBdOps;
 	GtkWidget * mnuTblOps;
+	
 	p_mysql_server mysql_srv;
 	p_mysql_database curr_mysql_db;
 	p_mysql_table curr_mysql_tbl;
+	
 	GString * currDbName;
 	GString * currTblName;
 } servWnd;
@@ -62,9 +73,7 @@ typedef servWnd * p_servWnd;
 
 p_servWnd create_wndServer (gboolean display, p_mysql_server msql_srv);
 
-
 /* Exec SQL window */
-
 
 typedef struct _execSqlWnd {
 	GtkWidget * wndMain;
@@ -88,9 +97,7 @@ typedef execSqlWnd * p_execSqlWnd;
 execSqlWnd * create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gchar * query, gboolean execNow);
 /*void ExecSql (execSqlWnd * stWnd, const char * sqlQuery);*/
 
-
 /* Text window */
-
 
 typedef struct _textWnd {
 	GtkWidget * wndText;
@@ -102,9 +109,7 @@ typedef textWnd * p_textWnd;
 
 p_textWnd create_wndText (gboolean display, gchar * content, gchar * filename);
 
-
 /* History window */
-
 
 typedef struct _historyWnd {
 	GtkWidget * wndMain;
@@ -119,9 +124,7 @@ typedef historyWnd * p_historyWnd;
 
 p_historyWnd create_wndHistory (gboolean display);
 
-
 /* Dump window */
-
 
 #define DUMP_LEVEL_NULL 0
 #define DUMP_LEVEL_SERVER 1
@@ -176,7 +179,6 @@ typedef struct _dumpWnd {
 typedef dumpWnd * p_dumpWnd;
 
 p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_database mysql_db, p_mysql_table mysql_tbl, gchar * sqlQuery);
-
 
 /* Misc gui functiond */
 
