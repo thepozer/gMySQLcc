@@ -82,11 +82,11 @@ gboolean gmysqlcc_config_read (p_gmysqlcc_config gmysqlcc_conf) {
 	gmysqlcc_conf->config_filename = NULL;
 	
 	g_string_printf(filePath, "%s/%s/%s/%s", g_get_home_dir(), CONF_DIR, GMYSQLCC_CONF_DIR, CONFIG_FILE);
-	if (g_file_test(filePath->str, (G_FILE_TEST_IS_REGULAR))) {
+	if (g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))) {
 		gmysqlcc_conf->config_filename = g_strdup(filePath->str);
 	} else {
 		g_string_printf(filePath, "%s/.%s/%s", g_get_home_dir(), GMYSQLCC_CONF_DIR, CONFIG_FILE);
-		if (g_file_test(filePath->str, (G_FILE_TEST_IS_REGULAR))) {
+		if (g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))) {
 			gmysqlcc_conf->config_filename = g_strdup(filePath->str);
 		}
 	}
@@ -97,11 +97,11 @@ gboolean gmysqlcc_config_read (p_gmysqlcc_config gmysqlcc_conf) {
 	gmysqlcc_conf->servers_filename = NULL;
 	
 	g_string_printf(filePath, "%s/%s/%s/%s", g_get_home_dir(), CONF_DIR, GMYSQLCC_CONF_DIR, SERVERS_FILE);
-	if (g_file_test(filePath->str, (G_FILE_TEST_IS_REGULAR))) {
+	if (g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))) {
 		gmysqlcc_conf->servers_filename = g_strdup(filePath->str);
 	} else {
 		g_string_printf(filePath, "%s/.%s/%s", g_get_home_dir(), GMYSQLCC_CONF_DIR, SERVERS_FILE);
-		if (g_file_test(filePath->str, (G_FILE_TEST_IS_REGULAR))) {
+		if (g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))) {
 			gmysqlcc_conf->servers_filename = g_strdup(filePath->str);
 		}
 	}
@@ -125,12 +125,12 @@ gboolean gmysqlcc_config_write (p_gmysqlcc_config gmysqlcc_conf) {
 	
 	/* Check config directories and create them if needed */
 	g_string_printf(filePath, "%s/%s", g_get_home_dir(), CONF_DIR);
-	if (!g_file_test(filePath->str, (G_FILE_TEST_IS_DIR))) {
+	if (!g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
 		mkdir (filePath->str, 0700);
 	}
 	
 	g_string_printf(filePath, "%s/%s/%s", g_get_home_dir(), CONF_DIR, GMYSQLCC_CONF_DIR);
-	if (!g_file_test(filePath->str, (G_FILE_TEST_IS_DIR))) {
+	if (!g_file_test(filePath->str, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
 		mkdir (filePath->str, 0700);
 	}
 	
@@ -307,8 +307,8 @@ gboolean gmysqlcc_config_read_servers_file (p_gmysqlcc_config gmysqlcc_conf) {
 	/* Create XML Parser */
 	xmlContext = g_markup_parse_context_new(&xmlParse, 0, (gpointer)gmysqlcc_conf, (GDestroyNotify)NULL);
 	
-	if (gmysqlcc_conf->config_filename != NULL) {
-		xmlFile = fopen(gmysqlcc_conf->config_filename, "r");
+	if (gmysqlcc_conf->servers_filename != NULL) {
+		xmlFile = fopen(gmysqlcc_conf->servers_filename, "r");
 	} else {
 		xmlFile = NULL;
 		errno = ENOENT;
