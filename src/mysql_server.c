@@ -325,26 +325,32 @@ void mysql_server_mark_found_all_users (p_mysql_server mysql_srv, gboolean found
 
 gboolean mysql_server_refresh_user_list (p_mysql_server mysql_srv) {
 	p_mysql_query mysql_qry;
-	p_mysql_database mysql_db;
+	p_mysql_user mysql_usr;
 	GArray * arRow;
-	gchar * db_name;
+	gchar * login;
+	gchar * host;
+	GString * userName;
+	
+	userName = g_string_new("");
 	
 	mysql_server_mark_found_all_databases(mysql_srv, FALSE);
 	
 	mysql_qry = mysql_server_query(mysql_srv, (gchar *)NULL);
 	
-	if (mysql_query_execute_query(mysql_qry, "SELECT Host, User, CONCAT('\'', User, '\'@\'', Host, '\'') FROM `mysql`.`user` ORDER BY Host, User", FALSE)) {
+	if (mysql_query_execute_query(mysql_qry, "SELECT Host, User AS UserName FROM `mysql`.`user` ORDER BY Host, User", FALSE)) {
 	
 		arRow = mysql_query_get_next_record(mysql_qry);
 		
 		while (arRow != (GArray *)NULL) {
 		
-			db_name = g_array_index(arRow, gchar *, 0);
-			if ((mysql_db = (p_mysql_database)g_hash_table_lookup(mysql_srv->hshDbs, db_name)) == (p_mysql_database)NULL) {
-				mysql_db = mysql_database_new(mysql_srv, db_name);
-				g_hash_table_insert(mysql_srv->hshDbs, db_name, mysql_db);
+			login = g_array_index(arRow, gchar *, 1);
+			host = g_array_index(arRow, gchar *, 0);
+			g_string_printf(userName, "'%s'@'%s'", login, host);
+			if ((mysql_usr = (p_mysql_user)g_hash_table_lookup(mysql_srv->hshUsers, userName->str)) == (p_mysql_user)NULL) {
+				mysql_usr = mysql_user_new(mysql_srv, login, host);
+				g_hash_table_insert(mysql_srv->hshUsers, userName->str, mysql_usr);
 			} else {
-				mysql_db->found = TRUE;
+				mysql_usr->found = TRUE;
 			}
 			
 			g_array_free(arRow, TRUE);
@@ -355,9 +361,10 @@ gboolean mysql_server_refresh_user_list (p_mysql_server mysql_srv) {
 		return FALSE;
 	}
 	
-	mysql_server_clean_database_list(mysql_srv, TRUE);
+	mysql_server_clean_user_list(mysql_srv, TRUE);
 	
 	mysql_query_delete(mysql_qry);
+	g_string_free(userName, TRUE);
 	
 	return TRUE;
 }

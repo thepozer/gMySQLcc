@@ -2,6 +2,7 @@
 #include "gmysql_gui.h"
 
 void initDataServer (p_servWnd pSrvWnd);
+void fillUserList (p_servWnd pSrvWnd);
 void fillBaseList (p_servWnd pSrvWnd);
 void fillTableList (p_servWnd pSrvWnd, p_mysql_database mysql_db);
 
@@ -15,6 +16,7 @@ static void tableSelected (GtkTreeSelection *selection, gpointer data);
 void initDataServer (p_servWnd pSrvWnd) {
 	GtkTreeViewColumn * currCol;
 
+	/*fillUserList(pSrvWnd);*/
 	fillBaseList(pSrvWnd);
 
 	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(pSrvWnd->lstTable), 0);
@@ -25,6 +27,23 @@ void initDataServer (p_servWnd pSrvWnd) {
 	pSrvWnd->curr_mysql_tbl = (p_mysql_table)NULL;
 	g_string_assign(pSrvWnd->currTblName, "");
 
+}
+
+void fillUserList (p_servWnd pSrvWnd) {
+	
+	void ht_throught_user_list(gpointer key, gpointer value, gpointer user_data) {
+		p_mysql_user mysql_usr = (p_mysql_user)value;
+		
+		g_print("User : '%s@%s'\n", mysql_usr->login, mysql_usr->host);
+	}
+
+	if (mysql_server_refresh_user_list(pSrvWnd->mysql_srv)) {
+		g_print("Fill user list ... Ok !\nDisplay now : \n");
+		g_hash_table_foreach(pSrvWnd->mysql_srv->hshUsers, &ht_throught_user_list, NULL);
+	} else {
+		return;
+	}
+	
 }
 
 void fillBaseList (p_servWnd pSrvWnd) {
