@@ -13,6 +13,7 @@ void gmysqlcc_gui_exec_file_evt_cmbServerList_changed (GtkComboBox *combobox, gp
 void gmysqlcc_gui_exec_file_evt_cmbDatabaseList_changed (GtkComboBox *combobox, gpointer user_data);
 void gmysqlcc_gui_exec_file_evt_btnExecute_clicked(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_exec_file_evt_btnCancel_clicked(GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_exec_file_evt_btnShowReport_clicked(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_exec_file_evt_rbtDatabase_clicked (GtkWidget *widget, gpointer user_data);
 
 p_gmysqlcc_gui_exec_file gmysqlcc_gui_exec_file_new_open_file () {
@@ -202,6 +203,7 @@ void gmysqlcc_gui_exec_file_create_widget (p_gmysqlcc_gui_exec_file gui_xcfl) {
 	btnShowReport = createIconButton("gtk-zoom-fit", _("Show report"));
 	gtk_widget_show (btnShowReport);
 	gtk_container_add (GTK_CONTAINER (hbuttonbox7), btnShowReport);
+	g_signal_connect (G_OBJECT (btnShowReport), "clicked", G_CALLBACK (gmysqlcc_gui_exec_file_evt_btnShowReport_clicked), gui_xcfl);
 	
 	label41 = gtk_label_new_with_mnemonic (_("Execution _result"));
 	gtk_widget_show (label41);
@@ -395,6 +397,8 @@ void gmysqlcc_gui_exec_file_evt_btnExecute_clicked(GtkWidget *widget, gpointer u
 		return;
 	}
 	
+	gtk_expander_set_expanded(GTK_EXPANDER(gui_xcfl->xpdResults), TRUE);
+	
 	b_stop_error = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_xcfl->chkStopError));
 	
 	gui_xcfl->mysql_mlt_qry = mysql_multi_query_new(gui_xcfl->mysql_db);
@@ -413,6 +417,15 @@ void gmysqlcc_gui_exec_file_evt_btnCancel_clicked(GtkWidget *widget, gpointer us
 	p_gmysqlcc_gui_exec_file gui_xcfl = (p_gmysqlcc_gui_exec_file)user_data;
 	
 	gtk_widget_destroy(GTK_WIDGET(gui_xcfl->window));
+}
+
+void gmysqlcc_gui_exec_file_evt_btnShowReport_clicked(GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_exec_file gui_xcfl = (p_gmysqlcc_gui_exec_file)user_data;
+	p_gmysqlcc_gui_text gui_text;
+	
+	gui_text = gmysqlcc_gui_text_new();
+	gmysqlcc_gui_text_set_content(gui_text, gui_xcfl->mysql_mlt_qry->report->str, _("report.txt"));
+	gmysqlcc_gui_text_display(gui_text, TRUE);
 }
 
 void gmysqlcc_gui_exec_file_evt_rbtDatabase_clicked (GtkWidget *widget, gpointer user_data) {
