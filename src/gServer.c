@@ -319,6 +319,46 @@ static void mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
 	initDataServer (pSrvWnd);
 }
 
+static void mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
+	p_servWnd pSrvWnd = (p_servWnd)user_data;
+	p_textWnd p_txtWnd;
+	GString * sqlFilename, * dbStructDump, * structDump;
+	p_mysql_query mysql_qry;
+	
+	void ht_fill_create_script(gpointer key, gpointer value, gpointer user_data) {
+		p_mysql_table mysql_tbl = (p_mysql_table)value;
+		GString * dbStructDump = (GString *)user_data;
+		GString * structDump;
+		
+		mysql_qry = mysql_table_query(mysql_tbl);
+		
+		structDump = mysql_dump_table_struct(mysql_qry, mysql_tbl->name, FALSE);
+		g_string_append(dbStructDump, structDump->str);
+		g_string_free(structDump, TRUE);
+		
+		mysql_query_delete(mysql_qry);
+	}
+	
+	if (pSrvWnd->curr_mysql_db != (p_mysql_database)NULL) {
+		dbStructDump = g_string_new("");
+		
+		structDump = mysql_dump_database_struct(pSrvWnd->curr_mysql_db->name, FALSE, FALSE);
+		g_string_append(dbStructDump, structDump->str);
+		
+		/* Fill SQL script */
+		g_hash_table_foreach(pSrvWnd->curr_mysql_db->hshTables, &ht_fill_create_script, (gpointer)dbStructDump);
+		
+		sqlFilename = g_string_new("");
+		g_string_printf(sqlFilename, "%s-struct.sql", pSrvWnd->curr_mysql_db->name);
+		
+		p_txtWnd = create_wndText(TRUE, dbStructDump->str, sqlFilename->str);
+		
+		g_string_free(structDump, TRUE);
+		g_string_free(dbStructDump, TRUE);
+		g_string_free(sqlFilename, TRUE);
+	}
+}
+
 static void mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	p_textWnd p_txtWnd;
@@ -403,6 +443,7 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 	GtkWidget *btnDBAdd, *btnDBDel;
   GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
 	GtkWidget *mnuDBOpsRefresh;
+	GtkWidget *mnuDBOpsShowCreate;
 	GtkWidget *mnuTBLOpsShowCreate;
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
@@ -590,6 +631,11 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 	gtk_widget_show (mnuDBOpsRefresh);
 	gtk_menu_append (GTK_MENU_SHELL(p_svr->mnuBdOps), mnuDBOpsRefresh);
 	g_signal_connect (G_OBJECT (mnuDBOpsRefresh), "activate", G_CALLBACK (mnuDBOpsRefresh_activate), (gpointer)p_svr);
+	
+	mnuDBOpsShowCreate = gtk_menu_item_new_with_label(_("Display all create structures"));
+	gtk_widget_show (mnuDBOpsShowCreate);
+	gtk_menu_append (GTK_MENU_SHELL(p_svr->mnuBdOps), mnuDBOpsShowCreate);
+	g_signal_connect (G_OBJECT (mnuDBOpsShowCreate), "activate", G_CALLBACK (mnuDBOpsShowCreate_activate), (gpointer)p_svr);
 	
 	p_svr->mnuTblOps = gtk_menu_new();
 	gtk_widget_show (p_svr->mnuTblOps);
