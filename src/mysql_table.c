@@ -65,7 +65,7 @@ gboolean mysql_table_dump_direct (p_mysql_table mysql_tbl, const p_dump_table_pa
 		g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_qry->db_name, mysql_tbl->name);
 		g_print("mysql_table_dump_direct - with_data - sql : '%s'\n", strSql->str);
 		if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
-			if (!mysql_dump_query_sql_direct (mysql_qry, params->data_complete_insert, file)) {
+			if (!mysql_dump_query_sql_direct (mysql_qry, params->data_complete_insert, dumpFile)) {
 				return FALSE;
 			}
 		}
