@@ -23,7 +23,6 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 gdk-2.0,,exit)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
-dnl Check MySQL client library
 AC_PATH_PROG(MYSQLCFG, mysql_config, [no])
 if test "$MYSQLCFG" = "no"; then
 	AC_MSG_ERROR([Sorry, can't found MySQL client library])

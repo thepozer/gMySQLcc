@@ -6,4 +6,6 @@
   <program_name>gmysqlcc</program_name>
   <source_directory>src-glade</source_directory>
   <gnome_support>FALSE</gnome_support>
+  <output_main_file>FALSE</output_main_file>
+  <output_build_files>FALSE</output_build_files>
 </glade-project>

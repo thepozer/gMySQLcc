@@ -102,6 +102,7 @@ p_mysql_table mysql_database_get_table (p_mysql_database mysql_db, const gchar *
 }
 
 
+/*
 typedef struct _s_dump_db_info {
 	p_dump_database_params params;
 	GString * strRet;
@@ -184,3 +185,4 @@ gboolean mysql_database_dump_direct (p_mysql_database mysql_db, const p_dump_dat
 	
 	return TRUE;
 }
+*/

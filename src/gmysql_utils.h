@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <errno.h>
+#include <string.h>
 
 #define FTC_TV_NONE					0
 #define FTC_TV_LENGTH				1
@@ -40,5 +41,9 @@ void initFieldTypeCapabilities ();
 /* Character conversion helpers */
 int gmysql_count_noascii_character (const unsigned char * string);
 gchar * gmysql_alloc_iconv(GIConv icv, const char * source);
+
+/* Character protection helpers */
+GString * addSlashes (const gchar * str);
+GString * protectUnderscore (const gchar * str);
 
 #endif /* __GMYSQL_UTILS_H__ */

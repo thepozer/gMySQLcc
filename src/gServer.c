@@ -1,5 +1,6 @@
 
 #include "gmysql_gui.h"
+#include "gmysqlcc_gui_all.h"
 
 void initDataServer (p_servWnd pSrvWnd);
 void fillUserList (p_servWnd pSrvWnd);
@@ -277,17 +278,28 @@ static void btntbledit_clicked (GtkWidget *widget, gpointer user_data) {
 static void btntbldump_clicked (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	p_dumpWnd pDmpWnd;
+	p_gmysqlcc_gui_dump gui_dump;
+	
+	gui_dump = NULL;
 	
 	if (pSrvWnd->curr_mysql_tbl != (p_mysql_table)NULL) {
 		g_print("Dump Table :'%s'.'%s' ...\n", pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
-		pDmpWnd = create_wndDump(TRUE, (p_mysql_server)NULL, (p_mysql_database)NULL, pSrvWnd->curr_mysql_tbl, (gchar *)NULL);
+		/*pDmpWnd = create_wndDump(TRUE, (p_mysql_server)NULL, (p_mysql_database)NULL, pSrvWnd->curr_mysql_tbl, (gchar *)NULL);*/
+		gui_dump = gmysqlcc_gui_dump_new(NULL, NULL, pSrvWnd->curr_mysql_tbl, NULL);
 	} else if (pSrvWnd->curr_mysql_db != (p_mysql_database)NULL) {
 		g_print("Dump Database :'%s' ...\n", pSrvWnd->curr_mysql_db->name);
-		pDmpWnd = create_wndDump(TRUE, (p_mysql_server)NULL, pSrvWnd->curr_mysql_db, (p_mysql_table)NULL, (gchar *)NULL);
+		/*pDmpWnd = create_wndDump(TRUE, (p_mysql_server)NULL, pSrvWnd->curr_mysql_db, (p_mysql_table)NULL, (gchar *)NULL);*/
+		gui_dump = gmysqlcc_gui_dump_new(NULL, pSrvWnd->curr_mysql_db, NULL, NULL);
 	} else {
 		g_print("Dump server ...\n");
-		pDmpWnd = create_wndDump(TRUE, pSrvWnd->mysql_srv, (p_mysql_database)NULL, (p_mysql_table)NULL, (gchar *)NULL);
+		/*pDmpWnd = create_wndDump(TRUE, pSrvWnd->mysql_srv, (p_mysql_database)NULL, (p_mysql_table)NULL, (gchar *)NULL);*/
+		gui_dump = gmysqlcc_gui_dump_new(pSrvWnd->mysql_srv, NULL, NULL, NULL);
 	}
+	
+	if (gui_dump != NULL) {
+		gmysqlcc_gui_dump_display(gui_dump, TRUE);
+	}
+	
 }
 
 static void btntbldel_clicked (GtkWidget *widget, gpointer user_data) {
@@ -323,6 +335,7 @@ static void mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
 }
 
 static void mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
+/*
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	p_textWnd p_txtWnd;
 	GString * sqlFilename, * dbStructDump, * structDump;
@@ -348,7 +361,7 @@ static void mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) 
 		structDump = mysql_dump_database_struct(pSrvWnd->curr_mysql_db->name, FALSE, FALSE);
 		g_string_append(dbStructDump, structDump->str);
 		
-		/* Fill SQL script */
+		* Fill SQL script *
 		g_hash_table_foreach(pSrvWnd->curr_mysql_db->hshTables, &ht_fill_create_script, (gpointer)dbStructDump);
 		
 		sqlFilename = g_string_new("");
@@ -360,9 +373,11 @@ static void mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) 
 		g_string_free(dbStructDump, TRUE);
 		g_string_free(sqlFilename, TRUE);
 	}
+*/
 }
 
 static void mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
+/*
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	p_textWnd p_txtWnd;
 	GString * sqlFilename, * structDump;
@@ -380,6 +395,7 @@ static void mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data)
 		g_string_free(structDump, TRUE);
 		g_string_free(sqlFilename, TRUE);
 	}
+*/
 }
 
 static void baseSelected (GtkTreeSelection *selection, gpointer data) {
