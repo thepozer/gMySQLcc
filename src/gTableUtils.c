@@ -1,11 +1,5 @@
 #include "gTableUtils.h"
 
-#define __VAR_ARFIELDTYPES__
-
-extern p_fieldTypeCapability * arFieldTypes;
-extern int szarFieldTypes;
-
-
 /* Manage Field's infos */
 
 p_fieldInfo createFieldInfo (int status) {
@@ -196,4 +190,3 @@ p_indexFieldInfo createIndexFieldInfo (int status) {
 	}
 	return p_ifi;
 }
-
