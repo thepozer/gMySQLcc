@@ -6,15 +6,10 @@
 
 # Source files
 src/gDump.c
-src/gDump.h
 src/gExecSql.c
-src/gExecSql.h
 src/gListServer.c
-src/gListServer.h
 src/gServer.c
-src/gServer.h
 src/gUtils.c
-src/gUtils.h
 src/gmysql_conf.c
 src/gmysql_conf.h
 src/gmysql_utils.c
@@ -29,5 +24,7 @@ src/mysql_server.c
 src/mysql_table.c
 src/gTableUtils.h
 src/mysql_user.c
+src/gmysql_gui.h
+src/gText.c
 
 
