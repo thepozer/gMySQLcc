@@ -14,6 +14,10 @@ int NbrWnd = 0;
 
 p_gmysql_config gmysql_conf;
 	
+#ifdef USE_GTKSOURCEVIEW
+GtkSourceLanguagesManager * LangManager;
+#endif /* USE_GTKSOURCEVIEW */
+
 gboolean doBeforeEnd(gpointer data) {
 	p_gmysql_config gmysql_conf = (p_gmysql_config)data;
 
@@ -41,6 +45,10 @@ int main(int argc, char *argv[]) {
 	}
 	
 	gtk_quit_add(0, doBeforeEnd, gmysql_conf);
+	
+#ifdef USE_GTKSOURCEVIEW
+	LangManager = gtk_source_languages_manager_new();
+#endif /* USE_GTKSOURCEVIEW */
 	
 	p_lstsvr = create_wndListServer(TRUE, gmysql_conf);
 	
