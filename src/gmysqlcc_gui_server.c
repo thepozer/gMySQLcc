@@ -454,10 +454,9 @@ void gmysqlcc_gui_server_evt_mnuDBOpsRefresh_activate (GtkWidget *widget, gpoint
 }
 
 void gmysqlcc_gui_server_evt_mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
-/*
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_textWnd p_txtWnd;
-	GString * sqlFilename, * dbStructDump, * structDump;
+	p_gmysqlcc_gui_text gui_text;
+	GString * sqlFilename, * dbStructDump; /*, * structDump;*/
 	p_mysql_query mysql_qry;
 	
 	void ht_fill_create_script(gpointer key, gpointer value, gpointer user_data) {
@@ -467,54 +466,58 @@ void gmysqlcc_gui_server_evt_mnuDBOpsShowCreate_activate (GtkWidget *widget, gpo
 		
 		mysql_qry = mysql_table_query(mysql_tbl);
 		
-		structDump = mysql_dump_table_struct(mysql_qry, mysql_tbl->name, FALSE);
+		structDump = mysql_table_get_sql_structure(mysql_tbl);
 		g_string_append(dbStructDump, structDump->str);
 		g_string_free(structDump, TRUE);
 		
 		mysql_query_delete(mysql_qry);
 	}
 	
-	if (pSrvWnd->curr_mysql_db != (p_mysql_database)NULL) {
+	if (gui_server->curr_mysql_db != NULL) {
 		dbStructDump = g_string_new("");
 		
-		structDump = mysql_dump_database_struct(pSrvWnd->curr_mysql_db->name, FALSE, FALSE);
+		/*
+		structDump = mysql_dump_database_struct(gui_server->curr_mysql_db->name, FALSE, FALSE);
 		g_string_append(dbStructDump, structDump->str);
+		*/
 		
-		* Fill SQL script *
-		g_hash_table_foreach(pSrvWnd->curr_mysql_db->hshTables, &ht_fill_create_script, (gpointer)dbStructDump);
+		/* Fill SQL script */
+		g_hash_table_foreach(gui_server->curr_mysql_db->hshTables, &ht_fill_create_script, (gpointer)dbStructDump);
 		
 		sqlFilename = g_string_new("");
-		g_string_printf(sqlFilename, "%s-struct.sql", pSrvWnd->curr_mysql_db->name);
+		g_string_printf(sqlFilename, "%s-struct.sql", gui_server->curr_mysql_db->name);
 		
-		p_txtWnd = create_wndText(TRUE, dbStructDump->str, sqlFilename->str);
+		gui_text = gmysqlcc_gui_text_new();
+		gmysqlcc_gui_text_set_content(gui_text, dbStructDump->str, sqlFilename->str);
+		gmysqlcc_gui_text_display(gui_text, TRUE);
 		
-		g_string_free(structDump, TRUE);
+		/*g_string_free(structDump, TRUE);*/
 		g_string_free(dbStructDump, TRUE);
 		g_string_free(sqlFilename, TRUE);
 	}
-*/
 }
 
 void gmysqlcc_gui_server_evt_mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
-/*
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_textWnd p_txtWnd;
+	p_gmysqlcc_gui_text gui_text;
 	GString * sqlFilename, * structDump;
 	p_mysql_query mysql_qry;
 	
-	if (pSrvWnd->curr_mysql_tbl != (p_mysql_table)NULL) {
-		mysql_qry = mysql_table_query(pSrvWnd->curr_mysql_tbl);
+	if (gui_server->curr_mysql_tbl != NULL) {
+		mysql_qry = mysql_table_query(gui_server->curr_mysql_tbl);
 		
 		sqlFilename = g_string_new("");
-		g_string_printf(sqlFilename, "%s-%s-struct.sql", pSrvWnd->curr_mysql_tbl->mysql_db->name, pSrvWnd->curr_mysql_tbl->name);
-		structDump = mysql_dump_table_struct(mysql_qry, pSrvWnd->curr_mysql_tbl->name, FALSE);
+		g_string_printf(sqlFilename, "%s-%s-struct.sql", gui_server->curr_mysql_tbl->mysql_db->name, gui_server->curr_mysql_tbl->name);
+		structDump = mysql_table_get_sql_structure(gui_server->curr_mysql_tbl);
 		
-		p_txtWnd = create_wndText(TRUE, structDump->str, sqlFilename->str);
+		gui_text = gmysqlcc_gui_text_new();
+		gmysqlcc_gui_text_set_content(gui_text, structDump->str, sqlFilename->str);
+		gmysqlcc_gui_text_display(gui_text, TRUE);
 		
 		g_string_free(structDump, TRUE);
 		g_string_free(sqlFilename, TRUE);
 	}
-*/	
+
 }
 
 gboolean gmysqlcc_gui_server_evt_lstBase_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {

@@ -253,12 +253,14 @@ gboolean mysql_dump_set_params_table (p_mysql_dump mysql_dmp, p_mysql_table mysq
 gboolean mysql_dump_set_table (p_mysql_dump mysql_dmp, p_mysql_table mysql_tbl);
 gboolean mysql_dump_set_query (p_mysql_dump mysql_dmp, p_mysql_query mysql_qry);
 gboolean mysql_dump_set_query_string (p_mysql_dump mysql_dmp, const gchar * qry_string);
-gboolean mysql_dump_do_to_disk (p_mysql_dump mysql_dmp);
-gchar * mysql_dump_do_to_memory (p_mysql_dump mysql_dmp);
 
+gboolean mysql_dump_do_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_xml_do_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_csv_do_to_disk (p_mysql_dump mysql_dmp);
+
+gchar * mysql_dump_do_to_memory (p_mysql_dump mysql_dmp);
+gchar * mysql_dump_csv_do_to_memory (p_mysql_dump mysql_dmp);
 
 /***** User functions *****/
 
