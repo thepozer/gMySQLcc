@@ -1,0 +1,6 @@
+gmysqlcc (0.2.2-1) unstable; urgency=low
+
+  * Initial Debian Release.
+
+ -- Didier Prolhac <gmysqlcc@thepozer.net>  Mon, 29 Nov 2004 15:39:00 +0100
+
