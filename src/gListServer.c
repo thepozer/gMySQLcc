@@ -38,7 +38,7 @@ void displayCurrentDB (p_listServWnd pLstSrvWnd) {
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPort), "3306");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLogin), "");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPasswd), "");
-		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock), "");
+		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock), "/var/run/mysqld/mysqld.sock");
 	}
 }
 
