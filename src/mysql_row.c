@@ -34,8 +34,12 @@ p_mysql_row mysql_row_new_next_record (p_mysql_query mysql_qry) {
 }
 
 gboolean mysql_row_free (p_mysql_row mysql_rw) {
+	guint i;
 	
-	g_array_free(mysql_rw->results, FALSE);
+	for (i = 0; i < mysql_rw->results->len; i++) {
+		g_free(g_array_index(mysql_rw->results, gchar *, i));
+	}
+	g_array_free(mysql_rw->results, TRUE);
 	g_free(mysql_rw->abs_tbl_name);
 	g_free(mysql_rw->primary_where_part);
 	g_free(mysql_rw);

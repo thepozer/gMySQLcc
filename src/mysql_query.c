@@ -349,7 +349,7 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 	GArray * hdrs;
 	
 	if (mysql_qry->abs_tbl_name != (gchar *)NULL) {
-		return mysql_qry->abs_tbl_name;
+		return g_strdup(mysql_qry->abs_tbl_name);
 	}
 
 	if ((hdrs = mysql_query_get_headers(mysql_qry)) == (GArray *)NULL) {
@@ -383,7 +383,7 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 	mysql_qry->abs_tbl_name = abs_tbl_name->str;
 	g_string_free(abs_tbl_name, FALSE);
 	g_string_free(abs_tbl_name_old, TRUE);
-	return mysql_qry->abs_tbl_name;
+	return g_strdup(mysql_qry->abs_tbl_name);
 }
 
 gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) {

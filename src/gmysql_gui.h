@@ -90,6 +90,7 @@ typedef struct _execSqlWnd {
 	p_mysql_row mysql_rw;
 	
 	int currCharset;
+	GSList * lstRows;
 } execSqlWnd;
 
 typedef execSqlWnd * p_execSqlWnd;
