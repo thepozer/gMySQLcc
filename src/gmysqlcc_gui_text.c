@@ -89,6 +89,8 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
 	GtkTooltips * tooltips;
 	GtkTextBuffer * txtBuffer;
 	
+	tooltips = gtk_tooltips_new();
+	
 	gui_text->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (gui_text->window), _("Text Window"));
  	gtk_window_set_default_size (GTK_WINDOW (gui_text->window), 400, 400);
