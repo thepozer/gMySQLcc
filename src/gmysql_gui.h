@@ -139,9 +139,9 @@ p_historyWnd create_wndHistory (gboolean display);
 #define DUMP_TYPE_DATA 3
 
 #define DUMP_FORMAT_NULL 0
-#define DUMP_FORMAT_CSV 1
-#define DUMP_FORMAT_XML 2
-#define DUMP_FORMAT_SQL 3
+#define DUMP_FORMAT_SQL 1
+#define DUMP_FORMAT_CSV 2
+#define DUMP_FORMAT_XML 3
 
 
 typedef struct _dumpWnd {
