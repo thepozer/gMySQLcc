@@ -4,9 +4,13 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <libintl.h>
 
 #include "mysql_db_all.h"
 #include "gUtils.h"
+#include "gmysql_utils.h"
+
+#define _(String) gettext (String)
 
 #define DUMP_LEVEL_NULL 0
 #define DUMP_LEVEL_SERVER 1

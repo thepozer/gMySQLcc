@@ -30,9 +30,7 @@ void initDataServer (p_servWnd pSrvWnd) {
 }
 
 void fillBaseList (p_servWnd pSrvWnd) {
-	int row;
 	GtkListStore * lstStrBase;
-	GtkTreeIter iter;
 	GtkTreeViewColumn * currCol;
 	GtkCellRenderer * renderer;
 
@@ -61,7 +59,7 @@ void fillBaseList (p_servWnd pSrvWnd) {
 	}
 
 	renderer = gtk_cell_renderer_text_new ();
-	currCol = gtk_tree_view_column_new_with_attributes ("Databases", renderer, "text", 0, NULL);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Databases"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (pSrvWnd->lstBase), currCol);
 	
 	pSrvWnd->curr_mysql_db = (p_mysql_database)NULL;
@@ -99,13 +97,13 @@ void fillTableList (p_servWnd pSrvWnd, p_mysql_database mysql_db) {
 	}
 
 	renderer = gtk_cell_renderer_text_new ();
-	currCol = gtk_tree_view_column_new_with_attributes ("Table name", renderer, "text", 0, NULL);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Table name"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (pSrvWnd->lstTable), currCol);
-	currCol = gtk_tree_view_column_new_with_attributes ("Rows", renderer, "text", 1, NULL);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Rows"), renderer, "text", 1, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (pSrvWnd->lstTable), currCol);
-	currCol = gtk_tree_view_column_new_with_attributes ("Size", renderer, "text", 2, NULL);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Size"), renderer, "text", 2, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (pSrvWnd->lstTable), currCol);
-	currCol = gtk_tree_view_column_new_with_attributes ("Type", renderer, "text", 3, NULL);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Type"), renderer, "text", 3, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (pSrvWnd->lstTable), currCol);
 
 	pSrvWnd->curr_mysql_tbl = (p_mysql_table)NULL;
@@ -191,7 +189,7 @@ static void btndbadd_clicked (GtkWidget *widget, gpointer user_data) {
 		g_string_printf(query, "CREATE DATABASE `%s`", dbname->str);
 		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
 		if (mysql_query_execute_query(mysql_qry, query->str)) {
-			msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Database '%s' created !", dbname->str);
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' created !"), dbname->str);
 			gtk_dialog_run (GTK_DIALOG (msgdlg));
 			gtk_widget_destroy (msgdlg);
 			fillBaseList (pSrvWnd);
@@ -218,7 +216,7 @@ static void btndbdel_clicked (GtkWidget *widget, gpointer user_data) {
 			
 			mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
 			if (mysql_query_execute_query(mysql_qry, query->str)) {
-				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Database '%s' deleted !", pSrvWnd->curr_mysql_db->name);
+				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' deleted !"), pSrvWnd->curr_mysql_db->name);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));
 				gtk_widget_destroy (msgdlg);
 				fillBaseList (pSrvWnd);
@@ -230,9 +228,9 @@ static void btndbdel_clicked (GtkWidget *widget, gpointer user_data) {
 }
 
 static void btntbladd_clicked (GtkWidget *widget, gpointer user_data) {
-	p_servWnd pSrvWnd = (p_servWnd)user_data;
+	/*p_servWnd pSrvWnd = (p_servWnd)user_data;*/
 
-	}
+}
 
 static void btntbledit_clicked (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
@@ -271,14 +269,14 @@ static void btntbldel_clicked (GtkWidget *widget, gpointer user_data) {
 	p_mysql_query mysql_qry;
 	
 	if (pSrvWnd->currDbName->len > 0 && pSrvWnd->currTblName->len > 0) {
-		ok = askConfirmation("Delete Table", "Are you sure ?");
+		ok = askConfirmation(_("Delete Table"), _("Are you sure ?"));
 		if (ok) {
 			g_print("Delete table : '%s'\n", pSrvWnd->currTblName->str);
 			query = g_string_new("");
 			g_string_printf(query, "DROP TABLE `%s`.`%s`", pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
 			mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
 			if (mysql_query_execute_query(mysql_qry, query->str)) {
-				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Table '%s'.'%s' deleted !", pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
+				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Table '%s'.'%s' deleted !"), pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));
 				gtk_widget_destroy (msgdlg);
 				fillBaseList (pSrvWnd);
@@ -314,7 +312,6 @@ static void tableSelected (GtkTreeSelection *selection, gpointer data) {
 	p_servWnd pSrvWnd = (p_servWnd)data;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	gchar * tblName;
 	
 	g_print("Changed !\n");
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -350,14 +347,14 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   GtkWidget *vbox1, *vbox2, *vbox3;
   GtkWidget *hpaned1;
   GtkWidget *hbox2, *hbox3;
-  GtkWidget *label1, *label2, *label3, *label4, *label5, *label6, *label7;
+  GtkWidget *label1, *label2, *label3, *label6, *label7;
   GtkWidget *notebook1;
   GtkWidget *scrolledwindow1, *scrolledwindow2;
   GtkAccelGroup *accel_group;
   GtkWidget *toolbar1;
-  GtkWidget *btnTlbrClose, *btnTlbrFile, *btnTlbrSql;
-	GtkWidget *btnDBAdd, *btnDBDel, *btnDBSql;
-  GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel, *btnTblSql;
+  GtkWidget *btnTlbrClose, *btnTlbrSql;
+	GtkWidget *btnDBAdd, *btnDBDel;
+  GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
 	GtkWidget *mnuDBOpsRefresh;
 	GtkTreeSelection *select;
 	GString * sTitle;
@@ -381,7 +378,7 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 
   p_svr->wndServer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	sTitle = g_string_new("");
-	g_string_printf(sTitle, "Server : %s", mysql_srv->name);
+	g_string_printf(sTitle, _("Server : %s"), mysql_srv->name);
   gtk_window_set_title (GTK_WINDOW (p_svr->wndServer), sTitle->str);
 	g_string_free(sTitle, TRUE);
 	gtk_window_set_default_size (GTK_WINDOW (p_svr->wndServer), 400, 300);
@@ -397,17 +394,17 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
 
 	btnTlbrSql = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		"SQL", "Exec SQL Query", "", 
+		_("SQL"), _("Exec SQL Query"), "", 
 		gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR),
 		G_CALLBACK (btntlbrsql_clicked), (gpointer)p_svr);
 
 	btnTlbrSql = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		"SQL File", "Exec SQL File", "", 
+		_("SQL File"), _("Exec SQL File"), "", 
 		gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR),
 		G_CALLBACK (btntlbrsqlfile_clicked), (gpointer)p_svr);
 
 	btnTlbrClose = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		"Close", "Close window", "", 
+		_("Close"), _("Close window"), "", 
 		gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR),
 		G_CALLBACK (btntlbrclose_clicked), (gpointer)p_svr);
 
@@ -441,12 +438,12 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox2, FALSE, TRUE, 0);
 
-  btnDBAdd = gtk_button_new_with_mnemonic ("Add");
+  btnDBAdd = gtk_button_new_with_mnemonic (_("Add"));
   gtk_widget_show (btnDBAdd);
   gtk_box_pack_start (GTK_BOX (hbox2), btnDBAdd, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnDBAdd), "clicked", G_CALLBACK (btndbadd_clicked), (gpointer)p_svr);
 
-  btnDBDel = gtk_button_new_with_mnemonic ("Detele");
+  btnDBDel = gtk_button_new_with_mnemonic (_("Delete"));
   gtk_widget_show (btnDBDel);
   gtk_box_pack_start (GTK_BOX (hbox2), btnDBDel, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnDBDel), "clicked", G_CALLBACK (btndbdel_clicked), (gpointer)p_svr);
@@ -472,47 +469,47 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox3), hbox3, FALSE, TRUE, 0);
 
-  btnTblAdd = gtk_button_new_with_mnemonic ("Add ");
+  btnTblAdd = gtk_button_new_with_mnemonic (_("Add"));
   gtk_widget_show (btnTblAdd);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblAdd, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblAdd), "clicked", G_CALLBACK (btntbladd_clicked), (gpointer)p_svr);
 
-  btnTblEdit = gtk_button_new_with_mnemonic ("Modify");
+  btnTblEdit = gtk_button_new_with_mnemonic (_("Modify"));
   gtk_widget_show (btnTblEdit);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblEdit, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblEdit), "clicked", G_CALLBACK (btntbledit_clicked), (gpointer)p_svr);
 
-  btnTblDump = gtk_button_new_with_mnemonic ("Dump");
+  btnTblDump = gtk_button_new_with_mnemonic (_("Dump"));
   gtk_widget_show (btnTblDump);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblDump, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblDump), "clicked", G_CALLBACK (btntbldump_clicked), (gpointer)p_svr);
 
-  btnTblDel = gtk_button_new_with_mnemonic ("Delete");
+  btnTblDel = gtk_button_new_with_mnemonic (_("Delete"));
   gtk_widget_show (btnTblDel);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblDel, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblDel), "clicked", G_CALLBACK (btntbldel_clicked), (gpointer)p_svr);
 
-  label1 = gtk_label_new ("Databases");
+  label1 = gtk_label_new (_("Databases"));
   gtk_widget_show (label1);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label1);
   gtk_label_set_justify (GTK_LABEL (label1), GTK_JUSTIFY_LEFT);
 
-  label6 = gtk_label_new ("In construction");
+  label6 = gtk_label_new (_("In construction"));
   gtk_widget_show (label6);
   gtk_container_add (GTK_CONTAINER (notebook1), label6);
   gtk_label_set_justify (GTK_LABEL (label6), GTK_JUSTIFY_LEFT);
 
-  label2 = gtk_label_new ("Users");
+  label2 = gtk_label_new (_("Users"));
   gtk_widget_show (label2);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label2);
   gtk_label_set_justify (GTK_LABEL (label2), GTK_JUSTIFY_LEFT);
 
-  label7 = gtk_label_new ("In construction");
+  label7 = gtk_label_new (_("In construction"));
   gtk_widget_show (label7);
   gtk_container_add (GTK_CONTAINER (notebook1), label7);
   gtk_label_set_justify (GTK_LABEL (label7), GTK_JUSTIFY_LEFT);
 
-  label3 = gtk_label_new ("Server");
+  label3 = gtk_label_new (_("Server"));
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label3);
   gtk_label_set_justify (GTK_LABEL (label3), GTK_JUSTIFY_LEFT);
@@ -526,7 +523,7 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 	p_svr->mnuBdOps = gtk_menu_new();
 	gtk_widget_show (p_svr->mnuBdOps);
 
-	mnuDBOpsRefresh = gtk_menu_item_new_with_label("Refresh");
+	mnuDBOpsRefresh = gtk_menu_item_new_with_label(_("Refresh"));
 	gtk_widget_show (mnuDBOpsRefresh);
 	gtk_menu_append (GTK_MENU_SHELL(p_svr->mnuBdOps), mnuDBOpsRefresh);
 	g_signal_connect (G_OBJECT (mnuDBOpsRefresh), "activate", G_CALLBACK (mnuDBOpsRefresh_activate), (gpointer)p_svr);

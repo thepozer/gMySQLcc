@@ -4,11 +4,14 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <libintl.h>
 
 #include "mysql_db_all.h"
 #include "gmysql_conf.h"
 #include "gServer.h"
 #include "gUtils.h"
+
+#define _(String) gettext (String)
 
 typedef struct _listServWnd {
 	  GtkWidget * txtName;

@@ -41,7 +41,7 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_srv->host, mysql_srv->user, mysql_srv->passwd, db_name, mysql_srv->port, mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
-		mysql_qry->mysql_link == (MYSQL *)NULL;
+		mysql_qry->mysql_link = (MYSQL *)NULL;
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
 		return mysql_qry;
 	}
@@ -131,7 +131,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_qry->mysql_srv->host, mysql_qry->mysql_srv->user, mysql_qry->mysql_srv->passwd, mysql_qry->db_name, mysql_qry->mysql_srv->port, mysql_qry->mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
-		mysql_qry->mysql_link == (MYSQL *)NULL;
+		mysql_qry->mysql_link = (MYSQL *)NULL;
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
 		return mysql_qry;
 	}
@@ -155,8 +155,6 @@ p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry) {
 	return mysql_server_get_database (mysql_qry->mysql_srv, mysql_qry->db_name);
 }
 gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query) {
-	GError * err = (GError *) NULL;
-	gsize nbRead, nbWrite;
 	int errcode;
 	
 	if (mysql_qry == (p_mysql_query)NULL) {
@@ -343,7 +341,6 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 	MYSQL_FIELD * field;
 	int i;
 	GString * abs_tbl_name, * abs_tbl_name_old;
-	gchar * retStr;
 	GArray * hdrs;
 	
 	if (mysql_qry->abs_tbl_name != (gchar *)NULL) {
@@ -415,19 +412,6 @@ gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) 
 	return retStr;
 }
 
-gchar * mysql_query_get_charset(p_mysql_query mysql_qry) {
-
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (gchar *)NULL;
-	}
-	
-	if (mysql_qry->mysql_link == (MYSQL *)NULL) {
-		return (gchar *)NULL;
-	}
-	
-	return mysql_qry->charset;
-}
-
 gboolean mysql_query_is_editable (p_mysql_query mysql_qry) {
 	return (mysql_qry->abs_tbl_name != (gchar *) NULL) && mysql_qry->can_edit;
 }
@@ -443,4 +427,52 @@ gboolean mysql_query_set_can_edit (p_mysql_query mysql_qry, gboolean new_value) 
 
 gboolean mysql_query_get_can_edit (p_mysql_query mysql_qry) {
 	return mysql_qry->can_edit;
+}
+gchar * mysql_query_get_charset(p_mysql_query mysql_qry) {
+
+	if (mysql_qry == (p_mysql_query)NULL) {
+		return (gchar *)NULL;
+	}
+	
+	return mysql_qry->charset;
+}
+
+gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * charset) {
+	GIConv iconv_from;
+	GIConv iconv_to;
+	
+	/* check mysql query object */
+	if (mysql_qry == (p_mysql_query)NULL) {
+		return FALSE;
+	}
+	
+	/* Create iconv converter based on given charset */
+	iconv_from = g_iconv_open("UTF-8", charset);
+	if (iconv_from < 0) {
+		g_printerr("Iconv from open error (%d) : '%s'\n", errno, strerrror(errno));
+		return FALSE;
+	}
+	
+	iconv_to = g_iconv_open(charset, "UTF-8");
+	if (iconv_to < 0) {
+		g_printerr("Iconv to open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_iconv_close(iconv_from);
+		return FALSE;
+	}
+	
+	/* Destroy iconv converter */
+	g_free(mysql_qry->charset);
+	if (mysql_qry->iconv_from < 0) {
+		g_iconv_close(mysql_qry->iconv_from);
+	}
+	if (mysql_qry->iconv_to < 0) {
+		g_iconv_close(mysql_qry->iconv_to);
+	}
+	
+	/* Update converter */
+	mysql_qry->charset = g_strdup(charset);
+	mysql_qry->iconv_from = iconv_from;
+	mysql_qry->iconv_to = iconv_to;
+	
+	return TRUE;
 }

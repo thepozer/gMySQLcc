@@ -35,7 +35,7 @@ GString * mysql_dump_database_struct (const gchar * db_name, gboolean drop_datab
 }
 
 GString * mysql_dump_table_struct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean drop_table) {
-	GString * strRet, * strTmp, * strSql;
+	GString * strRet, * strSql;
 	GArray * arRow;
 	
 	strRet = g_string_new("\n# Dump structure\n\n");
@@ -112,10 +112,8 @@ GString * mysql_dump_table_data (p_mysql_query mysql_qry, const gchar * tbl_name
 }
 
 GString * mysql_dump_query_csv (p_mysql_query mysql_qry) {
-	GString * strRet, * strInsert, * strSql, * tmpField;
+	GString * strRet, * tmpField;
 	GArray * arRow;
-	GError * err = (GError *)NULL;
-	gssize nbBytes;
 	int i;
 	
 	strRet = g_string_new("");

@@ -3,6 +3,9 @@
 
 #include <gtk/gtk.h>
 
+#include <libintl.h>
+
+#include "../config.h"
 #include "mysql_db_all.h"
 #include "gmysql_conf.h"
 #include "gmysql_utils.h"
@@ -38,6 +41,9 @@ int main(int argc, char *argv[]) {
 
 	gtk_init (&argc, &argv);
 	
+  bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+  textdomain (PACKAGE);
+
 	initFieldTypeCapabilities();
 	
 	g_printerr("Client librarie version : %s\n", mysql_get_client_info());

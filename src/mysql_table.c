@@ -127,5 +127,5 @@ GString * mysql_table_dump (p_mysql_table mysql_tbl, const p_dump_table_params p
 	}
 }
 gboolean mysql_table_set_status_infos (p_mysql_table mysql_tbl, guint64 nbrRow, guint64 size, const gchar * type) {
-	
+	return TRUE;
 }
