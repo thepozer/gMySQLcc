@@ -1,5 +1,5 @@
 
-#include "gmysql_gui.h"
+#include "gmysqlcc_gui_all.h"
 
 void closeAskFilename (GtkWidget *widget, gpointer user_data);
 

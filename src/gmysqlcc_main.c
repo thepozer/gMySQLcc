@@ -6,28 +6,21 @@
 
 #include "../config.h"
 #include "mysql_db_all.h"
-#include "gmysql_conf.h"
-#include "gmysql_utils.h"
+#include "gmysqlcc_helpers.h"
 #include "gmysqlcc_gui_all.h"
 
 int NbrWnd = 0;
 
-p_gmysql_config gmysql_conf;
+p_gmysqlcc_config gmysqlcc_conf;
 	
 #ifdef USE_GTKSOURCEVIEW
 GtkSourceLanguagesManager * LangManager;
 #endif /* USE_GTKSOURCEVIEW */
 
-gboolean doBeforeEnd(gpointer data) {
-	p_gmysql_config gmysql_conf = (p_gmysql_config)data;
-
-	gmysql_config_write_xml(gmysql_conf);
-	
-	return TRUE;
-}
+gboolean gmysqlcc_main_before_end(gpointer data);
 
 int main(int argc, char *argv[]) {
-	listServWnd * p_lstsvr;
+	p_gmysqlcc_gui_list_server gui_list_server;
 	
 	/* Init gtk library */
 	gtk_init (&argc, &argv);
@@ -38,18 +31,18 @@ int main(int argc, char *argv[]) {
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	
 	/* Init types list */
-	initFieldTypeCapabilities();
+	gmysqlcc_helpers_field_capability_init_array();
 	
 	/* Read configuration */
-	gmysql_conf = gmysql_config_new();
+	gmysqlcc_conf = gmysqlcc_config_new();
 	
-	if (!gmysql_config_init(gmysql_conf)) {
+	if (!gmysqlcc_config_read(gmysqlcc_conf)) {
 		g_printerr("Can't start gmysqlcc - Error during configuration ... \n");
 		return 1;
 	}
 	
 	/* Add trigger to save configuration before the end of gmysqlcc */
-	gtk_quit_add(0, doBeforeEnd, gmysql_conf);
+	gtk_quit_add(0, gmysqlcc_main_before_end, gmysqlcc_conf);
 	
 #ifdef USE_GTKSOURCEVIEW
 	/* Get Language Manager to select sql type */
@@ -57,11 +50,19 @@ int main(int argc, char *argv[]) {
 #endif /* USE_GTKSOURCEVIEW */
 	
 	/* Create server list windows */
-	p_lstsvr = create_wndListServer(TRUE, gmysql_conf);
+	gui_list_server = gmysqlcc_gui_list_server_new(gmysqlcc_conf);
+	gmysqlcc_gui_list_server_display(gui_list_server, TRUE);
 	
 	/* Start the application */
 	gtk_main ();
 	
-	
 	return 0;
+}
+
+gboolean gmysqlcc_main_before_end(gpointer data) {
+	p_gmysqlcc_config gmysqlcc_conf = (p_gmysqlcc_config)data;
+
+	gmysqlcc_config_write(gmysqlcc_conf);
+	
+	return TRUE;
 }

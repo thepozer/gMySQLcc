@@ -3,7 +3,7 @@
 #include <sys/types.h>
 
 #include "mysql_db_all.h"
-#include "gmysql_utils.h"
+#include "gmysqlcc_helpers.h"
 
 gboolean mysql_dump_csv_server_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_csv_database_to_disk (p_mysql_dump mysql_dmp);
@@ -207,7 +207,7 @@ gboolean mysql_dump_csv_data_query_to_disk (p_mysql_dump mysql_dmp) {
 			g_string_assign (strRet, "");
 			
 			for (i = 0; i < arRow->len; i++) {
-				tmpField = addSlashes(g_array_index(arRow, gchar *, i));
+				tmpField = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
 				g_string_append_printf(strRet, (i == 0) ? "\"%s\"" : ";\"%s\"" , tmpField->str);
 				g_string_free(tmpField, TRUE);
 			}
@@ -225,30 +225,3 @@ gboolean mysql_dump_csv_data_query_to_disk (p_mysql_dump mysql_dmp) {
 	mysql_query_delete(mysql_qry);
 	return TRUE;
 }
-
-/*
-GString * mysql_dump_query_csv (p_mysql_query mysql_qry) {
-	GString * strRet, * tmpField;
-	GArray * arRow;
-	int i;
-	
-	strRet = g_string_new("");
-	
-	arRow = mysql_query_get_next_record(mysql_qry);
-	while (arRow != (GArray *)NULL) {
-
-		for (i = 0; i < arRow->len; i++) {
-			tmpField = addSlashes(g_array_index(arRow, gchar *, i));
-			g_string_append_printf(strRet, (i == 0) ? "\"%s\"" : ";\"%s\"" , tmpField->str);
-			g_string_free(tmpField, TRUE);
-		}
-		
-		g_string_append(strRet, "\n");
-
-		g_array_free(arRow, TRUE);
-		arRow = mysql_query_get_next_record(mysql_qry);
-	}
-	
-	return strRet;
-}
-*/

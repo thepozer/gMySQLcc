@@ -1,5 +1,4 @@
 
-#include "gmysql_gui.h"
 
 #include "gmysqlcc_gui_all.h"
 
@@ -11,6 +10,7 @@ void gmysqlcc_gui_dump_to_file (p_gmysqlcc_gui_dump gui_dump, gchar * sqlFilenam
 void gmysqlcc_gui_dump_evt_destroy (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_dump_evt_dump_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_dump_evt_close_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_dump_evt_getOutputFilename_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_dump_evt_format_change (GtkList *list, GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_dump_evt_level_select (GtkRadioButton *radiobutton, gpointer user_data);
 void gmysqlcc_gui_dump_evt_separate_file_toggle (GtkToggleButton *togglebutton, gpointer user_data);
@@ -79,31 +79,27 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
 	g_signal_connect (G_OBJECT (btnOk), "clicked", G_CALLBACK (gmysqlcc_gui_dump_evt_dump_clicked), gui_dump);
 */
   
-	GtkWidget *dialog_vbox1, *vbox14, *vbox15, *vbox16;
+	GtkWidget *vbox14, *vbox15, *vbox16;
   GtkWidget *hbox15,  *hbox18;
   GtkWidget *frame5, *frame6, *frame7, *frame8;
   GtkWidget *table2, *table3;
   GtkWidget *label31, *label32, *label33, *label34, *label35, *label36, *label37;
   GtkWidget *scrolledwindow8;
-  GtkWidget *dialog_action_area;
+  GtkWidget *action_area;
   GtkWidget *btnCancel, *btnOk;
   GtkWidget *btnGetOutputFilename;
 	
   GSList *grp_rdoBaseDump = NULL;
   GSList *grp_rdoTypeDump = NULL;
 
-  gui_dump->window = gtk_dialog_new ();
+  gui_dump->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (gui_dump->window), _("Dump Query"));
-  gtk_window_set_type_hint (GTK_WINDOW (gui_dump->window), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-  dialog_vbox1 = GTK_DIALOG (gui_dump->window)->vbox;
-  gtk_widget_show (dialog_vbox1);
-	
-	
+  /*gtk_window_set_type_hint (GTK_WINDOW (gui_dump->window), GDK_WINDOW_TYPE_HINT_DIALOG);*/
+	g_signal_connect (G_OBJECT (gui_dump->window), "destroy", G_CALLBACK (gmysqlcc_gui_dump_evt_destroy), gui_dump);
 
   vbox14 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox14);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox1), vbox14, FALSE, TRUE, 0);
+	gtk_container_add (GTK_CONTAINER (gui_dump->window), vbox14);
   gtk_container_set_border_width (GTK_CONTAINER (vbox14), 2);
 
   frame5 = gtk_frame_new (NULL);
@@ -263,9 +259,9 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
   gtk_box_pack_start (GTK_BOX (vbox16), gui_dump->rdoDumpData, FALSE, FALSE, 0);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpData), grp_rdoTypeDump);
   grp_rdoTypeDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpData));
-
-
-
+	
+	
+	
   label33 = gtk_label_new (_("Table :"));
   gtk_widget_show (label33);
   gtk_frame_set_label_widget (GTK_FRAME (frame7), label33);
@@ -283,6 +279,28 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
   table3 = gtk_table_new (3, 2, FALSE);
   gtk_widget_show (table3);
   gtk_container_add (GTK_CONTAINER (frame8), table3);
+
+  label37 = gtk_label_new (_("File name :"));
+  gtk_widget_show (label37);
+  gtk_table_attach (GTK_TABLE (table3), label37, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label37), 0, 0.5);
+
+  hbox18 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox18);
+  gtk_table_attach (GTK_TABLE (table3), hbox18, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  gui_dump->txtOutputFilename = gtk_entry_new ();
+  gtk_widget_show (gui_dump->txtOutputFilename);
+  gtk_box_pack_start (GTK_BOX (hbox18), gui_dump->txtOutputFilename, TRUE, TRUE, 0);
+
+  btnGetOutputFilename = gtk_button_new_with_mnemonic (_("..."));
+  gtk_widget_show (btnGetOutputFilename);
+  gtk_box_pack_start (GTK_BOX (hbox18), btnGetOutputFilename, FALSE, FALSE, 0);
+	g_signal_connect (G_OBJECT (btnGetOutputFilename), "clicked", G_CALLBACK (gmysqlcc_gui_dump_evt_getOutputFilename_clicked), gui_dump);
 
   label32 = gtk_label_new (_("Format :"));
   gtk_widget_show (label32);
@@ -308,69 +326,50 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label37 = gtk_label_new (_("File name :"));
-  gtk_widget_show (label37);
-  gtk_table_attach (GTK_TABLE (table3), label37, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label37), 0, 0.5);
-
-  hbox18 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox18);
-  gtk_table_attach (GTK_TABLE (table3), hbox18, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-
-  gui_dump->txtOutputFilename = gtk_entry_new ();
-  gtk_widget_show (gui_dump->txtOutputFilename);
-  gtk_box_pack_start (GTK_BOX (hbox18), gui_dump->txtOutputFilename, TRUE, TRUE, 0);
-
-  btnGetOutputFilename = gtk_button_new_with_mnemonic (_("..."));
-  gtk_widget_show (btnGetOutputFilename);
-  gtk_box_pack_start (GTK_BOX (hbox18), btnGetOutputFilename, FALSE, FALSE, 0);
-
   label36 = gtk_label_new (_("Output :"));
   gtk_widget_show (label36);
   gtk_frame_set_label_widget (GTK_FRAME (frame8), label36);
-
-
-
-  dialog_action_area = GTK_DIALOG (gui_dump->window)->action_area;
-  gtk_widget_show (dialog_action_area);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area), GTK_BUTTONBOX_END);
+	
+	
+	
+  action_area = gtk_hbutton_box_new ();
+  gtk_widget_show (action_area);
+	gtk_box_pack_start (GTK_BOX (vbox14), action_area, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_SPREAD);
 
   btnCancel = gtk_button_new_from_stock ("gtk-cancel");
   gtk_widget_show (btnCancel);
-  gtk_dialog_add_action_widget (GTK_DIALOG (gui_dump->window), btnCancel, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (btnCancel, GTK_CAN_DEFAULT);
+	gtk_box_pack_start (GTK_BOX (action_area), btnCancel, FALSE, TRUE, 0);
+	g_signal_connect (G_OBJECT (btnCancel), "clicked", G_CALLBACK (gmysqlcc_gui_dump_evt_close_clicked), gui_dump);
 
   btnOk = gtk_button_new_from_stock ("gtk-ok");
   gtk_widget_show (btnOk);
-  gtk_dialog_add_action_widget (GTK_DIALOG (gui_dump->window), btnOk, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (btnOk, GTK_CAN_DEFAULT);
+	gtk_box_pack_start (GTK_BOX (action_area), btnOk, FALSE, TRUE, 0);
+	g_signal_connect (G_OBJECT (btnOk), "clicked", G_CALLBACK (gmysqlcc_gui_dump_evt_dump_clicked), gui_dump);
 	
 }
 
 void gmysqlcc_gui_dump_init_widget (p_gmysqlcc_gui_dump gui_dump) {
-	GList * cmbDataFormat_items = (GList *)NULL;
-	GList * cmbOutputCharset_items = (GList *)NULL;
+	GList * lstCharset_items = NULL;
+	GList * lstCharset_idx = NULL;
 	
 	gui_dump->dumpLevel = DumpLevel_Table;
 	gui_dump->dumpType = 0;
 	gui_dump->dumpFormat = DumpFormat_Sql;
 
 	/* Fill format combo box */
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("SQL"));
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("CSV"));
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
-	
-	gtk_combo_set_popdown_strings (GTK_COMBO (gui_dump->cmbOutputFormat), cmbDataFormat_items);
-  g_list_free (cmbDataFormat_items);
+	gtk_combo_box_append_text(GTK_COMBO_BOX(gui_dump->cmbOutputFormat), _("SQL"));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(gui_dump->cmbOutputFormat), _("CSV"));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(gui_dump->cmbOutputFormat), _("XML"));
 	
 	/* Fill output charset combo box */
-	cmbOutputCharset_items = gmysql_charset_list_new();
-	gtk_combo_set_popdown_strings (GTK_COMBO (gui_dump->cmbOutputCharset), cmbOutputCharset_items);
-  g_list_free (cmbOutputCharset_items);
+	lstCharset_items = gmysqlcc_helpers_charset_list_new();
+	lstCharset_idx = lstCharset_items;
+	while (lstCharset_idx != NULL) {
+		gtk_combo_box_append_text(GTK_COMBO_BOX(gui_dump->cmbOutputCharset), (gchar *)lstCharset_idx->data);
+		lstCharset_idx = g_list_next(lstCharset_idx);
+	}
+  g_list_free (lstCharset_items);
 	
 	/* Check datas */
 	if (gui_dump->mysql_tbl != NULL) {
@@ -512,6 +511,25 @@ void gmysqlcc_gui_dump_evt_separate_file_toggle (GtkToggleButton *togglebutton, 
 
 void gmysqlcc_gui_dump_evt_dump_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_dump gui_dump = (p_gmysqlcc_gui_dump)user_data;
+	gchar *filename;
+	
+	filename = gtk_editable_get_chars(GTK_EDITABLE(gui_dump->txtNewDirectory), 0, -1);
+	
+	if (filename != NULL) {
+		gmysqlcc_gui_dump_to_file (gui_dump, filename);
+		g_free (filename);
+		gtk_widget_destroy(GTK_WIDGET(gui_dump->window));
+	}
+}
+
+void gmysqlcc_gui_dump_evt_close_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_dump gui_dump = (p_gmysqlcc_gui_dump)user_data;
+	
+	gtk_widget_destroy(GTK_WIDGET(gui_dump->window));
+}
+
+void gmysqlcc_gui_dump_evt_getOutputFilename_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_dump gui_dump = (p_gmysqlcc_gui_dump)user_data;
 	GtkWidget *chooser;
 	gint response;
 	gchar *filename;
@@ -529,15 +547,9 @@ void gmysqlcc_gui_dump_evt_dump_clicked (GtkWidget *widget, gpointer user_data) 
 	gtk_widget_destroy (chooser);
 		
 	if (filename != NULL) {
-		gmysqlcc_gui_dump_to_file (gui_dump, filename);
+		gtk_entry_set_text(GTK_ENTRY(gui_dump->txtOutputFilename), filename);
 		g_free (filename);
 	}
-}
-
-void gmysqlcc_gui_dump_evt_close_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_dump gui_dump = (p_gmysqlcc_gui_dump)user_data;
-	
-	gtk_widget_destroy(GTK_WIDGET(gui_dump->window));
 }
 
 void gmysqlcc_gui_dump_to_file (p_gmysqlcc_gui_dump gui_dump, gchar * sqlFilename) {
@@ -559,12 +571,12 @@ void gmysqlcc_gui_dump_to_file (p_gmysqlcc_gui_dump gui_dump, gchar * sqlFilenam
 	sqlRequest = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 	
 	selOutputCharset = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_dump->cmbOutputCharset));
-	g_print("Selected charset : '%s'\n", gmysql_charset_list_get_by_index(selOutputCharset));
+	g_print("Selected charset : '%s'\n", gmysqlcc_helpers_charset_list_get_by_index(selOutputCharset));
 	
 
 	mysql_dmp = mysql_dump_new(format, gui_dump->dumpLevel);
 	
-	mysql_dump_set_filename(mysql_dmp, sqlFilename, gmysql_charset_list_get_by_index(selOutputCharset));
+	mysql_dump_set_filename(mysql_dmp, sqlFilename, gmysqlcc_helpers_charset_list_get_by_index(selOutputCharset));
 	
 	mysql_dump_set_params_server(mysql_dmp, gui_dump->mysql_srv, 
 					gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_dump->chkSeparateFile)), /* separate_file */

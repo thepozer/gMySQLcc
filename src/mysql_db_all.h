@@ -114,40 +114,6 @@ typedef enum _e_dumpLevel {
 	DumpLevel_Query
 } e_dumpLevel;
 
-/*
-typedef struct _s_dump_table_params {
-	gboolean drop_table;
-	gboolean structure;
-	gboolean data;
-	gboolean data_complete_insert;
-	e_dumpFormat format;
-	gchar * sql_filename;
-} s_dump_table_params;
-
-typedef s_dump_table_params * p_dump_table_params;
-
-typedef struct _s_dump_database_params {
-	gboolean drop_database;
-	gboolean use_database;
-	gchar * sql_filename;
-	e_dumpFormat format;
-	s_dump_table_params table;
-} s_dump_database_params;
-
-typedef s_dump_database_params * p_dump_database_params;
-
-typedef struct _s_dump_server_params {
-	gchar * sql_filename;
-	gboolean separate_file;
-	gchar * base_directory;
-	gboolean group_in_directory;
-	gchar * group_directory;
-	e_dumpFormat format;
-	s_dump_database_params database;
-} s_dump_server_params;
-
-typedef s_dump_server_params * p_dump_server_params;
-*/
 typedef struct _s_mysql_dump {
 	/* General informations */
 	e_dumpFormat			format;
