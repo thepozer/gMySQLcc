@@ -46,7 +46,8 @@ typedef struct _dumpWnd {
   GtkWidget * rdoDumpStructData;
   GtkWidget * rdoDumpData;
 	GtkWidget * cmbDataFormat;
-	
+	GtkWidget * cmbOutputCharset;
+
 	p_mysql_server mysql_srv;
 	p_mysql_database mysql_db;
 	p_mysql_table mysql_tbl;

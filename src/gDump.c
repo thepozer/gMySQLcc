@@ -14,9 +14,16 @@ void btnDump_clicked (GtkWidget *widget, gpointer user_data);
 void btnClose_clicked (GtkWidget *widget, gpointer user_data);
 void destroy(GtkWidget *widget, gpointer user_data);
 
+gchar * arOutputCharsets [] = {
+	"ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7",
+	"ISO-8859-8", "ISO-8859-9", "ISO-8859-15", "latin 1", "latin 2", "UTF-8", 
+	(gchar *)NULL };
+
 
 void initDump (p_dumpWnd p_wnd) {
-  GList *cmbDataFormat_items = NULL;
+	GList * cmbDataFormat_items = (GList *)NULL;
+	GList * cmbOutputCharset_items = (GList *)NULL;
+	gchar * * pCurrCharset = (gchar * *)NULL;
 	
 	p_wnd->dumpLevel = DUMP_LEVEL_NULL;
 	p_wnd->dumpType = DUMP_TYPE_NULL;
@@ -28,6 +35,15 @@ void initDump (p_dumpWnd p_wnd) {
 	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) "SQL");
 	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbDataFormat), cmbDataFormat_items);
   g_list_free (cmbDataFormat_items);
+	
+	/* Fill output charset combo box */
+	pCurrCharset = arOutputCharsets;
+	while (*pCurrCharset != (gchar *)NULL) {
+		cmbOutputCharset_items = g_list_append (cmbOutputCharset_items, (gpointer) *pCurrCharset);
+		pCurrCharset ++;
+	}
+	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbOutputCharset), cmbOutputCharset_items);
+  g_list_free (cmbOutputCharset_items);
 	
 	/* Check datas */
 	if (p_wnd->mysql_tbl != (p_mysql_table)NULL) {
@@ -194,6 +210,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	gssize nbBytes;
 	gchar * sqlFilename = (gchar *)NULL;
 	gchar * sqlRequest = (gchar *)NULL;
+	gint selOutputCharset;
 	
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(p_wnd->txtSQLRequest));
 	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
@@ -221,19 +238,22 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	dump_param_srv.database.table.structure = (p_wnd->dumpType == DUMP_TYPE_STRUCT || p_wnd->dumpType == DUMP_TYPE_STRUCT_DATA);
 	dump_param_srv.database.table.data = (p_wnd->dumpType == DUMP_TYPE_DATA || p_wnd->dumpType == DUMP_TYPE_STRUCT_DATA);
 	dump_param_srv.database.table.sql_filename = sqlFilename;
-
+	
+	selOutputCharset = gtk_combo_box_get_active(GTK_COMBO_BOX(p_wnd->cmbOutputCharset));
+	g_print("Selected charset : '%s'\n", arOutputCharsets[selOutputCharset]);
+	
 	switch (p_wnd->dumpLevel) {
 		case DUMP_LEVEL_SERVER : /* Dump the server */
 			dump_param_srv.database.sql_filename = (gchar *)NULL;
 			dump_param_srv.database.table.sql_filename = (gchar *)NULL;
-			mysql_server_dump_direct(p_wnd->mysql_srv, &dump_param_srv, (GIOChannel *)NULL, "ISO-8859-1");
+			mysql_server_dump_direct(p_wnd->mysql_srv, &dump_param_srv, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
 			break;
 		case DUMP_LEVEL_DATABASE : /* Dump the database */
 			dump_param_srv.database.table.sql_filename = (gchar *)NULL;
-			mysql_database_dump_direct(p_wnd->mysql_db, &dump_param_srv.database, (GIOChannel *)NULL, "ISO-8859-1");
+			mysql_database_dump_direct(p_wnd->mysql_db, &dump_param_srv.database, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
 			break;
 		case DUMP_LEVEL_TABLE : /* Dump the table */
-			mysql_table_dump_direct(p_wnd->mysql_tbl, &dump_param_srv.database.table, (GIOChannel *)NULL, "ISO-8859-1");
+			mysql_table_dump_direct(p_wnd->mysql_tbl, &dump_param_srv.database.table, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
 			break;
 		case DUMP_LEVEL_REQUEST : /* Dump with the request */
 			
@@ -253,7 +273,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 			}
 			
 			dumpFile = g_io_channel_new_file(sqlFilename, "w", &err);
-			g_io_channel_set_encoding(dumpFile, "ISO-8859-1", &err);
+			g_io_channel_set_encoding(dumpFile, arOutputCharsets[selOutputCharset], &err);
 
 			switch(p_wnd->dumpFormat) {
 				case DUMP_FORMAT_CSV : /* CSV Format */
@@ -307,12 +327,12 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   GtkWidget *vbox1, *vbox2,  *vbox3;
   GtkWidget *frame1, *frame2, *frame3;
   GtkWidget *table1;
-  GtkWidget *label5, *label6, *label7, *label8;
+  GtkWidget *label5, *label6, *label7, *label8, *label9;
   GtkWidget *combo_entry1;
   GtkWidget *hbuttonbox1;
   GtkWidget *btnCancel, *btnOk;
 	GtkWidget *scrlwndSQLRequest;
-  GtkWidget *hbox1, *hbox2;
+  GtkWidget *hbox1, *hbox2, *hbox3;
 	GSList *rdoDumpLevel_group = NULL;
   GSList *rdoDumpType_group = NULL;
 	GtkTextBuffer * sql_buff;
@@ -507,10 +527,6 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_combo_set_value_in_list (GTK_COMBO (p_wnd->cmbDataFormat), TRUE, FALSE);
 	g_signal_connect (G_OBJECT (GTK_COMBO(p_wnd->cmbDataFormat)->list), "select-child", G_CALLBACK (cmbDataFormat_change), (gpointer)p_wnd);
 
-  combo_entry1 = GTK_COMBO (p_wnd->cmbDataFormat)->entry;
-  gtk_widget_show (combo_entry1);
-/*  gtk_entry_set_text (GTK_ENTRY (combo_entry1), "SQL");*/
-
   label7 = gtk_label_new ("Table :");
   gtk_widget_show (label7);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label7);
@@ -519,7 +535,20 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (label6);
   gtk_frame_set_label_widget (GTK_FRAME (frame2), label6);
 
-  hbuttonbox1 = gtk_hbutton_box_new ();
+  hbox3 = gtk_hbox_new (FALSE, 5);
+  gtk_widget_show (hbox3);
+  gtk_box_pack_start (GTK_BOX (vbox1), hbox3, FALSE, FALSE, 0);
+	
+  label9 = gtk_label_new ("Output charset :");
+  gtk_widget_show (label9);
+  gtk_box_pack_start (GTK_BOX (hbox3), label9, TRUE, FALSE, 0);
+
+  p_wnd->cmbOutputCharset = gtk_combo_new ();
+  gtk_widget_show (p_wnd->cmbOutputCharset);
+  gtk_box_pack_start (GTK_BOX (hbox3), p_wnd->cmbOutputCharset, TRUE, TRUE, 0);
+  gtk_combo_set_value_in_list (GTK_COMBO (p_wnd->cmbOutputCharset), TRUE, FALSE);
+	
+	hbuttonbox1 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox1);
   gtk_box_pack_start (GTK_BOX (vbox1), hbuttonbox1, FALSE, TRUE, 3);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_SPREAD);
