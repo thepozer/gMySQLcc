@@ -50,6 +50,7 @@ typedef struct _servWnd {
 	GtkWidget * lstTable;
 	GtkWidget * wndServer;
 	GtkWidget * mnuBdOps;
+	GtkWidget * mnuTblOps;
 	p_mysql_server mysql_srv;
 	p_mysql_database curr_mysql_db;
 	p_mysql_table curr_mysql_tbl;
