@@ -37,6 +37,8 @@ p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysq
 	gmysqlcc_gui_list_server_create_widget(gui_list_server);
 	gmysqlcc_gui_list_server_init_widget(gui_list_server);
 	
+	gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked(NULL, gui_list_server);
+
 	NbrWnd ++;	
 	
 	return gui_list_server;
@@ -376,10 +378,6 @@ void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_s
 
 	g_object_unref (G_OBJECT (lstStrBase));
 	
-	
-	gui_list_server->show_edit_part = TRUE;
-	gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked(NULL, gui_list_server);
-	
 }
 
 void gmysqlcc_gui_list_server_dislpay_current_server (p_gmysqlcc_gui_list_server gui_list_server) {
@@ -421,7 +419,7 @@ void gmysqlcc_gui_list_server_evt_btnNew_clicked (GtkWidget *widget, gpointer us
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
 	
 	gui_list_server->curr_mysql_srv = NULL;
-	gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+	gmysqlcc_gui_list_server_init_widget(gui_list_server);
 }
 
 void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer user_data) {
@@ -472,7 +470,7 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
 	if (gmysqlcc_config_add_server(gui_list_server->gmysqlcc_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
 		gui_list_server->curr_mysql_srv = gmysqlcc_config_get_server(gui_list_server->gmysqlcc_conf, infos[0]->str);
-		gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+		gmysqlcc_gui_list_server_init_widget(gui_list_server);
 	}
 	
 	for (i = 0; i < 6; i++) {
@@ -538,7 +536,7 @@ void gmysqlcc_gui_list_server_evt_btnEdit_clicked (GtkWidget *widget, gpointer u
 	/* Update data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
 	if (gmysqlcc_config_update_server(gui_list_server->gmysqlcc_conf, gui_list_server->curr_mysql_srv->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
-		gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+		gmysqlcc_gui_list_server_init_widget(gui_list_server);
 	}
 	
 	for (i = 0; i < 6; i++) {
@@ -558,7 +556,7 @@ void gmysqlcc_gui_list_server_evt_btnDel_clicked (GtkWidget *widget, gpointer us
 			gtk_dialog_run (GTK_DIALOG (msgdlg));
 			gtk_widget_destroy (msgdlg);
 		} else {
-			gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+			gmysqlcc_gui_list_server_init_widget(gui_list_server);
 		}
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_list_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a database"));
@@ -587,7 +585,7 @@ void gmysqlcc_gui_list_server_evt_btnServerUp_clicked (GtkWidget *widget, gpoint
 			
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
-			gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+			gmysqlcc_gui_list_server_init_widget(gui_list_server);
 		} else {
 			error = TRUE;
 		}
@@ -622,7 +620,7 @@ void gmysqlcc_gui_list_server_evt_btnServerDown_clicked (GtkWidget *widget, gpoi
 			
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
-			gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
+			gmysqlcc_gui_list_server_init_widget(gui_list_server);
 		} else {
 			error = TRUE;
 		}
