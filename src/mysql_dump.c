@@ -136,7 +136,7 @@ GString * mysql_dump_query_csv (p_mysql_query mysql_qry) {
 	return strRet;
 }
 
-GString * mysql_dump_query_xml (p_mysql_query mysql_qry) {
+GString * mysql_dump_query_xml (p_mysql_query mysql_qry, gboolean bGlobal, gboolean bDatabase, gboolean bTable) {
 	GString * strRet;
 	
 	strRet = g_string_new("");
@@ -346,7 +346,88 @@ gboolean mysql_dump_query_csv_direct (p_mysql_query mysql_qry, GIOChannel * file
 	return TRUE;
 }
 
-gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file) {
+gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file, gboolean bGlobal, gboolean bDatabase, gboolean bTable, gboolean cdata) {
+	GString * strXML;
+	GArray * arRow, * arHeader;
+	GError * err = (GError *)NULL;
+	gssize nbBytes;
+	gint i;
+/*
+<?xml version="1.0"?>
+<mysqldump>
+<database name="mysql">
+        <table name="user">
+        <row>
+                <field name="Host">localhost</field>
+                <field name="User">root</field>
+                <field name="Password">6b8a9d6f4312ddb4</field>
+        </row>
+        </table>
+</database>
+</mysqldump>
+*/
+	strXML = g_string_new("");
+	
+	if (bGlobal) {
+		g_string_append(strXML, "<?xml version=\"1.0\"?>\n<mysqldump>\n");
+	}
+	
+	if (bDatabase) {
+		g_string_append_printf(strXML, "\t<database name=\"%s\">\n", mysql_qry->db_name);
+	}
+	
+	if (bTable) {
+		if (mysql_qry->abs_tbl_name != NULL) {
+			g_string_append_printf(strXML, "\t\t<table name=\"%s\">\n", mysql_qry->abs_tbl_name);
+		} else {
+			g_string_append(strXML, "\t\t<table>\n");
+		}
+	}
+	
+	if (strXML->len > 0) {
+		g_io_channel_write_chars(file, strXML->str, -1, &nbBytes, &err);
+		g_string_erase(strXML, 0, -1);
+	}
+	
+	arHeader = mysql_query_get_headers(mysql_qry);
+
+	arRow = mysql_query_get_next_record(mysql_qry);
+	while (arRow != (GArray *)NULL) {
+		
+		g_string_assign (strXML, "\t\t\t<row>\n");
+
+		for (i = 0; i < arRow->len; i++) {
+			g_string_append_printf(strXML, (cdata) ? "\t\t\t\t<field name=\"%s\"><![CDATA[%s]]></field>\n" : "<field name=\"%s\">%s</field>\n" , 
+				g_array_index(arHeader, gchar *, i), g_array_index(arRow, gchar *, i));
+		}
+		
+		g_string_append(strXML, "</row>\n");
+		g_io_channel_write_chars(file, strXML->str, -1, &nbBytes, &err);
+
+		g_array_free(arRow, TRUE);
+		arRow = mysql_query_get_next_record(mysql_qry);
+	}
+	
+	g_string_erase(strXML, 0, -1);
+
+	if (bTable) {
+		g_string_append(strXML, "\t\t</table>\n");
+	}
+	
+	if (bDatabase) {
+		g_string_append(strXML, "\t</database>\n");
+	}
+	
+	if (bGlobal) {
+		g_string_append(strXML, "</mysqldump>\n");
+	}
+	
+	if (strXML->len > 0) {
+		g_io_channel_write_chars(file, strXML->str, -1, &nbBytes, &err);
+		g_string_erase(strXML, 0, -1);
+	}
+	
+	g_string_free(strXML, TRUE);
 	return TRUE;
 }
 
