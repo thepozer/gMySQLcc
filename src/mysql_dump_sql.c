@@ -17,6 +17,7 @@ gboolean mysql_dump_sql_data_query_to_disk (p_mysql_dump mysql_dmp);
 
 gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp) {
 	GError * err = (GError *)NULL;
+	gboolean ret;
 	
 	if (mysql_dmp->filename == NULL) {
 		return FALSE;
@@ -31,19 +32,19 @@ gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp) {
 	
 	switch (mysql_dmp->level) {
 		case DumpLevel_Server :
-			return mysql_dump_sql_server_to_disk(mysql_dmp);
+			ret = mysql_dump_sql_server_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Database :
-			return mysql_dump_sql_database_to_disk(mysql_dmp);
+			ret = mysql_dump_sql_database_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Table :
-			return mysql_dump_sql_table_to_disk(mysql_dmp);
+			ret = mysql_dump_sql_table_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Query :
-			return mysql_dump_sql_query_to_disk(mysql_dmp);
+			ret = mysql_dump_sql_query_to_disk(mysql_dmp);
 			break;
 		default :
-			return FALSE;
+			ret = FALSE;
 			break;
 	}
 	
@@ -52,7 +53,7 @@ gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp) {
 		mysql_dmp->file = NULL;
 	}
 	
-	return TRUE;
+	return ret;
 }
 
 gboolean mysql_dump_sql_server_to_disk (p_mysql_dump mysql_dmp) {
@@ -133,6 +134,7 @@ gboolean mysql_dump_sql_table_to_disk (p_mysql_dump mysql_dmp) {
 	gboolean bRet;
 	GString * strSql;
 	
+	g_print("mysql_dump_sql_table_to_disk - table : '%s'\n", mysql_dmp->mysql_tbl->name);
 	
 	if (mysql_dmp->tbl_structure) {
 		if (!mysql_dump_sql_struct_table_to_disk (mysql_dmp)) {

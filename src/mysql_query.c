@@ -155,6 +155,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry) {
 	return mysql_server_get_database (mysql_qry->mysql_srv, mysql_qry->db_name);
 }
+
 gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean force_write) {
 	int errcode;
 	

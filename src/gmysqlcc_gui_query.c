@@ -422,8 +422,6 @@ void gmysqlcc_gui_query_evt_resultRow_edited (GtkCellRendererText *cellrenderert
 	s_cols_nfo * ar_cols_nfo = (s_cols_nfo *)data;
 	gchar * new_str;
 	
-/*	g_print("col : '%d' - string_path : '%s' - new_value : '%s'\n", ar_cols_nfo->numCol, path_string, new_value);*/
-
 	new_str = mysql_row_set_field_value(ar_cols_nfo->gui_query->mysql_rw, ar_cols_nfo->numCol, new_value);
 	
 	if (new_str != (gchar *)NULL) {
@@ -443,12 +441,10 @@ void gmysqlcc_gui_query_evt_resultRow_selected (GtkTreeSelection *selection, gpo
 	int numCol;
 	
 	numCol = gui_query->mysql_qry->nbrField;
-/*	g_print("Changed !\n");*/
 	if (numCol > 0) {
 		if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 			gtk_tree_model_get (model, &iter, numCol, &gui_query->mysql_rw, -1);
 			
-/*			g_print("Primary where for update/delete : 'FROM %s WHERE %s'\n", pExecWnd->mysql_rw->abs_tbl_name, pExecWnd->mysql_rw->primary_where_part);*/
 		}
 	}	
 }

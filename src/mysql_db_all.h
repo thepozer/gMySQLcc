@@ -4,6 +4,9 @@
 
 #include <glib.h>
 #include <mysql/mysql.h>
+#include <libintl.h>
+
+#define _(String) gettext (String)
 
 typedef struct _s_mysql_server {
 /* Connection infos */
@@ -98,6 +101,23 @@ typedef struct _s_mysql_query {
 
 typedef s_mysql_query * p_mysql_query;
 
+typedef struct _s_mysql_multi_query {
+	/* Connection Infos */
+	p_mysql_database mysql_db;
+	
+	/* Execution Infos */
+	p_mysql_query		mysql_qry;
+	void (* status_callback) (struct _s_mysql_multi_query * mysql_mlt_qry, gboolean error, gpointer user_data);
+	gpointer status_user_data;
+	
+	/* Report Infos */
+	GString *				report;
+	gint 						nbr_query;
+	gint						nbr_error;
+} s_mysql_multi_query;
+
+typedef s_mysql_multi_query * p_mysql_multi_query;
+	
 typedef struct _s_mysql_row {
 /* Data infos */
 	GArray *			results;
@@ -187,6 +207,7 @@ gboolean mysql_server_refresh_user_list (p_mysql_server mysql_srv);
 
 /***** Database functions *****/
 
+p_mysql_database mysql_database_new_create(p_mysql_server mysql_srv, const gchar * db_name);
 p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_name);
 gboolean mysql_database_delete(p_mysql_database mysql_db);
 
@@ -203,6 +224,17 @@ gboolean mysql_table_delete(p_mysql_table mysql_tbl);
 
 p_mysql_query mysql_table_query (p_mysql_table mysql_tbl);
 GString * mysql_table_get_sql_structure (p_mysql_table mysql_tbl);
+
+/***** Multi-Queries functions *****/
+
+p_mysql_multi_query mysql_multi_query_new (p_mysql_database mysql_db);
+gboolean mysql_multi_query_delete(p_mysql_multi_query mysql_mlt_qry);
+
+gboolean mysql_multi_query_from_file(p_mysql_multi_query mysql_mlt_qry, const char * filename, gboolean b_stop_on_error);
+gboolean mysql_multi_query_from_string(p_mysql_multi_query mysql_mlt_qry, const char * content, gboolean b_stop_on_error);
+
+void mysql_multi_query_set_status_callback(p_mysql_multi_query mysql_mlt_qry, void (* callback) (p_mysql_multi_query mysql_mlt_qry, gboolean error, gpointer user_data), gpointer user_data);
+const gchar * mysql_multi_query_get_report(p_mysql_multi_query mysql_mlt_qry);
 
 /***** Query functions *****/
 
@@ -253,6 +285,8 @@ gboolean mysql_dump_set_params_table (p_mysql_dump mysql_dmp, p_mysql_table mysq
 gboolean mysql_dump_set_table (p_mysql_dump mysql_dmp, p_mysql_table mysql_tbl);
 gboolean mysql_dump_set_query (p_mysql_dump mysql_dmp, p_mysql_query mysql_qry);
 gboolean mysql_dump_set_query_string (p_mysql_dump mysql_dmp, const gchar * qry_string);
+
+void mysql_dump_show_debug(p_mysql_dump mysql_dmp);
 
 gboolean mysql_dump_do_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp);

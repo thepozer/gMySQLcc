@@ -44,15 +44,19 @@ p_mysql_dump mysql_dump_new (e_dumpFormat format, e_dumpLevel level) {
 
 gboolean mysql_dump_free (p_mysql_dump mysql_dmp) {
 	
-	if (mysql_dmp == (p_mysql_dump)NULL) {
+	if (mysql_dmp == NULL) {
 		return TRUE;
 	}
+	
+	if (mysql_dmp->file != NULL) {
+		g_io_channel_unref(mysql_dmp->file);
+	}
+	mysql_query_delete(mysql_dmp->mysql_qry);
 	
 	g_free(mysql_dmp->filename);
 	g_free(mysql_dmp->charset);
 	g_free(mysql_dmp->svr_base_directory);
 	g_free(mysql_dmp->svr_group_directory);
-	mysql_query_delete(mysql_dmp->mysql_qry);
 	g_free(mysql_dmp->qry_string);
 	
 	g_free(mysql_dmp);
@@ -179,4 +183,23 @@ gchar * mysql_dump_do_to_memory (p_mysql_dump mysql_dmp) {
 	}
 	
 	return NULL;
+}
+
+void mysql_dump_show_debug(p_mysql_dump mysql_dmp) {
+	g_print(
+"Mysql dump debug ... \nGeneral informations\n	(e_dumpFormat)format : '%d'\n	(e_dumpLevel)level : '%d'\n"
+"File informations\n	(gchar *)filename : '%s'\n	(gchar *)charset : '%s'\n	(GIOChannel *)file : '%p'\n"
+"Server informations\n	(p_mysql_server)mysql_svr : '%p'\n	(gboolean)svr_separate_file : '%d'\n"
+"	(gchar *)svr_base_directory : '%s'\n	(gboolean)svr_group_in_directory : '%d'\n	(gchar *)svr_group_directory : '%s'\n"
+"Database informations\n	(p_mysql_database)mysql_db : '%p'\n	(gboolean)db_drop_database : '%d'\n	(gboolean)db_use_database : '%d'\n"
+"Table informations\n	(p_mysql_table)mysql_tbl : '%p'\n	(gboolean)tbl_drop_table : '%d'\n	(gboolean)tbl_structure : '%d'\n"
+"	(gboolean)tbl_data : '%d'\n	(gboolean)tbl_data_complete_insert : '%d'\n"
+"Query informations\n	(p_mysql_query)mysql_qry : '%p'\n	(gchar *)qry_string : '%s'\n", 
+		mysql_dmp->format, mysql_dmp->level, 
+		mysql_dmp->filename, mysql_dmp->charset, mysql_dmp->file, 
+		mysql_dmp->mysql_svr, mysql_dmp->svr_separate_file, mysql_dmp->svr_base_directory, mysql_dmp->svr_group_in_directory, mysql_dmp->svr_group_directory, 
+		mysql_dmp->mysql_db, mysql_dmp->db_drop_database, mysql_dmp->db_use_database, 
+		mysql_dmp->mysql_tbl, mysql_dmp->tbl_drop_table, mysql_dmp->tbl_structure, mysql_dmp->tbl_data, mysql_dmp->tbl_data_complete_insert, 
+		mysql_dmp->mysql_qry, mysql_dmp->qry_string);
+	
 }

@@ -8,7 +8,7 @@ INCLUDES = \
 AM_CFLAGS =\
 	 -Wall 
 
-#SUBDIRS = plugins
+#SUBDIRS = tests
 
 bin_PROGRAMS = gmysqlcc
 
@@ -20,6 +20,7 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_helpers.h\
 	gmysqlcc_gui_all.h\
 	gmysqlcc_gui_dump.c\
+	gmysqlcc_gui_exec_file.c\
 	gmysqlcc_gui_list_server.c\
 	gmysqlcc_gui_query.c\
 	gmysqlcc_gui_server.c\
@@ -31,6 +32,7 @@ gmysqlcc_SOURCES = \
 	mysql_dump_csv.c\
 	mysql_dump_sql.c\
 	mysql_dump_xml.c\
+	mysql_multi_query.c\
 	mysql_query.c\
 	mysql_row.c\
 	mysql_server.c\

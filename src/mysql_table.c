@@ -48,19 +48,21 @@ GString * mysql_table_get_sql_structure (p_mysql_table mysql_tbl) {
 	strSql = g_string_new("");
 	g_string_printf(strSql, "SHOW CREATE TABLE `%s`.`%s`", mysql_tbl->mysql_db->name, mysql_tbl->name);
 	g_print("mysql_table_get_sql_structure - sql : '%s'\n", strSql->str);
-
 	mysql_qry = mysql_table_query(mysql_tbl);
 	
 	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 		arRow = mysql_query_get_next_record(mysql_qry);
+		
 		if (arRow != (GArray *)NULL) {
 			g_string_append(strRet, g_array_index(arRow, gchar *, 1));
 			g_string_append(strRet, " ;\n");
 		}
+		
 		g_array_free(arRow, TRUE);
 	}
 
 	mysql_query_delete(mysql_qry);
+	
 	g_string_free(strSql, TRUE);
 	
 	return strRet;

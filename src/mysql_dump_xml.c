@@ -17,6 +17,7 @@ gboolean mysql_dump_xml_data_query_to_disk (p_mysql_dump mysql_dmp);
 
 gboolean mysql_dump_xml_do_to_disk (p_mysql_dump mysql_dmp) {
 	GError * err = (GError *)NULL;
+	gboolean ret;
 	gssize nbBytes;
 	
 	if (mysql_dmp->filename == NULL) {
@@ -33,29 +34,29 @@ gboolean mysql_dump_xml_do_to_disk (p_mysql_dump mysql_dmp) {
 	
 	switch (mysql_dmp->level) {
 		case DumpLevel_Server :
-			return mysql_dump_xml_server_to_disk(mysql_dmp);
+			ret = mysql_dump_xml_server_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Database :
-			return mysql_dump_xml_database_to_disk(mysql_dmp);
+			ret = mysql_dump_xml_database_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Table :
-			return mysql_dump_xml_table_to_disk(mysql_dmp);
+			ret = mysql_dump_xml_table_to_disk(mysql_dmp);
 			break;
 		case DumpLevel_Query :
-			return mysql_dump_xml_query_to_disk(mysql_dmp);
+			ret = mysql_dump_xml_query_to_disk(mysql_dmp);
 			break;
 		default :
-			return FALSE;
+			ret = FALSE;
 			break;
 	}
 	
 	if (!mysql_dmp->svr_separate_file && mysql_dmp->file != NULL) {
-		g_io_channel_write_chars(mysql_dmp->file, "</mysqldump>\n", -1, &nbBytes, &err);
+		g_io_channel_write_chars(mysql_dmp->file, "\n</mysqldump>\n", -1, &nbBytes, &err);
 		g_io_channel_unref(mysql_dmp->file);
 		mysql_dmp->file = NULL;
 	}
 	
-	return TRUE;
+	return ret;
 }
 
 gboolean mysql_dump_xml_server_to_disk (p_mysql_dump mysql_dmp) {
@@ -166,7 +167,7 @@ gboolean mysql_dump_xml_table_to_disk (p_mysql_dump mysql_dmp) {
 	if (mysql_dmp->tbl_data) {
 		strSql = g_string_new("");
 		g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_dmp->mysql_db->name, mysql_dmp->mysql_tbl->name);
-		g_print("mysql_table_dump_direct - with_data - sql : '%s'\n", strSql->str);
+		g_print("mysql_dump_xml_table_to_disk - with_data - sql : '%s'\n", strSql->str);
 		
 		/* Set query string and query object */
 		mysql_dump_set_query_string(mysql_dmp, strSql->str);
@@ -239,8 +240,8 @@ gboolean mysql_dump_xml_data_query_to_disk (p_mysql_dump mysql_dmp) {
 			g_string_assign(strRet, "\t\t\t<row>\n");
 			
 			for (i = 0; i < arRow->len; i++) {
-				fieldName = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
-				fieldValue = g_string_new(g_array_index(arHeaders, gchar *, i));
+				fieldValue = g_string_new(g_array_index(arRow, gchar *, i));
+				fieldName = gmysqlcc_helpers_add_slashes(g_array_index(arHeaders, gchar *, i));
 				g_string_append_printf(strRet, "\t\t\t\t<field name=\"%s\">%s</field>\n", fieldName->str, fieldValue->str);
 				g_string_free(fieldName, TRUE);
 				g_string_free(fieldValue, TRUE);
