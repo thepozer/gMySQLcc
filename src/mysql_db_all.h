@@ -16,9 +16,23 @@ typedef struct _s_mysql_server {
 	gchar * localSock;
 	GList * lstDbs;
 	GHashTable * hshDbs;
+	GHashTable * hshUsers;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
+
+typedef struct _s_mysql_user {
+/* User Infos */
+	gchar * login;
+	gchar * host;
+	GHashTable * hshRights;
+/* Connection Infos */
+	p_mysql_server mysql_srv;
+/* Update user list informations */
+	gboolean found;
+} s_mysql_user;
+
+typedef s_mysql_user * p_mysql_user;
 
 typedef struct _s_mysql_database {
 /* Connection Infos */
@@ -165,7 +179,7 @@ gboolean mysql_query_delete(p_mysql_query mysql_qry);
 p_mysql_query mysql_query_duplicate(p_mysql_query mysql_qry);
 p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry);
 
-gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query);
+gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean add_history);
 gboolean mysql_query_free_query(p_mysql_query mysql_qry);
 
 GArray * mysql_query_get_headers(p_mysql_query mysql_qry);
@@ -211,6 +225,13 @@ GString * mysql_dump_query_sql (p_mysql_query mysql_qry, gboolean complete_inser
 gboolean mysql_dump_query_xml_direct (p_mysql_query mysql_qry, GIOChannel * file);
 gboolean mysql_dump_query_csv_direct (p_mysql_query mysql_qry, GIOChannel * file);
 gboolean mysql_dump_query_sql_direct (p_mysql_query mysql_qry, gboolean complete_insert, GIOChannel * file);
+
+/***** User functions *****/
+
+p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host);
+gboolean mysql_user_delete (p_mysql_user mysql_usr);
+gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr);
+gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
 
 
 #endif /* __MYSQL_DB_ALL_H__ */
