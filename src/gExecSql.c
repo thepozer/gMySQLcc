@@ -606,6 +606,7 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean m
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnExecSql = gtk_tool_button_new (imgToolbar, _("Execute"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnExecSql), TRUE);
 	g_signal_connect (G_OBJECT (btnExecSql), "clicked", G_CALLBACK (btnexecsql_clicked), pExecWnd);
 	gtk_widget_show(GTK_WIDGET(btnExecSql));
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnExecSql), -1);
@@ -624,30 +625,34 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean m
 	gtk_widget_show(GTK_WIDGET(ticmbCharset));
 	gtk_container_add (GTK_CONTAINER(ticmbCharset), pExecWnd->cmbCharset);
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(ticmbCharset), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(ticmbCharset), tooltips, _("Select output charset"), NULL);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnDuplicateSql = gtk_tool_button_new (imgToolbar, _("Duplicate"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnDuplicateSql), TRUE);
 	g_signal_connect (G_OBJECT (btnDuplicateSql), "clicked", G_CALLBACK (btnduplicatesql_clicked), pExecWnd);
 	gtk_widget_show(GTK_WIDGET(btnDuplicateSql));
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnDuplicateSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnExecSql), tooltips, _("Duplicate SQL Windows"), NULL);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDuplicateSql), tooltips, _("Duplicate SQL Windows"), NULL);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnDumpSql = gtk_tool_button_new (imgToolbar, _("Dump"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnDumpSql), TRUE);
 	g_signal_connect (G_OBJECT (btnDumpSql), "clicked", G_CALLBACK (btndumpsql_clicked), pExecWnd);
 	gtk_widget_show(GTK_WIDGET(btnDumpSql));
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnDumpSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnExecSql), tooltips, _("Dump with current query"), NULL);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDumpSql), tooltips, _("Dump with current query"), NULL);
 		
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnClose = gtk_tool_button_new (imgToolbar, _("Close"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnClose), TRUE);
 	g_signal_connect (G_OBJECT (btnClose), "clicked", G_CALLBACK (btnclose_clicked), pExecWnd);
 	gtk_widget_show(GTK_WIDGET(btnClose));
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnClose), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnExecSql), tooltips, _("Close window"), NULL);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnClose), tooltips, _("Close window"), NULL);
 
   vpanedSQL = gtk_vpaned_new ();
   gtk_widget_show (vpanedSQL);

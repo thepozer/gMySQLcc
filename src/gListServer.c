@@ -387,9 +387,11 @@ listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf
 	
 	GtkWidget *hpaned1;
   GtkWidget *toolbar1;
-  GtkWidget *btnTlbrApply, *btnTlbrClose;
+	GtkWidget * imgToolbar;
+  GtkToolItem * btnTlbrApply, * btnTlbrClose;
 
 	GtkTreeSelection *select;
+	GtkTooltips * tooltips;
 	p_listServWnd p_lstsvr;
 	
 	/* Init structure */
@@ -401,10 +403,10 @@ listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf
 	
 	p_lstsvr->gmsql_conf = gmsql_conf;
 	
+	tooltips = gtk_tooltips_new();
+	
   p_lstsvr->wndListServer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  /*gtk_container_set_border_width (GTK_CONTAINER (p_lstsvr->wndListServer), 5);*/
   gtk_window_set_title (GTK_WINDOW (p_lstsvr->wndListServer), _("Servers list"));
-  /*gtk_window_set_resizable (GTK_WINDOW (p_lstsvr->wndListServer), FALSE);*/
 	g_signal_connect (G_OBJECT (p_lstsvr->wndListServer), "destroy", G_CALLBACK (destroy), p_lstsvr);
 	gtk_window_set_default_size (GTK_WINDOW (p_lstsvr->wndListServer), 500, 300);
 
@@ -415,18 +417,26 @@ listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf
   toolbar1 = gtk_toolbar_new ();
   gtk_widget_show (toolbar1);
   gtk_box_pack_start (GTK_BOX (vbox4), toolbar1, FALSE, FALSE, 0);
-  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
+	gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
 
-	btnTlbrApply = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		_("Connection"), _("Connect to a server"), "", 
-		gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR),
-		G_CALLBACK (btnconnect_clicked), (gpointer)p_lstsvr);
-
-	btnTlbrClose = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		_("Close"), _("Close window"), "", 
-		gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR),
-		G_CALLBACK (btnclose_clicked), (gpointer)p_lstsvr);
-
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrApply = gtk_tool_button_new (imgToolbar, _("Connection"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrApply), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrApply), "clicked", G_CALLBACK (btnconnect_clicked), p_lstsvr);
+	gtk_widget_show(GTK_WIDGET(btnTlbrApply));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrApply), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrApply), tooltips, _("Connect to a server"), "glop");
+	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrClose = gtk_tool_button_new (imgToolbar, _("Close"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrClose), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrClose), "clicked", G_CALLBACK (btnclose_clicked), p_lstsvr);
+	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrClose), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
+	
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (vbox4), hpaned1);

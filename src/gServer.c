@@ -352,11 +352,13 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   GtkWidget *scrolledwindow1, *scrolledwindow2;
   GtkAccelGroup *accel_group;
   GtkWidget *toolbar1;
-  GtkWidget *btnTlbrClose, *btnTlbrSql;
+	GtkWidget * imgToolbar;
+  GtkToolItem * btnTlbrClose, * btnTlbrSql, * btnTlbrSqlFile;
 	GtkWidget *btnDBAdd, *btnDBDel;
   GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
 	GtkWidget *mnuDBOpsRefresh;
 	GtkTreeSelection *select;
+	GtkTooltips * tooltips;
 	GString * sTitle;
 	
 	p_servWnd p_svr;
@@ -376,6 +378,8 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 
 	accel_group = gtk_accel_group_new ();
 
+	tooltips = gtk_tooltips_new();
+	
   p_svr->wndServer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	sTitle = g_string_new("");
 	g_string_printf(sTitle, _("Server : %s"), mysql_srv->name);
@@ -393,21 +397,33 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_box_pack_start (GTK_BOX (vbox1), toolbar1, FALSE, FALSE, 0);
   gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
 
-	btnTlbrSql = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		_("SQL"), _("Exec SQL Query"), "", 
-		gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR),
-		G_CALLBACK (btntlbrsql_clicked), (gpointer)p_svr);
-
-	btnTlbrSql = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		_("SQL File"), _("Exec SQL File"), "", 
-		gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR),
-		G_CALLBACK (btntlbrsqlfile_clicked), (gpointer)p_svr);
-
-	btnTlbrClose = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar1), 
-		_("Close"), _("Close window"), "", 
-		gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR),
-		G_CALLBACK (btntlbrclose_clicked), (gpointer)p_svr);
-
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrSql = gtk_tool_button_new (imgToolbar, _("SQL"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrSql), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrSql), "clicked", G_CALLBACK (btntlbrsql_clicked), p_svr);
+	gtk_widget_show(GTK_WIDGET(btnTlbrSql));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrSql), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSql), tooltips, _("Exec SQL Query"), NULL);
+	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrSqlFile = gtk_tool_button_new (imgToolbar, _("SQL File"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrSqlFile), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrSqlFile), "clicked", G_CALLBACK (btntlbrsqlfile_clicked), p_svr);
+	gtk_widget_show(GTK_WIDGET(btnTlbrSqlFile));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrSqlFile), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSqlFile), tooltips, _("Exec SQL File"), NULL);
+	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrClose = gtk_tool_button_new (imgToolbar, _("Close"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrClose), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrClose), "clicked", G_CALLBACK (btntlbrclose_clicked), p_svr);
+	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrClose), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
+	
   notebook1 = gtk_notebook_new ();
   gtk_widget_show (notebook1);
   gtk_box_pack_start (GTK_BOX (vbox1), notebook1, TRUE, TRUE, 0);
