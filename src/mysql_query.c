@@ -280,7 +280,7 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry) {
 GArray * mysql_query_get_next_record(p_mysql_query mysql_qry) {
 	MYSQL_ROW currRow;
 	GArray * arRow = (GArray *) NULL;
-	gchar * tmpstr;
+	gchar * tmpstr, * glopstr;
 	int i = 0;
 	
 	if (mysql_qry == (p_mysql_query)NULL) {
@@ -300,7 +300,9 @@ GArray * mysql_query_get_next_record(p_mysql_query mysql_qry) {
 	
 	for(i = 0; i < mysql_qry->nbrField; i++) {
 		if (currRow[i] != (gchar *)NULL) {
-			tmpstr = gmysql_alloc_iconv(mysql_qry->iconv_from, currRow[i]);
+			glopstr = g_strdup(currRow[i]);
+			tmpstr = gmysql_alloc_iconv(mysql_qry->iconv_from, glopstr);
+			g_free(glopstr);
 		} else {
 			tmpstr = (gchar *)g_strdup("NULL");
 		}
