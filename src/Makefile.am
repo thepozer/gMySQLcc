@@ -13,7 +13,7 @@ AM_CFLAGS =\
 bin_PROGRAMS = gmysqlcc
 
 gmysqlcc_SOURCES = \
-	gmysqlcc.c\
+	gmysqlcc_main.c\
 	gmysql_gui.h\
 	gExecSql.c\
 	gListServer.c\
