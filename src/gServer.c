@@ -5,6 +5,7 @@ void initDataServer (p_servWnd pSrvWnd);
 void fillUserList (p_servWnd pSrvWnd);
 void fillBaseList (p_servWnd pSrvWnd);
 void fillTableList (p_servWnd pSrvWnd, p_mysql_database mysql_db);
+void openQueryWindow (p_mysql_database mysql_db, p_mysql_table mysql_tbl);
 
 static void destroy(GtkWidget *widget, gpointer user_data);
 static void btntlbrsql_clicked (GtkWidget *widget, gpointer user_data);
@@ -127,13 +128,34 @@ void fillTableList (p_servWnd pSrvWnd, p_mysql_database mysql_db) {
 	g_string_assign(pSrvWnd->currTblName, "");
 }
 
+
+void openQueryWindow (p_mysql_database mysql_db, p_mysql_table mysql_tbl) {
+	execSqlWnd * psqlWnd;
+	GString * sqlQuery;
+	p_mysql_query mysql_qry;
+
+	if (mysql_db != NULL) {
+		
+		mysql_qry = mysql_database_query(mysql_db);
+		
+		if (mysql_tbl != NULL) {
+			sqlQuery = g_string_new("");
+			g_string_printf(sqlQuery, "SELECT * \nFROM `%s`\nWHERE 1\nLIMIT 1000", mysql_tbl->name);
+			psqlWnd = create_wndSQL(TRUE, mysql_qry, sqlQuery->str, TRUE);
+			g_string_free(sqlQuery, TRUE);
+		} else {
+			psqlWnd = create_wndSQL(TRUE, mysql_qry, (gchar *)NULL, FALSE);
+		}
+	}
+}
+
 static gboolean lstbase_btnpress(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 
 	switch (event->button) {
 		case 1 : /* Left button */
 			if (event->type == GDK_2BUTTON_PRESS) {
-				btntlbrsql_clicked(widget, user_data);
+				openQueryWindow (pSrvWnd->curr_mysql_db, NULL);
 			}
 			break;
 		case 3 : /* Right button */
@@ -151,7 +173,7 @@ static gboolean lsttable_btnpress(GtkWidget *widget, GdkEventButton *event, gpoi
 	switch (event->button) {
 		case 1 : /* Left button */
 			if (event->type == GDK_2BUTTON_PRESS) {
-				btntlbrsql_clicked(widget, user_data);
+				openQueryWindow (pSrvWnd->curr_mysql_db, pSrvWnd->curr_mysql_tbl);
 			}
 			break;
 		case 3 : /* Right button */
@@ -165,33 +187,14 @@ static gboolean lsttable_btnpress(GtkWidget *widget, GdkEventButton *event, gpoi
 
 static void btntlbrsql_clicked (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
-	execSqlWnd * psqlWnd;
-	GString * sqlQuery;
-	p_mysql_query mysql_qry;
-
-	/*if (pSrvWnd->currDbName->len > 0) {*/
-	if (pSrvWnd->curr_mysql_db != (p_mysql_database) NULL) {
-		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, pSrvWnd->curr_mysql_db->name);
-		if (pSrvWnd->currTblName->len > 0) {
-			sqlQuery = g_string_new("");
-			g_string_printf(sqlQuery, "SELECT * \nFROM %s\nWHERE 1\nLIMIT 1000", pSrvWnd->currTblName->str);
-			psqlWnd = create_wndSQL(TRUE, mysql_qry, sqlQuery->str, TRUE);
-			g_string_free(sqlQuery, TRUE);
-		} else {
-			psqlWnd = create_wndSQL(TRUE, mysql_qry, (gchar *)NULL, FALSE);
-		}
-	}
+	
+	openQueryWindow (pSrvWnd->curr_mysql_db, pSrvWnd->curr_mysql_tbl);
 }
 
 static void btntlbrsqlfile_clicked (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
-	execSqlWnd * psqlWnd;
-	p_mysql_query mysql_qry;
 	
-	if (pSrvWnd->curr_mysql_db != (p_mysql_database)NULL) {
-		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, pSrvWnd->curr_mysql_db->name);
-		psqlWnd = create_wndSQL(TRUE, mysql_qry, (gchar *)NULL, FALSE);
-	}
+	openQueryWindow (pSrvWnd->curr_mysql_db, pSrvWnd->curr_mysql_tbl);
 }
 
 static void btntlbrclose_clicked (GtkWidget *widget, gpointer user_data) {
