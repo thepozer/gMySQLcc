@@ -11,7 +11,7 @@ static void btntlbrsave_clicked (GtkWidget *widget, gpointer user_data) {
 	GtkWidget *chooser;
 	gint response;
 	
-	chooser = gtk_file_chooser_dialog_new (_("Save Text"), GTK_WINDOW(pTxtWnd->wndText), GTK_FILE_CHOOSER_ACTION_SAVE,
+	chooser = gtk_file_chooser_dialog_new (_("Save text"), GTK_WINDOW(pTxtWnd->wndText), GTK_FILE_CHOOSER_ACTION_SAVE,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 	
 	gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), pTxtWnd->filename);

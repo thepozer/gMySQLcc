@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gmysqlcc 0.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-28 09:24+0200\n"
+"POT-Creation-Date: 2004-09-21 15:16+0200\n"
 "PO-Revision-Date: 2004-06-22 09:13+0200\n"
 "Last-Translator: Debian User <gmysqlcc@thepozer.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -17,105 +17,109 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Fill format combo box
-#: src/gDump.c:26
+#: src/gDump.c:25
 msgid "CSV"
 msgstr "CSV"
 
-#: src/gDump.c:27 src/gDump.c:28
+#: src/gDump.c:26
 msgid "XML"
 msgstr "XML"
 
-#: src/gDump.c:65 src/gDump.c:71 src/gDump.c:77
+#: src/gDump.c:27 src/gServer.c:490
+msgid "SQL"
+msgstr "SQL"
+
+#: src/gDump.c:60 src/gDump.c:66 src/gDump.c:72
 msgid "-"
 msgstr "-"
 
-#: src/gDump.c:185
+#: src/gDump.c:178
 msgid "Dump file name"
 msgstr "Dump file name"
 
 #. Query Not Ok
-#: src/gDump.c:255 src/gExecSql.c:70
+#: src/gDump.c:258 src/gExecSql.c:70
 #, c-format
 msgid "Error during the query : (%d) %s"
 msgstr "Error during the query : (%d) %s"
 
-#: src/gDump.c:342
+#: src/gDump.c:345
 msgid "Dump SQL"
 msgstr "Dump SQL"
 
-#: src/gDump.c:358
+#: src/gDump.c:361
 msgid "Server name :"
 msgstr "Server name :"
 
-#: src/gDump.c:367
+#: src/gDump.c:370
 msgid "Database name :"
 msgstr "Database name :"
 
-#: src/gDump.c:376
+#: src/gDump.c:379
 msgid "Table name :"
 msgstr "Table name :"
 
-#: src/gDump.c:385
+#: src/gDump.c:388
 msgid "SQL query :"
 msgstr "SQL query :"
 
-#: src/gDump.c:429 src/gDump.c:441
+#: src/gDump.c:432 src/gDump.c:444
 msgid "Selection :"
 msgstr "Selection :"
 
-#: src/gDump.c:450
+#: src/gDump.c:453
 msgid "All files in a directory"
 msgstr "All files in a directory"
 
-#: src/gDump.c:458
+#: src/gDump.c:461
 msgid "Drop database if exist"
 msgstr "Drop database if exist"
 
-#: src/gDump.c:462
+#: src/gDump.c:465
 msgid "Add USE database"
 msgstr "Add USE database"
 
-#: src/gDump.c:466
+#: src/gDump.c:469
 msgid "Drop table if exist"
 msgstr "Drop table if exist"
 
-#: src/gDump.c:470
+#: src/gDump.c:473
 msgid "Complete inserts"
 msgstr "Complete inserts"
 
-#: src/gDump.c:484
+#: src/gDump.c:487
 msgid "Structure"
 msgstr "Structure"
 
-#: src/gDump.c:490
+#: src/gDump.c:493
 msgid "Structure and data"
 msgstr "Structure and data"
 
-#: src/gDump.c:500
+#: src/gDump.c:503
 msgid "Data only"
 msgstr "Data only"
 
-#: src/gDump.c:506
+#: src/gDump.c:509
 msgid "Format :"
 msgstr "Format :"
 
-#: src/gDump.c:516
+#: src/gDump.c:519
 msgid "Table :"
 msgstr "Table :"
 
-#: src/gDump.c:520
+#: src/gDump.c:523
 msgid "Options :"
 msgstr "Options :"
 
-#: src/gDump.c:528
+#: src/gDump.c:531
 msgid "Output charset :"
 msgstr "Output charset :"
 
-#: src/gDump.c:542
+#: src/gDump.c:545
 msgid "_Close"
 msgstr "_Close"
 
-#: src/gDump.c:547
+#: src/gDump.c:550
 msgid "_Dump"
 msgstr "_Dump"
 
@@ -124,73 +128,78 @@ msgstr "_Dump"
 msgid "Affected row : %d\n"
 msgstr "Affected row : %d\n"
 
-#: src/gExecSql.c:240
+#: src/gExecSql.c:160
+#, c-format
+msgid "Records : %d"
+msgstr ""
+
+#: src/gExecSql.c:253
 #, c-format
 msgid "Can't use the charset : '%s'"
 msgstr "Can't use the charset : '%s'"
 
-#: src/gExecSql.c:589
+#: src/gExecSql.c:468
 #, c-format
 msgid "SQL Request - %s - %s"
 msgstr "SQL Request - %s - %s"
 
-#: src/gExecSql.c:608
+#: src/gExecSql.c:487
 msgid "Execute"
 msgstr "Execute"
 
-#: src/gExecSql.c:613
+#: src/gExecSql.c:492
 msgid "Execute SQL query"
 msgstr "Execute SQL query"
 
-#: src/gExecSql.c:628
+#: src/gExecSql.c:507
 #, fuzzy
 msgid "Select output charset"
 msgstr "Output charset :"
 
-#: src/gExecSql.c:632
+#: src/gExecSql.c:511
 msgid "Duplicate"
 msgstr "Duplicate"
 
-#: src/gExecSql.c:637
+#: src/gExecSql.c:516
 msgid "Duplicate SQL Windows"
 msgstr "Duplicate SQL Windows"
 
-#: src/gExecSql.c:641 src/gServer.c:498
+#: src/gExecSql.c:520 src/gServer.c:586
 msgid "Dump"
 msgstr "Dump"
 
-#: src/gExecSql.c:646
+#: src/gExecSql.c:525
 msgid "Dump with current query"
 msgstr "Dump with current query"
 
-#: src/gExecSql.c:650 src/gListServer.c:433 src/gServer.c:420
+#: src/gExecSql.c:540 src/gListServer.c:431 src/gServer.c:508 src/gText.c:138
 msgid "Close"
 msgstr "Close"
 
-#: src/gExecSql.c:655 src/gListServer.c:438 src/gServer.c:425
+#: src/gExecSql.c:545 src/gListServer.c:436 src/gServer.c:513 src/gText.c:143
 msgid "Close window"
 msgstr "Close window"
 
-#: src/gListServer.c:84
+#: src/gListServer.c:82
 msgid "Server name"
 msgstr "Server name"
 
-#: src/gListServer.c:130 src/gListServer.c:207 src/gListServer.c:275
+#: src/gListServer.c:128 src/gListServer.c:205 src/gListServer.c:273
 msgid "Please select a database"
 msgstr "Please select a database"
 
 #. check if not empty
-#: src/gListServer.c:161 src/gListServer.c:224
+#: src/gListServer.c:159 src/gListServer.c:222
 #, c-format
 msgid "Field %s cannot be empty !!!"
 msgstr "Field %s cannot be empty !!!"
 
-#: src/gListServer.c:168 src/gListServer.c:231
+#: src/gListServer.c:166 src/gListServer.c:229
 #, c-format
 msgid "Field %s can only contain digits !!!"
 msgstr "Field %s can only contain digits !!!"
 
-#: src/gListServer.c:179 src/gListServer.c:243
+#: src/gListServer.c:177 src/gListServer.c:241
 msgid ""
 "Name already taken !\n"
 "Please set another one."
@@ -198,166 +207,188 @@ msgstr ""
 "Name already taken !\n"
 "Please set another one."
 
-#: src/gListServer.c:268
+#: src/gListServer.c:266
 msgid "Can't delete this server !!!"
 msgstr "Can't delete this server !!!"
 
-#: src/gListServer.c:314
+#: src/gListServer.c:312
 msgid "Can't move up more !!!"
 msgstr "Can't move up more !!!"
 
-#: src/gListServer.c:349
+#: src/gListServer.c:347
 msgid "Can't move down more !!!"
 msgstr "Can't move down more !!!"
 
-#: src/gListServer.c:409
+#: src/gListServer.c:407
 msgid "Servers list"
 msgstr "Servers list"
 
-#: src/gListServer.c:424
+#: src/gListServer.c:422
 msgid "Connection"
 msgstr "Connection"
 
-#: src/gListServer.c:429
+#: src/gListServer.c:427
 msgid "Connect to a server"
 msgstr "Connect to a server"
 
-#: src/gListServer.c:465
+#: src/gListServer.c:463
 msgid "_Up"
 msgstr "_Up"
 
-#: src/gListServer.c:469
+#: src/gListServer.c:467
 msgid "_Down"
 msgstr "_Down"
 
-#: src/gListServer.c:481 src/gServer.c:528
+#: src/gListServer.c:479 src/gServer.c:616
 msgid "Server"
 msgstr "Server"
 
-#: src/gListServer.c:496
+#: src/gListServer.c:494
 msgid "Name :"
 msgstr "Name :"
 
-#: src/gListServer.c:510
+#: src/gListServer.c:508
 msgid "Host :"
 msgstr "Host :"
 
-#: src/gListServer.c:524
+#: src/gListServer.c:522
 msgid "Port :"
 msgstr "Port :"
 
-#: src/gListServer.c:539
+#: src/gListServer.c:537
 msgid "User name :"
 msgstr "User name :"
 
-#: src/gListServer.c:553
+#: src/gListServer.c:551
 msgid "Password :"
 msgstr "Password :"
 
-#: src/gListServer.c:567
+#: src/gListServer.c:565
 msgid "Local socket file :"
 msgstr "Local socket file :"
 
-#: src/gListServer.c:581
+#: src/gListServer.c:579
 msgid "_New"
 msgstr "_New"
 
-#: src/gListServer.c:586
+#: src/gListServer.c:584
 msgid "_Add"
 msgstr "_Add"
 
-#: src/gListServer.c:591
+#: src/gListServer.c:589
 msgid "_Modify"
 msgstr "_Modify"
 
-#: src/gListServer.c:596
+#: src/gListServer.c:594
 msgid "D_elete"
 msgstr "D_elete"
 
-#: src/gServer.c:62 src/gServer.c:508
+#: src/gServer.c:79 src/gServer.c:596
 msgid "Databases"
 msgstr "Databases"
 
-#: src/gServer.c:100
+#: src/gServer.c:117
 msgid "Table name"
 msgstr "Table name"
 
-#: src/gServer.c:102
+#: src/gServer.c:119
 msgid "Rows"
 msgstr "Rows"
 
-#: src/gServer.c:104
+#: src/gServer.c:121
 msgid "Size"
 msgstr "Size"
 
-#: src/gServer.c:106
+#: src/gServer.c:123
 msgid "Type"
 msgstr "Type"
 
-#: src/gServer.c:192
+#: src/gServer.c:218
 #, c-format
 msgid "Database '%s' created !"
 msgstr "Database '%s' created !"
 
-#: src/gServer.c:219
+#: src/gServer.c:245
 #, c-format
 msgid "Database '%s' deleted !"
 msgstr "Database '%s' deleted !"
 
-#: src/gServer.c:272
+#: src/gServer.c:298
 msgid "Delete Table"
 msgstr "Delete Table"
 
-#: src/gServer.c:272
+#: src/gServer.c:298
 msgid "Are you sure ?"
 msgstr "Are you sure ?"
 
-#: src/gServer.c:279
+#: src/gServer.c:305
 #, c-format
 msgid "Table '%s'.'%s' deleted !"
 msgstr "Table '%s'.'%s' deleted !"
 
-#: src/gServer.c:385
+#: src/gServer.c:473
 #, c-format
 msgid "Server : %s"
 msgstr "Server : %s"
 
-#: src/gServer.c:402
-msgid "SQL"
-msgstr "SQL"
-
-#: src/gServer.c:407
+#: src/gServer.c:495
 msgid "Exec SQL Query"
 msgstr "Exec SQL Query"
 
-#: src/gServer.c:411
+#: src/gServer.c:499
 msgid "SQL File"
 msgstr "SQL File"
 
-#: src/gServer.c:416
+#: src/gServer.c:504
 msgid "Exec SQL File"
 msgstr "Exec SQL File"
 
-#: src/gServer.c:457 src/gServer.c:488
+#: src/gServer.c:545 src/gServer.c:576
 msgid "Add"
 msgstr "Add"
 
-#: src/gServer.c:462 src/gServer.c:503
+#: src/gServer.c:550 src/gServer.c:591
 msgid "Delete"
 msgstr "Delete"
 
-#: src/gServer.c:493
+#: src/gServer.c:581
 msgid "Modify"
 msgstr "Modify"
 
-#: src/gServer.c:513 src/gServer.c:523
+#: src/gServer.c:601 src/gServer.c:611
 msgid "In construction"
 msgstr "In construction"
 
-#: src/gServer.c:518
+#: src/gServer.c:606
 msgid "Users"
 msgstr "Users"
 
-#: src/gServer.c:542
+#: src/gServer.c:630
 msgid "Refresh"
 msgstr "Refresh"
+
+#: src/gServer.c:635
+msgid "Display all create structures"
+msgstr "Display all create structures"
+
+#: src/gServer.c:643
+msgid "Display create structure"
+msgstr "Display create structure"
+
+#: src/gText.c:14
+msgid "Save Text"
+msgstr "Save Text"
+
+#: src/gText.c:112
+#, c-format
+msgid "Text Window - File name : %s"
+msgstr "Text Window - File name : %s"
+
+#: src/gText.c:129
+#, fuzzy
+msgid "Save"
+msgstr "Save"
+
+#: src/gText.c:134
+msgid "Save text"
+msgstr "Save text"
