@@ -14,7 +14,12 @@ typedef struct _s_mysql_server {
 	gchar *				passwd;
 	gchar *				allowedDbs;
 	gchar *				localSock;
-	GList *				lstDbs;
+	
+/* Server protections */
+	gboolean			read_only;
+	gboolean			write_warning;
+
+/* Server datas */
 	GHashTable *	hshDbs;
 	GHashTable *	hshUsers;
 } s_mysql_server;
@@ -26,8 +31,10 @@ typedef struct _s_mysql_user {
 	gchar *					login;
 	gchar *					host;
 	GHashTable *		hshRights;
+	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
+	
 /* Update user list informations */
 	gboolean				found;
 } s_mysql_user;
@@ -38,9 +45,11 @@ typedef struct _s_mysql_database {
 /* Connection Infos */
 	gchar *					name;
 	p_mysql_server	mysql_srv;
+	
 /* Tables Informations */
 	GList *					lstTables;
 	GHashTable *		hshTables;
+	
 /* Update database list informations */
 	gboolean				found;
 } s_mysql_database;
@@ -51,6 +60,7 @@ typedef struct _s_mysql_table {
 /* Connection Infos */
 	gchar *						name;
 	p_mysql_database	mysql_db;
+	
 /* Status infos */
 	gchar *						nbrRow;
 	gchar *						size;
@@ -62,6 +72,7 @@ typedef s_mysql_table * p_mysql_table;
 typedef struct _s_mysql_query {
 /* Query Infos */
 	gchar *					query;
+	
 /* Result Infos */
 	int							nbrField;
 	int							editResult;
@@ -69,13 +80,16 @@ typedef struct _s_mysql_query {
 	gchar *					errMsg;
 	GArray *				rawHeaders;
 	gboolean				can_edit;
+	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
 	gchar *					db_name;
 	gchar *					abs_tbl_name;
+	
 /* Mysql Infos */
 	MYSQL *					mysql_link;
 	MYSQL_RES *			mysql_result;
+	
 /* Charset Infos */
 	gchar *					charset;
 	GIConv					iconv_from;
@@ -87,8 +101,10 @@ typedef s_mysql_query * p_mysql_query;
 typedef struct _s_mysql_row {
 /* Data infos */
 	GArray *			results;
+	
 /* Connection infos */
 	p_mysql_query	mysql_qry;
+	
 /* Request for update infos */
 	gchar *				abs_tbl_name;
 	gchar *				primary_where_part;

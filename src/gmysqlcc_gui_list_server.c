@@ -68,7 +68,7 @@ gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_se
 void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list_server) {
 	GtkWidget *frame1;
   GtkWidget *vbox4, *vbox5, *vbox6, *vbox7;
-  GtkWidget *hbox5, *hbox6, *hbox7, *hbox8, *hbox12, *hbox13, *hbox14, *hbox15;
+  GtkWidget *hbox5, *hbox6, *hbox7, *hbox8, *hbox12, *hbox13, *hbox14, *hbox15, *hbox16, *hbox17;
   GtkWidget *label9, *label10, *label11, *label12, *label13, *label14, *label17;
 	GtkWidget *scrolledwindow3;
   GtkWidget *btnNew, *btnAdd, *btnEdit, *btnDel, *btnServerUp, *btnServerDown;
@@ -258,6 +258,24 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
   gtk_widget_show (gui_list_server->txtLocalSock);
   gtk_box_pack_start (GTK_BOX (hbox15), gui_list_server->txtLocalSock, TRUE, TRUE, 2);
 
+	hbox16 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox16);
+  gtk_box_pack_start (GTK_BOX (vbox5), hbox16, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox16), 2);
+
+  gui_list_server->chkReadOnly = gtk_check_button_new_with_label (_("Read only server"));
+  gtk_widget_show (gui_list_server->chkReadOnly);
+  gtk_box_pack_start (GTK_BOX (hbox16), gui_list_server->chkReadOnly, TRUE, TRUE, 2);
+
+	hbox17 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox17);
+  gtk_box_pack_start (GTK_BOX (vbox5), hbox17, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox17), 2);
+
+  gui_list_server->chkWriteWarning = gtk_check_button_new_with_label (_("Warning about write query on this server"));
+  gtk_widget_show (gui_list_server->chkWriteWarning);
+  gtk_box_pack_start (GTK_BOX (hbox17), gui_list_server->chkWriteWarning, TRUE, TRUE, 2);
+
   hbox5 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox5);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox5, FALSE, TRUE, 0);
@@ -352,7 +370,7 @@ void gmysqlcc_gui_list_server_dislpay_current_server (p_gmysqlcc_gui_list_server
 	p_mysql_server mysql_srv = gui_list_server->curr_mysql_srv;
 	char tmpPort [G_ASCII_DTOSTR_BUF_SIZE + 1];
 	
-	if (mysql_srv != (p_mysql_server)NULL) {
+	if (mysql_srv != NULL) {
 		g_ascii_dtostr(tmpPort, G_ASCII_DTOSTR_BUF_SIZE, mysql_srv->port);
 		
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtName), mysql_srv->name);
@@ -362,6 +380,8 @@ void gmysqlcc_gui_list_server_dislpay_current_server (p_gmysqlcc_gui_list_server
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtPasswd), mysql_srv->passwd);
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtLocalSock), 
 											((mysql_srv->localSock != NULL) ? mysql_srv->localSock : ""));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_list_server->chkReadOnly), mysql_srv->read_only);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_list_server->chkWriteWarning), mysql_srv->write_warning);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtName), "");
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtHost), "");
@@ -369,6 +389,8 @@ void gmysqlcc_gui_list_server_dislpay_current_server (p_gmysqlcc_gui_list_server
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtLogin), "");
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtPasswd), "");
 		gtk_entry_set_text(GTK_ENTRY(gui_list_server->txtLocalSock), "/var/run/mysqld/mysqld.sock");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_list_server->chkReadOnly), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_list_server->chkWriteWarning), FALSE);
 	}
 }
 
@@ -390,6 +412,7 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
 	GString * infos[6];
 	GtkWidget * msgdlg;
+	gboolean read_only, write_warning;
 	int i, j, port;
 	
 	/* Get data */
@@ -399,6 +422,8 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 	infos[3] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtLogin)));
 	infos[4] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtPasswd)));
 	infos[5] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtLocalSock)));
+	read_only = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_list_server->chkReadOnly));
+	write_warning = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_list_server->chkWriteWarning));
 	
 	/* Check data */
 	for (i = 0; i < 4; i++) {
@@ -429,7 +454,7 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 	
 	/* Insert data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
-	if (gmysqlcc_config_add_server(gui_list_server->gmysqlcc_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str)) {
+	if (gmysqlcc_config_add_server(gui_list_server->gmysqlcc_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
 		gui_list_server->curr_mysql_srv = gmysqlcc_config_get_server(gui_list_server->gmysqlcc_conf, infos[0]->str);
 		gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
 	}
@@ -443,10 +468,11 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 
 void gmysqlcc_gui_list_server_evt_btnEdit_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
+	p_mysql_server newSrvr;
 	GString * infos[6];
 	GtkWidget * msgdlg;
+	gboolean read_only, write_warning;
 	int i, j, port;
-	p_mysql_server newSrvr;
 	
 	if (gui_list_server->curr_mysql_srv == NULL) {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_list_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a database"));
@@ -462,6 +488,8 @@ void gmysqlcc_gui_list_server_evt_btnEdit_clicked (GtkWidget *widget, gpointer u
 	infos[3] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtLogin)));
 	infos[4] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtPasswd)));
 	infos[5] = g_string_new(gtk_entry_get_text(GTK_ENTRY(gui_list_server->txtLocalSock)));
+	read_only = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_list_server->chkReadOnly));
+	write_warning = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_list_server->chkWriteWarning));
 	
 	/* Check data */
 	for (i = 0; i < 4; i++) {
@@ -493,7 +521,7 @@ void gmysqlcc_gui_list_server_evt_btnEdit_clicked (GtkWidget *widget, gpointer u
 	
 	/* Update data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
-	if (gmysqlcc_config_update_server(gui_list_server->gmysqlcc_conf, gui_list_server->curr_mysql_srv->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str)) {
+	if (gmysqlcc_config_update_server(gui_list_server->gmysqlcc_conf, gui_list_server->curr_mysql_srv->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
 		gmysqlcc_gui_list_server_dislpay_current_server(gui_list_server);
 	}
 	

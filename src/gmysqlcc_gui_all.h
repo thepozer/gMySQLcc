@@ -44,7 +44,9 @@ typedef struct _s_gmysqlcc_gui_list_server {
 	GtkWidget * txtPasswd;
 	GtkWidget * txtAllowedDb;
 	GtkWidget * txtLocalSock;
-	GtkWidget * cmbListHosts;
+	GtkWidget * chkReadOnly;
+	GtkWidget * chkWriteWarning;
+	
 	GtkWidget * lstListHosts;
 	
 	p_mysql_server curr_mysql_srv;

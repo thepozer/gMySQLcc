@@ -13,7 +13,9 @@ struct _s_xml_servers_read_state {
 			X_IN_PASSWD = 7,
 			X_IN_ALLOWED_DBS = 8,
 			X_IN_LOCAL_SOCK = 9,
-			X_IN_OPTIONS = 10
+			X_IN_OPTIONS = 10,
+			X_IN_READ_ONLY = 11,
+			X_IN_WRITE_WARNING = 12
 		} state;
 	GString * name;
 	GString * host;
@@ -22,6 +24,8 @@ struct _s_xml_servers_read_state {
 	GString * passwd;
 	GString * allowedDbs;
 	GString * localSock;
+	gboolean read_only;
+	gboolean write_warning;
 } xml_servers_read_state;
 
 char * default_servers_conf = "<?xml version=\"1.0\"?>"
@@ -34,7 +38,10 @@ char * default_servers_conf = "<?xml version=\"1.0\"?>"
 		"<passwd><![CDATA[]]></passwd>"
 		"<alloweddbs><![CDATA[]]></alloweddbs>"
 		"<localsock><![CDATA[/var/run/mysqld/mysqld.sock]]></localsock>"
-		"<options></options>"
+		"<options>"
+			"<read_only/>"
+			"<write_warning/>"
+		"</options>"
 	"</server>"
 "</servers>";
 
@@ -178,7 +185,7 @@ gboolean gmysqlcc_config_delete (p_gmysqlcc_config gmysqlcc_conf) {
 	return TRUE;
 }
 
-gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
+gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * name, const gchar * host, const gint port, const gchar * login, const gchar * passwd, const gchar * dbAllowedList, const gchar * localSock, const gboolean read_only, const gboolean write_warning) {
 	p_mysql_server mysql_srv;
 	
 	mysql_srv = gmysqlcc_config_get_server(gmysqlcc_conf, name);
@@ -188,7 +195,7 @@ gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, gchar * na
 	}
 	
 	mysql_srv = mysql_server_new();
-	if (mysql_srv == FALSE) {
+	if (mysql_srv == NULL) {
 		return FALSE;
 	}
 	
@@ -200,12 +207,15 @@ gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, gchar * na
 	mysql_srv->allowedDbs = g_strdup(dbAllowedList);
 	mysql_srv->localSock= g_strdup(localSock);
 	
+	mysql_srv->read_only = read_only;
+	mysql_srv->write_warning = write_warning;
+	
 	gmysqlcc_conf->lst_servers = g_list_append(gmysqlcc_conf->lst_servers, mysql_srv);
 	
 	return TRUE;
 }
 
-gboolean gmysqlcc_config_update_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
+gboolean gmysqlcc_config_update_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * oldname, const gchar * name, const gchar * host, const gint port, const gchar * login, const gchar * passwd, const gchar * dbAllowedList, const gchar * localSock, const gboolean read_only, const gboolean write_warning) {
 	p_mysql_server mysql_srv;
 	
 	mysql_srv = gmysqlcc_config_get_server(gmysqlcc_conf, oldname);
@@ -228,6 +238,9 @@ gboolean gmysqlcc_config_update_server (p_gmysqlcc_config gmysqlcc_conf, const g
 		mysql_srv->passwd = g_strdup(passwd);
 		mysql_srv->allowedDbs = g_strdup(passwd);
 		mysql_srv->localSock= g_strdup(localSock);
+		
+		mysql_srv->read_only = read_only;
+		mysql_srv->write_warning = write_warning;
 		
 		return TRUE;
 	}
@@ -342,7 +355,7 @@ gboolean gmysqlcc_config_write_servers_file (p_gmysqlcc_config gmysqlcc_conf) {
 	p_mysql_server mysql_srv;
 	FILE * xmlFile;
 	
-	if (gmysqlcc_conf == (p_gmysqlcc_config)NULL) {
+	if (gmysqlcc_conf == NULL) {
 		return FALSE; 
 	}
 	
@@ -362,17 +375,25 @@ gboolean gmysqlcc_config_write_servers_file (p_gmysqlcc_config gmysqlcc_conf) {
 		g_string_append_printf(xmlContent, "\t\t<port>%d</port>\n", mysql_srv->port);
 		g_string_append_printf(xmlContent, "\t\t<login><![CDATA[%s]]></login>\n", mysql_srv->user);
 		g_string_append_printf(xmlContent, "\t\t<passwd><![CDATA[%s]]></passwd>\n", mysql_srv->passwd);
-		if (mysql_srv->allowedDbs != (gchar *)NULL) {
+		if (mysql_srv->allowedDbs != NULL) {
 			g_string_append_printf(xmlContent, "\t\t<alloweddbs><![CDATA[%s]]></alloweddbs>\n", mysql_srv->allowedDbs);
 		} else {
 			g_string_append_printf(xmlContent, "\t\t<alloweddbs><![CDATA[]]></alloweddbs>\n");
 		}
-		if (mysql_srv->localSock != (gchar *)NULL) {
+		if (mysql_srv->localSock != NULL) {
 			g_string_append_printf(xmlContent, "\t\t<localsock><![CDATA[%s]]></localsock>\n", mysql_srv->localSock);
 		} else {
 			g_string_append_printf(xmlContent, "\t\t<localsock><![CDATA[]]></localsock>\n");
 		}
-		g_string_append(xmlContent, "\t\t<options></options>\n\t</server>\n");
+		g_string_append(xmlContent, "\t\t<options>\n");
+		if (mysql_srv->read_only) {
+			g_string_append_printf(xmlContent, "\t\t\t<read_only/>\n");
+		}
+		if (mysql_srv->write_warning) {
+			g_string_append_printf(xmlContent, "\t\t\t<write_warning/>\n");
+		}
+		
+		g_string_append(xmlContent, "\t\t</options>\n\t</server>\n");
 		lstServersIdx = g_list_next(lstServersIdx);
 	}
 
@@ -404,6 +425,8 @@ void xml_servers_conf_start (GMarkupParseContext *context, const gchar * element
 		g_string_erase(xml_servers_read_state.allowedDbs, 0, -1);
 		g_string_erase(xml_servers_read_state.localSock, 0, -1);
 		xml_servers_read_state.port = 0;
+		xml_servers_read_state.read_only = FALSE;
+		xml_servers_read_state.write_warning = FALSE;
 		xml_servers_read_state.state = X_IN_SERVER;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xml_servers_read_state.state == X_IN_SERVER) {
 		xml_servers_read_state.state = X_IN_NAME;
@@ -421,6 +444,10 @@ void xml_servers_conf_start (GMarkupParseContext *context, const gchar * element
 		xml_servers_read_state.state = X_IN_LOCAL_SOCK;
 	} else if (g_ascii_strcasecmp(element_name, "options") == 0 && xml_servers_read_state.state == X_IN_SERVER) {
 		xml_servers_read_state.state = X_IN_OPTIONS;
+	} else if (g_ascii_strcasecmp(element_name, "read_only") == 0 && xml_servers_read_state.state == X_IN_OPTIONS) {
+		/* Nothing to do */
+	} else if (g_ascii_strcasecmp(element_name, "write_warning") == 0 && xml_servers_read_state.state == X_IN_OPTIONS) {
+		/* Nothing to do */
 	}
 }
 
@@ -430,7 +457,7 @@ void xml_servers_conf_end (GMarkupParseContext *context, const gchar * element_n
 	if (g_ascii_strcasecmp(element_name, "servers") == 0 && xml_servers_read_state.state == X_IN_ROOT) {
 		xml_servers_read_state.state = X_OUT_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "server") == 0 && xml_servers_read_state.state == X_IN_SERVER) {
-		gmysqlcc_config_add_server(gmysqlcc_conf, xml_servers_read_state.name->str, xml_servers_read_state.host->str, xml_servers_read_state.port, xml_servers_read_state.login->str, xml_servers_read_state.passwd->str, xml_servers_read_state.allowedDbs->str, xml_servers_read_state.localSock->str);
+		gmysqlcc_config_add_server(gmysqlcc_conf, xml_servers_read_state.name->str, xml_servers_read_state.host->str, xml_servers_read_state.port, xml_servers_read_state.login->str, xml_servers_read_state.passwd->str, xml_servers_read_state.allowedDbs->str, xml_servers_read_state.localSock->str, xml_servers_read_state.read_only, xml_servers_read_state.write_warning);
 		xml_servers_read_state.state = X_IN_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xml_servers_read_state.state == X_IN_NAME) {
 		xml_servers_read_state.state = X_IN_SERVER;
@@ -448,6 +475,10 @@ void xml_servers_conf_end (GMarkupParseContext *context, const gchar * element_n
 		xml_servers_read_state.state = X_IN_SERVER;
 	} else if (g_ascii_strcasecmp(element_name, "options") == 0 && xml_servers_read_state.state == X_IN_OPTIONS) {
 		xml_servers_read_state.state = X_IN_SERVER;
+	} else if (g_ascii_strcasecmp(element_name, "read_only") == 0 && xml_servers_read_state.state == X_IN_OPTIONS) {
+		xml_servers_read_state.read_only = TRUE;
+	} else if (g_ascii_strcasecmp(element_name, "write_warning") == 0 && xml_servers_read_state.state == X_IN_OPTIONS) {
+		xml_servers_read_state.write_warning = TRUE;
 	}
 }
 
