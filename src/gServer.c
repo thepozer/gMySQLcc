@@ -542,13 +542,13 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox2, FALSE, TRUE, 0);
 
-  btnDBAdd = gtk_button_new_with_mnemonic (_("Add"));
+ 	btnDBAdd = createIconButton("gtk-add", _("Add"));
   gtk_widget_show (btnDBAdd);
   gtk_box_pack_start (GTK_BOX (hbox2), btnDBAdd, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnDBAdd), "clicked", G_CALLBACK (btndbadd_clicked), (gpointer)p_svr);
 
-  btnDBDel = gtk_button_new_with_mnemonic (_("Delete"));
-  gtk_widget_show (btnDBDel);
+ 	btnDBDel = createIconButton("gtk-delete", _("Delete"));
+	gtk_widget_show (btnDBDel);
   gtk_box_pack_start (GTK_BOX (hbox2), btnDBDel, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnDBDel), "clicked", G_CALLBACK (btndbdel_clicked), (gpointer)p_svr);
 
@@ -573,22 +573,22 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox3), hbox3, FALSE, TRUE, 0);
 
-  btnTblAdd = gtk_button_new_with_mnemonic (_("Add"));
-  gtk_widget_show (btnTblAdd);
+	btnTblAdd = createIconButton("gtk-add", _("Add"));
+	gtk_widget_show (btnTblAdd);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblAdd, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblAdd), "clicked", G_CALLBACK (btntbladd_clicked), (gpointer)p_svr);
 
-  btnTblEdit = gtk_button_new_with_mnemonic (_("Modify"));
+	btnTblEdit = createIconButton("gtk-apply", _("Modify"));
   gtk_widget_show (btnTblEdit);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblEdit, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblEdit), "clicked", G_CALLBACK (btntbledit_clicked), (gpointer)p_svr);
 
-  btnTblDump = gtk_button_new_with_mnemonic (_("Dump"));
+	btnTblDump = createIconButton("gtk-save", _("Dump"));
   gtk_widget_show (btnTblDump);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblDump, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblDump), "clicked", G_CALLBACK (btntbldump_clicked), (gpointer)p_svr);
 
-  btnTblDel = gtk_button_new_with_mnemonic (_("Delete"));
+	btnTblDel = createIconButton("gtk-delete", _("Delete"));
   gtk_widget_show (btnTblDel);
   gtk_box_pack_start (GTK_BOX (hbox3), btnTblDel, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnTblDel), "clicked", G_CALLBACK (btntbldel_clicked), (gpointer)p_svr);
