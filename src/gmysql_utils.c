@@ -138,22 +138,26 @@ gchar * gmysql_alloc_iconv(GIConv icv, const char * source) {
 	if (icv > 0) {
 		tmpstrRead = (gchar *)source;
 		nbRead = strlen(tmpstrRead);
-		nbWrite = nbRead + (gmysql_count_noascii_character(source) * 3) + 1;
-		tmpstr = g_try_malloc((nbWrite) * sizeof(gchar));
-		if (tmpstr != (gchar *)NULL) {
-			*tmpstr = '\0';
-			tmpstrWrite = tmpstr;
-			
-			retIcv = g_iconv(icv, &tmpstrRead, &nbRead, &tmpstrWrite, &nbWrite);
-			
-			if (retIcv < 0) {
-				/*g_printerr("--- Iconv error (%d) : '%s'\n", errno, strerrror(errno));*/
-				g_free(tmpstr);
-				tmpstr = (gchar *)NULL;
-			} else {
-				/*g_printerr("+++ Number of translation pb : %d\n", retIcv);
-				g_printerr("+++ Translation : '%s':'%s' -> '%s':'%s' \n", source, tmpstrRead, tmpstr, tmpstrWrite);*/
-				*tmpstrWrite = '\0';
+		if (nbRead < 1) {
+			tmpstr = (gchar *)NULL;
+		} else {
+			nbWrite = nbRead + (gmysql_count_noascii_character(source) * 3) + 1;
+			tmpstr = g_try_malloc((nbWrite) * sizeof(gchar));
+			if (tmpstr != (gchar *)NULL) {
+				*tmpstr = '\0';
+				tmpstrWrite = tmpstr;
+				
+				retIcv = g_iconv(icv, &tmpstrRead, &nbRead, &tmpstrWrite, &nbWrite);
+				
+				if (retIcv < 0) {
+					/*g_printerr("--- Iconv error (%d) : '%s'\n", errno, strerrror(errno));*/
+					g_free(tmpstr);
+					tmpstr = (gchar *)NULL;
+				} else {
+					/*g_printerr("+++ Number of translation pb : %d\n", retIcv);
+					g_printerr("+++ Translation : '%s':'%s' -> '%s':'%s' \n", source, tmpstrRead, tmpstr, tmpstrWrite);*/
+					*tmpstrWrite = '\0';
+				}
 			}
 		}
 	}
