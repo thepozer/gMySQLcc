@@ -3,14 +3,19 @@
 
 /* Definitions of all locals functions */
 GString * protectUnderscore (const gchar * str);
-gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
-void displayLstQueries (p_execSqlWnd pExecWnd);
-void loadSqlFile (GtkWidget *widget, gpointer user_data);
+static void cleanQueryResult(p_execSqlWnd pExecWnd);
+static void displayQueryResult(p_execSqlWnd pExecWnd, p_mysql_query mysql_qry);
+static void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery);
+static gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+static void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data);
+static void btndumpsql_clicked (GtkWidget *widget, gpointer user_data);
+static void btnexecsql_clicked (GtkWidget *widget, gpointer user_data);
+static void btnHistory_clicked (GtkWidget *widget, gpointer user_data);
+static void btnclose_clicked (GtkWidget *widget, gpointer user_data);
+static void cmbCharset_changed (GtkComboBox *combobox, gpointer user_data);
 static void destroy(GtkWidget *widget, gpointer user_data);
-void btnexecsql_clicked (GtkWidget *widget, gpointer user_data);
-void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data);
-void btnclose_clicked (GtkWidget *widget, gpointer user_data);
-void resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *arg1, gchar *arg2, gpointer user_data);
+static void resultRow_selected (GtkTreeSelection *selection, gpointer data);
+static void resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer data);
 
 typedef struct _s_cols_nfo {
 	p_execSqlWnd pExecWnd;
@@ -35,8 +40,38 @@ GString * protectUnderscore (const gchar * str) {
 	return pgstr;
 }
 
-void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
-	p_mysql_query mysql_qry;
+static void cleanQueryResult(p_execSqlWnd pExecWnd) {
+	int count;
+	GtkTreeViewColumn * currCol;
+	GtkListStore * ls;
+	
+	/* Delete old Columns */
+	while ((currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(pExecWnd->lstSQLResult), 0)) != (GtkTreeViewColumn *)NULL) {
+		gtk_tree_view_remove_column(GTK_TREE_VIEW(pExecWnd->lstSQLResult), currCol);
+	}
+	
+	/* Clean List store */
+	ls = (GtkListStore *)gtk_tree_view_get_model(GTK_TREE_VIEW(pExecWnd->lstSQLResult));
+	if (ls != NULL) {
+		
+		g_print("Clean current list store ...\n");
+		
+		count = 0;
+		while (pExecWnd->lstRows != NULL) {
+			mysql_row_free((p_mysql_row)pExecWnd->lstRows->data);
+			pExecWnd->lstRows = g_slist_delete_link (pExecWnd->lstRows, pExecWnd->lstRows);
+			count ++;
+		}
+		g_print("Remove %d line(s)\n", count);
+		
+		/* Clean old List store */
+		gtk_list_store_clear(ls);
+		/*g_object_unref (G_OBJECT (ls));*/
+		
+	}
+}
+
+static void displayQueryResult(p_execSqlWnd pExecWnd, p_mysql_query mysql_qry) {
 	p_mysql_row mysql_rw;
 	s_cols_nfo * ar_cols_nfo;
 	
@@ -52,41 +87,7 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	GValue gval = {0, };
 	GValue gvalpoint = {0, };
 	GValue gvalbool = {0, };
-	GtkWidget * msgdlg;
 	GString * colTitle, *strSttsBar;
-	
-	mysql_qry = pExecWnd->mysql_qry;
-	
-	/*gmysql_history_add(gmysql_conf->queryHistory, mysql_qry->mysql_srv->name, sqlQuery, TRUE);*/
-	
-	/* Delete old Columns */
-	while ((currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(pExecWnd->lstSQLResult), 0)) != (GtkTreeViewColumn *)NULL) {
-		gtk_tree_view_remove_column(GTK_TREE_VIEW(pExecWnd->lstSQLResult), currCol);
-	}
-	
-	mysql_query_free_query(mysql_qry);
-	if (!mysql_query_execute_query(mysql_qry, sqlQuery, TRUE)) {
-		/* Query Not Ok */
-		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pExecWnd->wndMain), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), mysql_qry->errCode, mysql_qry->errMsg);
-		gtk_dialog_run (GTK_DIALOG (msgdlg));
-		gtk_widget_destroy (msgdlg);
-		mysql_query_free_query(mysql_qry);
-		return;
-	}
-	
-	/* Query Ok ... Continue */
-	
-	/* Modification query - Display affected rows */
-	if (mysql_qry->errCode == 0 && mysql_qry->nbrField == 0) {
-		g_printerr("Affected row : %d\n", mysql_qry->editResult);
-		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pExecWnd->wndMain), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Affected row : %d\n"), mysql_qry->editResult);
-		gtk_dialog_run (GTK_DIALOG (msgdlg));
-		gtk_widget_destroy (msgdlg);
-		mysql_query_free_query(mysql_qry);
-		return;
-	}
-	
-	/* Select query - Display datas */
 	
 	nbrcol = mysql_qry->nbrField + 1;
 	arTypes = (GType *)g_try_malloc(nbrcol * sizeof(GType));
@@ -96,6 +97,9 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	arTypes[mysql_qry->nbrField] = G_TYPE_POINTER;
 	
 	ls = gtk_list_store_newv(nbrcol, arTypes);
+	
+	g_free(arTypes);
+
 	count = 0;
 	g_value_init(&gval, G_TYPE_STRING);
 	g_value_init(&gvalpoint, G_TYPE_POINTER);
@@ -107,20 +111,18 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 		for(i = 0; i < mysql_qry->nbrField; i++) {
 			g_value_set_string(&gval, mysql_row_get_field_value(mysql_rw, i));
 			gtk_list_store_set_value(ls, &iter, i, &gval);
-			
 		}
 		g_value_set_pointer(&gvalpoint, mysql_rw);
 		gtk_list_store_set_value(ls, &iter, mysql_qry->nbrField, &gvalpoint);
+		pExecWnd->lstRows = g_slist_append(pExecWnd->lstRows, mysql_rw);
 		
 	}
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(pExecWnd->lstSQLResult), GTK_TREE_MODEL(ls));
 	g_object_unref (G_OBJECT (ls));
-		
-	g_free(arTypes);
 	
 	if ((arRow = mysql_query_get_headers(mysql_qry)) != (GArray * )NULL) {
-
+		
 		ar_cols_nfo = (s_cols_nfo *)g_try_malloc(mysql_qry->nbrField * sizeof(s_cols_nfo));
 		ar_renderer = (GtkCellRenderer * *)g_try_malloc(mysql_qry->nbrField * sizeof(GtkCellRenderer *));
 		if (mysql_query_is_editable(mysql_qry)) {
@@ -164,9 +166,48 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	sbItemId = gtk_statusbar_push(GTK_STATUSBAR(pExecWnd->statusbarSQL), sbContext, strSttsBar->str);
 	
 	g_string_free(strSttsBar, TRUE);
+	
 }
 
-gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+static void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
+	p_mysql_query mysql_qry;
+	
+	GtkWidget * msgdlg;
+	
+	mysql_qry = pExecWnd->mysql_qry;
+	
+	/*gmysql_history_add(gmysql_conf->queryHistory, mysql_qry->mysql_srv->name, sqlQuery, TRUE);*/
+	
+	mysql_query_free_query(mysql_qry);
+	if (!mysql_query_execute_query(mysql_qry, sqlQuery, TRUE)) {
+		/* Query Not Ok */
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pExecWnd->wndMain), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), mysql_qry->errCode, mysql_qry->errMsg);
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		mysql_query_free_query(mysql_qry);
+		return;
+	}
+	
+	/* Query Ok ... Continue */
+	
+	/* Modification query - Display affected rows */
+	if (mysql_qry->errCode == 0 && mysql_qry->nbrField == 0) {
+		g_printerr("Affected row : %d\n", mysql_qry->editResult);
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pExecWnd->wndMain), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Affected row : %d\n"), mysql_qry->editResult);
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		mysql_query_free_query(mysql_qry);
+		return;
+	}
+	
+	/* Select query - Display datas */
+	
+	cleanQueryResult (pExecWnd);
+	
+	displayQueryResult (pExecWnd, mysql_qry);
+}
+
+static gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	if (event->state & GDK_CONTROL_MASK && (event->keyval == GDK_e || event->keyval == GDK_E)) {
 		btnexecsql_clicked (widget, user_data);
 		return TRUE;
@@ -175,7 +216,7 @@ gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data
 }
 
 
-void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data) {
+static void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	p_execSqlWnd psqlWnd;
 	GtkTextBuffer * txtBuffer;
@@ -194,7 +235,7 @@ void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data) {
 	g_free(sqlQuery);
 }
 
-void btndumpsql_clicked (GtkWidget *widget, gpointer user_data) {
+static void btndumpsql_clicked (GtkWidget *widget, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	p_dumpWnd pDmpWnd;
 	GtkTextBuffer * txtBuffer;
@@ -213,7 +254,7 @@ void btndumpsql_clicked (GtkWidget *widget, gpointer user_data) {
 	g_free(sqlQuery);
 }
 
-void btnexecsql_clicked (GtkWidget *widget, gpointer user_data) {
+static void btnexecsql_clicked (GtkWidget *widget, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	GtkTextBuffer * txtBuffer;
 	GtkTextIter begin, end;
@@ -229,19 +270,19 @@ void btnexecsql_clicked (GtkWidget *widget, gpointer user_data) {
 	ExecSql(pExecWnd, csql);
 }
 
-void btnHistory_clicked (GtkWidget *widget, gpointer user_data) {
+static void btnHistory_clicked (GtkWidget *widget, gpointer user_data) {
 	/*p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;*/
 	
 	/*create_wndHistory(TRUE);*/
 }
 
-void btnclose_clicked (GtkWidget *widget, gpointer user_data) {
+static void btnclose_clicked (GtkWidget *widget, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	
 	gtk_widget_destroy(GTK_WIDGET(pExecWnd->wndMain));
 }
 
-void cmbCharset_changed (GtkComboBox *combobox, gpointer user_data) {
+static void cmbCharset_changed (GtkComboBox *combobox, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	gint idx;
 	gchar * charset;
@@ -371,6 +412,9 @@ void cmbCharset_changed (GtkComboBox *combobox, gpointer user_data) {
 static void destroy(GtkWidget *widget, gpointer user_data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;
 	
+	/* Clean table */
+	cleanQueryResult (pExecWnd);
+	
 	/* Destroy GUI */
 	gtk_widget_hide (GTK_WIDGET(pExecWnd->wndMain));
 	gtk_widget_destroy (GTK_WIDGET(pExecWnd->wndMain));
@@ -390,7 +434,7 @@ static void destroy(GtkWidget *widget, gpointer user_data) {
 	}
 }
 
-void resultRow_selected (GtkTreeSelection *selection, gpointer data) {
+static void resultRow_selected (GtkTreeSelection *selection, gpointer data) {
 	p_execSqlWnd pExecWnd = (p_execSqlWnd)data;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -407,7 +451,7 @@ void resultRow_selected (GtkTreeSelection *selection, gpointer data) {
 	}
 }
 
-void resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer data) {
+static void resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer data) {
 	GtkTreeIter iter;
 	GtkTreeModel * tree_model;
 	s_cols_nfo * ar_cols_nfo = (s_cols_nfo *)data;
@@ -441,7 +485,7 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gcha
 	GtkToolItem *ticmbCharset;
 	GtkToolItem *btnDumpSql;
 	GtkToolItem *btnDuplicateSql;
-	GtkToolItem *btnHistory;
+	/*GtkToolItem *btnHistory;*/
 	GtkToolItem *btnClose;
 	GtkTooltips * tooltips;
 	GtkWidget * imgToolbar;
@@ -458,6 +502,7 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gcha
 	}
 	
 	pExecWnd->mysql_qry = mysql_qry;
+	pExecWnd->lstRows = NULL;
 	
 	g_print("Using query(%d) - serveur name(%d) : '%s' - database name : '%s'\n", (int)mysql_qry, (int)mysql_qry->mysql_srv, mysql_qry->mysql_srv->name, mysql_qry->db_name);
 	
