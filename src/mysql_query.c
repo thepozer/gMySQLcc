@@ -1,7 +1,7 @@
 
 #include "mysql_db_all.h"
 
-#include "gmysql_utils.h"
+#include "gmysqlcc_helpers.h"
 
 #include <errno.h>
 #include <string.h>
@@ -11,28 +11,28 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	
 	mysql_qry = (p_mysql_query) g_try_malloc(sizeof(s_mysql_query));
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (p_mysql_query)NULL;
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
-	mysql_qry->query = (gchar *)NULL;
+	mysql_qry->query = NULL;
 	mysql_qry->nbrField = 0;
 	mysql_qry->editResult = 0;
 	mysql_qry->errCode = 0;
-	mysql_qry->errMsg = (gchar *)NULL;
-	mysql_qry->rawHeaders = (GArray *)NULL;
+	mysql_qry->errMsg = NULL;
+	mysql_qry->rawHeaders = NULL;
 	mysql_qry->can_edit = TRUE;
 	mysql_qry->mysql_srv = mysql_srv;
-	mysql_qry->db_name = (gchar *)g_strdup(db_name);
-	mysql_qry->abs_tbl_name = (gchar *)NULL;
-	mysql_qry->mysql_link = (MYSQL *)NULL;
-	mysql_qry->mysql_result = (MYSQL_RES *)NULL;
-	mysql_qry->charset = (gchar *)NULL;
+	mysql_qry->db_name = g_strdup(db_name);
+	mysql_qry->abs_tbl_name = NULL;
+	mysql_qry->mysql_link = NULL;
+	mysql_qry->mysql_result = NULL;
+	mysql_qry->charset = NULL;
 	mysql_qry->iconv_from = 0;
 	mysql_qry->iconv_to = 0;
 	
-	mysql_qry->mysql_link = mysql_init((MYSQL *)NULL);
-	if (mysql_qry->mysql_link == (MYSQL *)NULL) {
+	mysql_qry->mysql_link = mysql_init(NULL);
+	if (mysql_qry->mysql_link == NULL) {
 		mysql_qry->errCode = -1;
 		mysql_qry->errMsg = "**** Can't prepare mysql connection ****";
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
@@ -42,7 +42,7 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_srv->host, mysql_srv->user, mysql_srv->passwd, db_name, mysql_srv->port, mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
-		mysql_qry->mysql_link = (MYSQL *)NULL;
+		mysql_qry->mysql_link = NULL;
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
 		return mysql_qry;
 	}
@@ -64,14 +64,14 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 
 gboolean mysql_query_delete(p_mysql_query mysql_qry) {
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
+	if (mysql_qry == NULL) {
 		return TRUE;
 	}
 	
 	mysql_query_free_query(mysql_qry);
 	
 	/* Close DB connection */
-	if (mysql_qry->mysql_link != (MYSQL *)NULL) {
+	if (mysql_qry->mysql_link != NULL) {
 		mysql_close(mysql_qry->mysql_link);
 	}
 	
@@ -84,7 +84,7 @@ gboolean mysql_query_delete(p_mysql_query mysql_qry) {
 	}
 	
 	/* Release pointers */
-	if (mysql_qry->rawHeaders != (GArray *)NULL) {
+	if (mysql_qry->rawHeaders != NULL) {
 		g_array_free(mysql_qry->rawHeaders, TRUE);
 	}
 	g_free(mysql_qry->abs_tbl_name);
@@ -101,28 +101,28 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 	
 	mysql_qry = (p_mysql_query) g_try_malloc(sizeof(s_mysql_query));
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (p_mysql_query)NULL;
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
-	mysql_qry->query = (gchar *)NULL;
+	mysql_qry->query = NULL;
 	mysql_qry->nbrField = 0;
 	mysql_qry->editResult = 0;
 	mysql_qry->errCode = 0;
-	mysql_qry->errMsg = (gchar *)NULL;
-	mysql_qry->rawHeaders = (GArray *)NULL;
+	mysql_qry->errMsg = NULL;
+	mysql_qry->rawHeaders = NULL;
 	mysql_qry->can_edit = base_mysql_qry->can_edit;
 	mysql_qry->mysql_srv = base_mysql_qry->mysql_srv;
-	mysql_qry->db_name = (gchar *)g_strdup(base_mysql_qry->db_name);
-	mysql_qry->abs_tbl_name = (gchar *)NULL;
-	mysql_qry->mysql_link = (MYSQL *)NULL;
-	mysql_qry->mysql_result = (MYSQL_RES *)NULL;
-	mysql_qry->charset = (gchar *)NULL;
+	mysql_qry->db_name = g_strdup(base_mysql_qry->db_name);
+	mysql_qry->abs_tbl_name = NULL;
+	mysql_qry->mysql_link = NULL;
+	mysql_qry->mysql_result = NULL;
+	mysql_qry->charset = NULL;
 	mysql_qry->iconv_from = 0;
 	mysql_qry->iconv_to = 0;
 	
-	mysql_qry->mysql_link = mysql_init((MYSQL *)NULL);
-	if (mysql_qry->mysql_link == (MYSQL *)NULL) {
+	mysql_qry->mysql_link = mysql_init(NULL);
+	if (mysql_qry->mysql_link == NULL) {
 		mysql_qry->errCode = -1;
 		mysql_qry->errMsg = "**** Can't prepare mysql connection ****";
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
@@ -132,7 +132,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_qry->mysql_srv->host, mysql_qry->mysql_srv->user, mysql_qry->mysql_srv->passwd, mysql_qry->db_name, mysql_qry->mysql_srv->port, mysql_qry->mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
-		mysql_qry->mysql_link = (MYSQL *)NULL;
+		mysql_qry->mysql_link = NULL;
 		g_printerr("Failed to connect to database: Error (%d) : %s\n", mysql_qry->errCode, mysql_qry->errMsg);
 		return mysql_qry;
 	}
@@ -158,15 +158,15 @@ p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry) {
 gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean user_query) {
 	int errcode;
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
+	if (mysql_qry == NULL) {
 		return FALSE;
 	}
 	
-	if (mysql_qry->mysql_link == (MYSQL *)NULL) {
+	if (mysql_qry->mysql_link == NULL) {
 		return FALSE;
 	}
 	
-	mysql_qry->query = gmysql_alloc_iconv(mysql_qry->iconv_to, query);
+	mysql_qry->query = gmysqlcc_helpers_alloc_iconv(mysql_qry->iconv_to, query);
 	
 	/* Ping mysql host to reconnect if needeed */
 	mysql_ping (mysql_qry->mysql_link);
@@ -207,30 +207,30 @@ gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query,
 	}
 	
 	mysql_qry->errCode = 0;
-	mysql_qry->errMsg = (gchar *)NULL;
+	mysql_qry->errMsg = NULL;
 	return TRUE;
 }
 
 gboolean mysql_query_free_query(p_mysql_query mysql_qry) {
 
-	if (mysql_qry == (p_mysql_query)NULL) {
+	if (mysql_qry == NULL) {
 		return TRUE;
 	}
 	
-	if (mysql_qry->mysql_result == (MYSQL_RES *)NULL) {
+	if (mysql_qry->mysql_result == NULL) {
 		return FALSE;
 	}
 	
 	mysql_free_result(mysql_qry->mysql_result);
 	g_free(mysql_qry->query);
 	
-	if (mysql_qry->rawHeaders != (GArray *)NULL) {
+	if (mysql_qry->rawHeaders != NULL) {
 		g_array_free(mysql_qry->rawHeaders, TRUE);
-		mysql_qry->rawHeaders = (GArray *)NULL;
+		mysql_qry->rawHeaders = NULL;
 	}
 	
-	mysql_qry->mysql_result = (MYSQL_RES *)NULL;
-	mysql_qry->query = (gchar *)NULL;
+	mysql_qry->mysql_result = NULL;
+	mysql_qry->query = NULL;
 	
 	return TRUE;
 }
@@ -241,12 +241,12 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry) {
 	gchar * tmpstr;
 	int i = 0;
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (GArray *) NULL;
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
 	if (mysql_qry->nbrField == 0) {
-		return (GArray *) NULL;
+		return NULL;
 	}
 	
 	headers = g_array_sized_new (FALSE, TRUE, sizeof (char *), mysql_qry->nbrField);
@@ -255,7 +255,7 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry) {
 		/* List headers from array */
 		for(i = 0; i < mysql_qry->rawHeaders->len; i++) {
 			field = g_array_index(mysql_qry->rawHeaders, MYSQL_FIELD *, i);
-			tmpstr = gmysql_alloc_iconv(mysql_qry->iconv_from, field->name);
+			tmpstr = gmysqlcc_helpers_alloc_iconv(mysql_qry->iconv_from, field->name);
 			g_array_append_val (headers, tmpstr);
 		}
 		
@@ -269,7 +269,7 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry) {
 		for(i = 0; i < mysql_qry->nbrField; i++) {
 			field = &fields[i];
 			g_array_append_val (mysql_qry->rawHeaders, field);
-			tmpstr = gmysql_alloc_iconv(mysql_qry->iconv_from, field->name);
+			tmpstr = gmysqlcc_helpers_alloc_iconv(mysql_qry->iconv_from, field->name);
 			g_array_append_val (headers, tmpstr);
 		}
 	}
@@ -279,32 +279,32 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry) {
 
 GArray * mysql_query_get_next_record(p_mysql_query mysql_qry) {
 	MYSQL_ROW currRow;
-	GArray * arRow = (GArray *) NULL;
+	GArray * arRow = NULL;
 	gchar * tmpstr, * glopstr;
 	int i = 0;
 	
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (GArray *) NULL;
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
 	if (mysql_qry->nbrField == 0) {
-		return (GArray *) NULL;
+		return NULL;
 	}
 	
 	currRow = mysql_fetch_row(mysql_qry->mysql_result);
-	if (currRow == (MYSQL_ROW)NULL) {
-		return (GArray *) NULL;
+	if (currRow == NULL) {
+		return NULL;
 	}
 	
 	arRow = g_array_sized_new (FALSE, TRUE, sizeof (char *), mysql_qry->nbrField);
 	
 	for(i = 0; i < mysql_qry->nbrField; i++) {
-		if (currRow[i] != (gchar *)NULL) {
+		if (currRow[i] != NULL) {
 			glopstr = g_strdup(currRow[i]);
-			tmpstr = gmysql_alloc_iconv(mysql_qry->iconv_from, glopstr);
+			tmpstr = gmysqlcc_helpers_alloc_iconv(mysql_qry->iconv_from, glopstr);
 			g_free(glopstr);
 		} else {
-			tmpstr = (gchar *)g_strdup("NULL");
+			tmpstr = g_strdup("NULL");
 		}
 		
 		g_array_append_val (arRow, tmpstr);
@@ -317,26 +317,27 @@ GArray * mysql_query_get_next_record(p_mysql_query mysql_qry) {
 GArray * mysql_query_get_all_records(p_mysql_query mysql_qry) {
 	GArray * arAllRows, * currRow;
 	int cntr;
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (GArray *) NULL;
+	
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
 	if (mysql_qry->nbrField == 0) {
-		return (GArray *) NULL;
+		return NULL;
 	}
 	
 	arAllRows = g_array_new (FALSE, TRUE, sizeof (GArray *));
 	
 	cntr = 0;
 	currRow = mysql_query_get_next_record(mysql_qry);
-	while (currRow != (GArray *)NULL) {
+	while (currRow != NULL) {
 		g_array_append_val (arAllRows, currRow);
 		cntr ++;
 		currRow = mysql_query_get_next_record(mysql_qry);
 	}
 	
 	if (cntr == 0) {
-		return (GArray *) NULL;
+		return NULL;
 	} else {
 		return arAllRows;
 	}
@@ -348,30 +349,30 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 	GString * abs_tbl_name, * abs_tbl_name_old;
 	GArray * hdrs;
 	
-	if (mysql_qry->abs_tbl_name != (gchar *)NULL) {
+	if (mysql_qry->abs_tbl_name != NULL) {
 		return g_strdup(mysql_qry->abs_tbl_name);
 	}
 
-	if ((hdrs = mysql_query_get_headers(mysql_qry)) == (GArray *)NULL) {
-		return (gchar *)NULL;
+	if ((hdrs = mysql_query_get_headers(mysql_qry)) == NULL) {
+		return NULL;
 	}
 	g_array_free(hdrs, TRUE);
 
 	abs_tbl_name = g_string_new("");
-	abs_tbl_name_old = (GString *) NULL;
+	abs_tbl_name_old = NULL;
 	
 	for(i = 0; i < mysql_qry->rawHeaders->len; i++) {
 		
 		field = g_array_index(mysql_qry->rawHeaders, MYSQL_FIELD *, i);
 		g_string_printf(abs_tbl_name, "`%s`.`%s`", mysql_qry->db_name, field->table);
 		
-		if (abs_tbl_name_old != (GString *) NULL) {
+		if (abs_tbl_name_old != NULL) {
 			
 			if (!g_string_equal(abs_tbl_name, abs_tbl_name_old)) {
-				mysql_qry->abs_tbl_name = (gchar *)NULL;
+				mysql_qry->abs_tbl_name = NULL;
 				g_string_free(abs_tbl_name, TRUE);
 				g_string_free(abs_tbl_name_old, TRUE);
-				return (gchar *) NULL;
+				return NULL;
 			}
 			
 		} else {
@@ -393,8 +394,8 @@ gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) 
 	gchar * retStr;
 	GArray * hdrs;
 	
-	if ((hdrs = mysql_query_get_headers(mysql_qry)) == (GArray *)NULL) {
-		return (gchar *)NULL;
+	if ((hdrs = mysql_query_get_headers(mysql_qry)) == NULL) {
+		return NULL;
 	}
 	g_array_free(hdrs, TRUE);
 	
@@ -435,8 +436,8 @@ gboolean mysql_query_get_can_edit (p_mysql_query mysql_qry) {
 }
 gchar * mysql_query_get_charset(p_mysql_query mysql_qry) {
 
-	if (mysql_qry == (p_mysql_query)NULL) {
-		return (gchar *)NULL;
+	if (mysql_qry == NULL) {
+		return NULL;
 	}
 	
 	return mysql_qry->charset;
@@ -447,7 +448,7 @@ gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * char
 	GIConv iconv_to;
 	
 	/* check mysql query object */
-	if (mysql_qry == (p_mysql_query)NULL) {
+	if (mysql_qry == NULL) {
 		return FALSE;
 	}
 	

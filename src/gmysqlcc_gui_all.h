@@ -15,66 +15,71 @@
 #endif /* USE_GTKSOURCEVIEW */
 
 #include "mysql_db_all.h"
-#include "gmysql_conf.h"
-#include "gmysql_utils.h"
+#include "gmysqlcc_config.h"
+#include "gmysqlcc_helpers.h"
 
-/*
+
 #define _(String) gettext (String)
 
 #ifndef __GMYSQLCC_MAIN_PART__
 
 extern int NbrWnd;
-extern p_gmysql_config gmysql_conf;
+/*extern p_gmysqlcc_config gmysqlcc_conf;*/
 
 #ifdef USE_GTKSOURCEVIEW
 extern GtkSourceLanguagesManager * LangManager;
-#endif * USE_GTKSOURCEVIEW *
+#endif /* USE_GTKSOURCEVIEW */
 
-#endif * __GMYSQLCC_MAIN_PART__ *
-*/
+#endif /* __GMYSQLCC_MAIN_PART__ */
+
 /* List server window */
-/*
-typedef struct _listServWnd {
-	  GtkWidget * txtName;
-		GtkWidget * txtHost;
-	  GtkWidget * txtPort;
-		GtkWidget * txtLogin;
-	  GtkWidget * txtPasswd;
-	  GtkWidget * txtAllowedDb;
-	  GtkWidget * txtLocalSock;
-		GtkWidget * cmbListHosts;
-		GtkWidget * lstListHosts;
-		GtkWidget * wndListServer;
-		p_mysql_server selSrvr;
-		p_gmysql_config gmsql_conf;
-} listServWnd;
-typedef listServWnd * p_listServWnd;
 
-listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf);
-*/
+typedef struct _s_gmysqlcc_gui_list_server {
+	GtkWidget * window;
+	
+	GtkWidget * txtName;
+	GtkWidget * txtHost;
+	GtkWidget * txtPort;
+	GtkWidget * txtLogin;
+	GtkWidget * txtPasswd;
+	GtkWidget * txtAllowedDb;
+	GtkWidget * txtLocalSock;
+	GtkWidget * cmbListHosts;
+	GtkWidget * lstListHosts;
+	
+	p_mysql_server curr_mysql_srv;
+	p_gmysqlcc_config gmysqlcc_conf;
+} s_gmysqlcc_gui_list_server;
+
+typedef s_gmysqlcc_gui_list_server * p_gmysqlcc_gui_list_server;
+
+p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysql_conf);
+gboolean gmysqlcc_gui_list_server_display (p_gmysqlcc_gui_list_server gui_list_server, gboolean display);
+gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_server);
+
+
 /* Server window */
-/*
-typedef struct _servWnd {
+
+typedef struct _s_gmysqlcc_gui_server {
+	GtkWidget * window;
 	GtkWidget * lstBase;
 	GtkWidget * lstTable;
-	GtkWidget * wndServer;
 	GtkWidget * mnuBdOps;
 	GtkWidget * mnuTblOps;
 	
 	p_mysql_server mysql_srv;
 	p_mysql_database curr_mysql_db;
 	p_mysql_table curr_mysql_tbl;
-	
-	GString * currDbName;
-	GString * currTblName;
-} servWnd;
+} s_gmysqlcc_gui_server;
 
-typedef servWnd * p_servWnd;
+typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;
 
-p_servWnd create_wndServer (gboolean display, p_mysql_server msql_srv);
-*/
+p_gmysqlcc_gui_server gmysqlcc_gui_server_new (p_mysql_server mysql_srv);
+gboolean gmysqlcc_gui_server_display (p_gmysqlcc_gui_server gui_server, gboolean display);
+gboolean gmysqlcc_gui_server_delete (p_gmysqlcc_gui_server gui_server);
+
 /* Exec SQL window */
-/*
+
 typedef struct _s_gmysqlcc_gui_query {
 	GtkWidget * window;
 	
@@ -90,7 +95,7 @@ typedef struct _s_gmysqlcc_gui_query {
 	p_mysql_query mysql_qry;
 	p_mysql_row mysql_rw;
 	
-	int currCharset;
+	gint currCharset;
 	GSList * lstRows;
 } s_gmysqlcc_gui_query;
 
@@ -101,36 +106,21 @@ gboolean gmysqlcc_gui_query_set_query (p_gmysqlcc_gui_query gui_query, const gch
 gboolean gmysqlcc_gui_query_display (p_gmysqlcc_gui_query gui_query, gboolean display);
 gboolean gmysqlcc_gui_query_delete (p_gmysqlcc_gui_query gui_query);
 
-execSqlWnd * create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gchar * query, gboolean execNow);
-void ExecSql (execSqlWnd * stWnd, const char * sqlQuery);*
-*/
 /* Text window */
-/*
-typedef struct _textWnd {
-	GtkWidget * wndText;
+
+typedef struct _s_gmysqlcc_gui_text {
+	GtkWidget * window;
 	GtkWidget * txtContent;
 	
 	gchar * filename;
-} textWnd;
-typedef textWnd * p_textWnd;
+} s_gmysqlcc_gui_text;
+typedef s_gmysqlcc_gui_text * p_gmysqlcc_gui_text;
 
-p_textWnd create_wndText (gboolean display, gchar * content, gchar * filename);
-*/
-/* History window */
-/*
-typedef struct _historyWnd {
-	GtkWidget * wndMain;
-	
-	GtkWidget * lstHistory;
-	
-	p_gmysql_history_entry current_entry;
-	void * current_entry;
-} historyWnd;
+p_gmysqlcc_gui_text gmysqlcc_gui_text_new ();
+gboolean gmysqlcc_gui_text_set_content (p_gmysqlcc_gui_text gui_text, const gchar * content, const gchar * filename);
+gboolean gmysqlcc_gui_text_display (p_gmysqlcc_gui_text gui_text, gboolean display);
+gboolean gmysqlcc_gui_text_delete (p_gmysqlcc_gui_text gui_text);
 
-typedef historyWnd * p_historyWnd;
-
-p_historyWnd create_wndHistory (gboolean display);
-*/
 /* Dump window */
 
 #define DUMP_LEVEL_NULL 0
@@ -169,8 +159,8 @@ typedef struct _s_gmysqlcc_gui_dump {
 	GtkWidget * chkDropTable;
  	GtkWidget * chkCompleteInsert;
 	GtkWidget * rdoDumpStruct;
-  GtkWidget * rdoDumpStructData;
-  GtkWidget * rdoDumpData;
+	GtkWidget * rdoDumpStructData;
+	GtkWidget * rdoDumpData;
 	GtkWidget * cmbOutputFormat;
 	GtkWidget * cmbOutputCharset;
 	GtkWidget * txtOutputFilename;
@@ -192,7 +182,7 @@ gboolean gmysqlcc_gui_dump_display (p_gmysqlcc_gui_dump gui_dump, gboolean displ
 gboolean gmysqlcc_gui_dump_delete (p_gmysqlcc_gui_dump gui_dump);
 
 /* Misc gui functiond */
-/*
+
 typedef struct _askFilenameInfos {
 	GtkWidget * dialog;
 	void * userData;
@@ -205,7 +195,7 @@ gboolean askYesno(const gchar * title, const gchar * message);
 gboolean askFilename(const gchar * title, const gchar * filename, void (*okevent) (GtkWidget *widget, gpointer user_data), gpointer user_data);
 
 GtkWidget * createIconButton(const char * icon, const char * title);
-*/
+
 
 
 #endif /* __GMYSQLCC_GUI_ALL_H__ */

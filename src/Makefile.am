@@ -14,18 +14,17 @@ bin_PROGRAMS = gmysqlcc
 
 gmysqlcc_SOURCES = \
 	gmysqlcc_main.c\
-	gmysql_gui.h\
-	gExecSql.c\
-	gListServer.c\
-	gServer.c\
-	gText.c\
-	gUtils.c\
+	gmysqlcc_config.c\
+	gmysqlcc_config.h\
+	gmysqlcc_helpers.c\
+	gmysqlcc_helpers.h\
 	gmysqlcc_gui_all.h\
 	gmysqlcc_gui_dump.c\
-	gmysql_conf.c\
-	gmysql_conf.h\
-	gmysql_utils.c\
-	gmysql_utils.h\
+	gmysqlcc_gui_list_server.c\
+	gmysqlcc_gui_query.c\
+	gmysqlcc_gui_server.c\
+	gmysqlcc_gui_text.c\
+	gmysqlcc_gui_misc.c\
 	mysql_db_all.h\
 	mysql_database.c\
 	mysql_dump.c\

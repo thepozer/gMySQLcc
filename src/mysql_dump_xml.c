@@ -3,7 +3,7 @@
 #include <sys/types.h>
 
 #include "mysql_db_all.h"
-#include "gmysql_utils.h"
+#include "gmysqlcc_helpers.h"
 
 gboolean mysql_dump_xml_server_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_xml_database_to_disk (p_mysql_dump mysql_dmp);
@@ -239,7 +239,7 @@ gboolean mysql_dump_xml_data_query_to_disk (p_mysql_dump mysql_dmp) {
 			g_string_assign(strRet, "\t\t\t<row>\n");
 			
 			for (i = 0; i < arRow->len; i++) {
-				fieldName = addSlashes(g_array_index(arRow, gchar *, i));
+				fieldName = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
 				fieldValue = g_string_new(g_array_index(arHeaders, gchar *, i));
 				g_string_append_printf(strRet, "\t\t\t\t<field name=\"%s\">%s</field>\n", fieldName->str, fieldValue->str);
 				g_string_free(fieldName, TRUE);

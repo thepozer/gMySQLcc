@@ -3,7 +3,7 @@
 #include <sys/types.h>
 
 #include "mysql_db_all.h"
-#include "gmysql_utils.h"
+#include "gmysqlcc_helpers.h"
 
 gboolean mysql_dump_sql_server_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_sql_database_to_disk (p_mysql_dump mysql_dmp);
@@ -58,7 +58,6 @@ gboolean mysql_dump_sql_do_to_disk (p_mysql_dump mysql_dmp) {
 gboolean mysql_dump_sql_server_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strTmp;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
 	
 	void ht_dump_database(gpointer key, gpointer value, gpointer user_data) {
 		GString * strTmp;
@@ -256,7 +255,7 @@ gboolean mysql_dump_sql_data_query_to_disk (p_mysql_dump mysql_dmp) {
 			g_string_append(strRet, " VALUES (");
 			
 			for (i = 0; i < arRow->len; i++) {
-				tmpField = addSlashes(g_array_index(arRow, gchar *, i));
+				tmpField = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
 				g_string_append_printf(strRet, (i == 0) ? "'%s'" : ", '%s'" , tmpField->str);
 				g_string_free(tmpField, TRUE);
 			}
