@@ -3,9 +3,7 @@
 
 <glade-project>
   <name>gmysqlcc</name>
-  <program_name>gladepart</program_name>
-  <source_directory>src</source_directory>
-  <pixmaps_directory>pixmaps</pixmaps_directory>
-  <gettext_support>FALSE</gettext_support>
+  <program_name>gmysqlcc</program_name>
+  <source_directory>src-glade</source_directory>
   <gnome_support>FALSE</gnome_support>
 </glade-project>
