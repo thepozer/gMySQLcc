@@ -1,36 +1,59 @@
 
 #include "gmysql_gui.h"
 
-static void saveContent (GtkWidget *widget, gpointer user_data);
+static void btntlbrsave_clicked (GtkWidget *widget, gpointer user_data);
+static void save_file (p_textWnd pTxtWnd, const gchar * filename);
+static void btntlbrclose_clicked (GtkWidget *widget, gpointer user_data);
+static void destroy(GtkWidget *widget, gpointer user_data);
 
 static void btntlbrsave_clicked (GtkWidget *widget, gpointer user_data) {
 	p_textWnd pTxtWnd = (p_textWnd)user_data;
+	GtkWidget *chooser;
+	gint response;
 	
-	askFilename(_("Save Text"), pTxtWnd->filename, saveContent, user_data);
+	chooser = gtk_file_chooser_dialog_new (_("Save Text"), GTK_WINDOW(pTxtWnd->wndText), GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+	
+	gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), pTxtWnd->filename);
+	
+	response = gtk_dialog_run (GTK_DIALOG (chooser));
+	if (response == GTK_RESPONSE_OK) {
+		gchar *filename;
+		
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+		if (filename != NULL) {
+			save_file (pTxtWnd, filename);
+			g_free (filename);
+		}
+	}
+	
+	gtk_widget_destroy (chooser);
 }
 
-static void saveContent (GtkWidget *widget, gpointer user_data) {
-	p_askFilenameInfos paskFnInf = (p_askFilenameInfos)user_data;
-	p_textWnd pTxtWnd = (p_textWnd)paskFnInf->userData;
-	gchar * filename = (gchar *)NULL;
-	gchar * content = (gchar *)NULL;
-	
+static void save_file (p_textWnd pTxtWnd, const gchar * filename) {
+	gchar * content = NULL;
 	GtkTextBuffer * txtBuffer;
 	GtkTextIter begin, end;
-	
 	GIOChannel * saveFile;
-	GError * err = (GError *)NULL;
+	GError * err = NULL;
 	gssize nbBytes;
+	
+	g_return_if_fail (filename != NULL);
+	
+	/*g_print("Save file : '%s'\n", filename);*/
+	
+	if (pTxtWnd->filename != NULL) {
+		g_free(pTxtWnd->filename);
+	}
+	pTxtWnd->filename = g_strdup(filename);
 	
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pTxtWnd->txtContent));
 	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
 	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
 	content = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 
-	filename = (gchar *)gtk_file_selection_get_filename(GTK_FILE_SELECTION (paskFnInf->dialog));
-	
 	saveFile = g_io_channel_new_file(filename, "w", &err);
-	g_io_channel_set_encoding(saveFile, FALSE, &err);
+	g_io_channel_set_encoding(saveFile, "ISO-8859-15", &err);
 	g_io_channel_write_chars(saveFile, content, -1, &nbBytes, &err);
 	g_io_channel_unref(saveFile);
 }
@@ -123,11 +146,20 @@ p_textWnd create_wndText (gboolean display, gchar * content, gchar * filename){
   gtk_widget_show (scrolledwindow);
   gtk_box_pack_start (GTK_BOX (vbox), scrolledwindow, TRUE, TRUE, 0);
 
+#ifdef USE_GTKSOURCEVIEW
+  p_txt->txtContent = gtk_source_view_new ();
+	gtk_source_view_set_show_line_numbers (GTK_SOURCE_VIEW(p_txt->txtContent), TRUE);
+	gtk_source_view_set_tabs_width (GTK_SOURCE_VIEW(p_txt->txtContent), 2);
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(p_txt->txtContent));
+	gtk_source_buffer_set_highlight (GTK_SOURCE_BUFFER(txtBuffer), TRUE);
+	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(txtBuffer), 
+			gtk_source_languages_manager_get_language_from_mime_type(LangManager, "text/x-sql"));
+#else /* USE_GTKSOURCEVIEW */
   p_txt->txtContent = gtk_text_view_new ();
+#endif /* USE_GTKSOURCEVIEW */
   gtk_widget_show (p_txt->txtContent);
   gtk_container_add (GTK_CONTAINER (scrolledwindow), p_txt->txtContent);
-  /*gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (p_txt->txtContent), GTK_WRAP_WORD);*/
-
+  
 	if (content != (gchar *) NULL) {
 		txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(p_txt->txtContent));
 		gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), content, -1);

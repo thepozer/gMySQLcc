@@ -427,145 +427,6 @@ void resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *path_string
 	}
 }
 
-/* Main algorithm to colorize SQL code */
-gboolean colorizeSqlText(GtkTextView *widget, GdkEventKey *event, gpointer user_data) {
-	GtkTextBuffer *txtBuffer;
-	char *csql;
-	char c, startChar;
-	GtkTextIter begin, end, start, finish;
-	unsigned int i, length;
-	
-	txtBuffer = gtk_text_view_get_buffer(widget);
-	gtk_text_buffer_get_start_iter (txtBuffer, &begin);
-	gtk_text_buffer_get_end_iter (txtBuffer, &end);
-	csql = gtk_text_buffer_get_text (txtBuffer, &begin, &end, FALSE);
-	
-	gtk_text_buffer_remove_all_tags(txtBuffer, &begin, &end);
-	length = gtk_text_iter_get_offset(&end);
-	
-	for (i = 0; i < length; i++) {
-		c = csql[i];
-		switch (c) {
-			case '#':
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &start, i);
-				while (++i < length) {
-					if (csql[i] == '\n') {
-						break;
-					}
-				}
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &finish, i);
-				gtk_text_buffer_apply_tag_by_name(txtBuffer, "comment", &start, &finish);
-				
-				break;
-			case '-':
-				if (i + 1 == length) break; /* End of text */
-			
-				if (csql[i + 1] == '-') { /* Line comment */
-					gtk_text_buffer_get_iter_at_offset(txtBuffer, &start, i);
-					while (++i < length) {
-						if (csql[i] == '\n') {
-							break;
-						}
-					}
-					gtk_text_buffer_get_iter_at_offset(txtBuffer, &finish, i);
-					gtk_text_buffer_apply_tag_by_name(txtBuffer, "comment", &start, &finish);
-				}
-				break;
-			case '/': /* Comment ? */
-				if (i + 1 == length) break; /* End of text */
-			
-				if (csql[i + 1] == '*') { /* Comment :) */
-					gtk_text_buffer_get_iter_at_offset(txtBuffer, &start, i);
-					while (++i < length) {
-						if (csql[i] == '*') {
-							i++;
-							if (i == length) break;
-							if (csql[i] == '/') {
-								i++;
-								break;
-							}
-						}
-					}
-				}
-				else {
-					break;
-				}
-				
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &finish, i);
-				gtk_text_buffer_apply_tag_by_name(txtBuffer, "comment", &start, &finish);
-				break;
-			case '"':
-			case '\'':
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &start, i);
-				startChar = c;
-			
-				while (++i < length) {
-					c = csql[i];
-					if ( c == '\\' ) {
-						i++;
-					} else if (c == startChar) {
-						i++;
-						break;
-					}
-				}
-				
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &finish, i);
-				gtk_text_buffer_apply_tag_by_name(txtBuffer, "string", &start, &finish);
-				break;
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				/* Numeric coloration */
-				/* Check if we are not at begining */
-				if ( i > 0 ) {
-					c = csql[i - 1];
-					// Check if previous character is not a letter
-					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ) {
-						break;
-					} else if (c == '.') { 
-						i--;
-					}
-				}
-				
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &start, i);
-				while (++i < length) {
-					if (i == length) break;
-					
-					c = csql[i];
-					
-					if ( !((c >= '0' && c <= '9') || c == '.') ) {
-						break;
-					}
-				}
-				
-				gtk_text_buffer_get_iter_at_offset(txtBuffer, &finish, i);
-				gtk_text_buffer_apply_tag_by_name(txtBuffer, "number", &start, &finish);
-				
-				break;
-		}
-	}
-	
-	g_free(csql);
-	return FALSE;
-}
-
-/* Init SQL tags for coloration */
-void init_sqlTags(GtkTextBuffer *buffer) {
-	gtk_text_buffer_create_tag(buffer, "keyword", "foreground", "#0000CC", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(buffer, "comment", "foreground", "#337F33", NULL);
-	gtk_text_buffer_create_tag(buffer, "string", "foreground", "#B25900", NULL);
-	gtk_text_buffer_create_tag(buffer, "number", "foreground", "#007777", NULL);
-}
-
-
-
 
 p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gchar * query, gboolean execNow) {
 	p_execSqlWnd pExecWnd;
@@ -692,12 +553,19 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gcha
   gtk_widget_show (scrlwndSQLRequest);
   gtk_paned_pack1 (GTK_PANED (vpanedSQL), scrlwndSQLRequest, FALSE, TRUE);
 
+#ifdef USE_GTKSOURCEVIEW
+  pExecWnd->txtSQLRequest = gtk_source_view_new ();
+	gtk_source_view_set_show_line_numbers (GTK_SOURCE_VIEW(pExecWnd->txtSQLRequest), TRUE);
+	gtk_source_view_set_tabs_width (GTK_SOURCE_VIEW(pExecWnd->txtSQLRequest), 2);
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pExecWnd->txtSQLRequest));
+	gtk_source_buffer_set_highlight (GTK_SOURCE_BUFFER(txtBuffer), TRUE);
+	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(txtBuffer), 
+			gtk_source_languages_manager_get_language_from_mime_type(LangManager, "text/x-sql"));
+#else /* USE_GTKSOURCEVIEW */
   pExecWnd->txtSQLRequest = gtk_text_view_new ();
+#endif /* USE_GTKSOURCEVIEW */
   gtk_widget_show (pExecWnd->txtSQLRequest);
   gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), pExecWnd->txtSQLRequest);
-  g_signal_connect (G_OBJECT (pExecWnd->txtSQLRequest), "key-release-event", G_CALLBACK (colorizeSqlText), pExecWnd);
-  
-  init_sqlTags(gtk_text_view_get_buffer(GTK_TEXT_VIEW(pExecWnd->txtSQLRequest)));
   
   pExecWnd->sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (pExecWnd->sclSQLResult);
