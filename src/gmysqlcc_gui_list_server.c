@@ -15,7 +15,8 @@ void gmysqlcc_gui_list_server_evt_btnDel_clicked (GtkWidget *widget, gpointer us
 void gmysqlcc_gui_list_server_evt_btnServerUp_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_list_server_evt_btnServerDown_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_list_server_evt_btnTlbrApply_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_list_server_evt_btnTlbrLoad_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_list_server_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_list_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_list_server_evt_lstListHosts_selected (GtkTreeSelection *selection, gpointer user_data);
 gboolean gmysqlcc_gui_list_server_evt_lstListHosts_btnpress(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
@@ -37,8 +38,9 @@ p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysq
 	gmysqlcc_gui_list_server_create_widget(gui_list_server);
 	gmysqlcc_gui_list_server_init_widget(gui_list_server);
 	
+	/* To hide edition server part */
 	gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked(NULL, gui_list_server);
-
+	
 	NbrWnd ++;	
 	
 	return gui_list_server;
@@ -80,7 +82,7 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 	GtkWidget *hpaned1;
   GtkWidget *toolbar1;
 	GtkWidget * imgToolbar;
-  GtkToolItem * btnTlbrApply, * btnTlbrEdit, * btnTlbrClose;
+  GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrLoad, * btnTlbrClose;
 
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
@@ -104,13 +106,13 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
-	btnTlbrApply = gtk_tool_button_new (imgToolbar, _("Connection"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrApply), TRUE);
-	g_signal_connect (G_OBJECT (btnTlbrApply), "clicked", 
-										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnTlbrApply_clicked), gui_list_server);
-	gtk_widget_show(GTK_WIDGET(btnTlbrApply));
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrApply), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrApply), tooltips, _("Connect to a server"), NULL);
+	btnTlbrConnect = gtk_tool_button_new (imgToolbar, _("Connection"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrConnect), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrConnect), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnTlbrConnect_clicked), gui_list_server);
+	gtk_widget_show(GTK_WIDGET(btnTlbrConnect));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrConnect), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrConnect), tooltips, _("Connect to a server"), NULL);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -121,6 +123,16 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 	gtk_widget_show(GTK_WIDGET(btnTlbrEdit));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrEdit), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrEdit), tooltips, _("Display edit server part"), NULL);
+	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrLoad = gtk_tool_button_new (imgToolbar, _("Execute SQL file"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrLoad), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrLoad), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnTlbrLoad_clicked), gui_list_server);
+	gtk_widget_show(GTK_WIDGET(btnTlbrLoad));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrLoad), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrLoad), tooltips, _("Execute an SQL file on a MySQL server"), NULL);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -585,6 +597,7 @@ void gmysqlcc_gui_list_server_evt_btnServerUp_clicked (GtkWidget *widget, gpoint
 			
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
+			
 			gmysqlcc_gui_list_server_init_widget(gui_list_server);
 		} else {
 			error = TRUE;
@@ -620,6 +633,7 @@ void gmysqlcc_gui_list_server_evt_btnServerDown_clicked (GtkWidget *widget, gpoi
 			
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
+			
 			gmysqlcc_gui_list_server_init_widget(gui_list_server);
 		} else {
 			error = TRUE;
@@ -647,7 +661,17 @@ void gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked (GtkWidget *widget, gpoint
 	}
 }
 
-void gmysqlcc_gui_list_server_evt_btnTlbrApply_clicked (GtkWidget *widget, gpointer user_data) {
+void gmysqlcc_gui_list_server_evt_btnTlbrLoad_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_exec_file gui_xcfl = NULL;
+	
+	gui_xcfl = gmysqlcc_gui_exec_file_new_open_file();
+	
+	if (gui_xcfl != NULL) {
+		gmysqlcc_gui_exec_file_display(gui_xcfl, TRUE);
+	}
+}
+
+void gmysqlcc_gui_list_server_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
 	p_gmysqlcc_gui_server gui_server;
 	GtkWidget * msgdlg;
@@ -682,7 +706,7 @@ void gmysqlcc_gui_list_server_evt_lstListHosts_selected (GtkTreeSelection *selec
 
 gboolean gmysqlcc_gui_list_server_evt_lstListHosts_btnpress(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
 	if (event->type == GDK_2BUTTON_PRESS) {
-		gmysqlcc_gui_list_server_evt_btnTlbrApply_clicked(widget, user_data);
+		gmysqlcc_gui_list_server_evt_btnTlbrConnect_clicked(widget, user_data);
 	}
 	return FALSE;
 }

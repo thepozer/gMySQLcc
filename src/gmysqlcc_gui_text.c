@@ -5,8 +5,11 @@
 void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text);
 void gmysqlcc_gui_text_init_widget (p_gmysqlcc_gui_text gui_text);
 void gmysqlcc_gui_text_save_to_file (p_gmysqlcc_gui_text gui_text, const gchar * filename);
+void gmysqlcc_gui_text_load_from_file (p_gmysqlcc_gui_text gui_text, const gchar * filename);
 
+void gmysqlcc_gui_text_evt_btnTlbrLoad_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_text_evt_btnTlbrSave_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_text_evt_btnTlbrExecute_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_text_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_text_evt_destroy (GtkWidget *widget, gpointer user_data);
 
@@ -85,7 +88,7 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
   GtkWidget *toolbar;
   GtkWidget *scrolledwindow;
  	GtkWidget * imgToolbar;
-  GtkToolItem * btnTlbrClose, * btnTlbrSave;
+  GtkToolItem * btnTlbrLoad, * btnTlbrSave, * btnTlbrExecute, * btnTlbrClose;
 	GtkTooltips * tooltips;
 	GtkTextBuffer * txtBuffer;
 	
@@ -105,6 +108,15 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
   gtk_box_pack_start (GTK_BOX (vbox), toolbar, FALSE, FALSE, 0);
   gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrLoad = gtk_tool_button_new (imgToolbar, _("Open"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrLoad), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrLoad), "clicked", G_CALLBACK (gmysqlcc_gui_text_evt_btnTlbrLoad_clicked), gui_text);
+	gtk_widget_show(GTK_WIDGET(btnTlbrLoad));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrLoad), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrLoad), tooltips, _("Load sql file"), NULL);
+	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnTlbrSave = gtk_tool_button_new (imgToolbar, _("Save"));
@@ -112,7 +124,16 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
 	g_signal_connect (G_OBJECT (btnTlbrSave), "clicked", G_CALLBACK (gmysqlcc_gui_text_evt_btnTlbrSave_clicked), gui_text);
 	gtk_widget_show(GTK_WIDGET(btnTlbrSave));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrSave), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSave), tooltips, _("Save text"), NULL);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSave), tooltips, _("Save sql file"), NULL);
+	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnTlbrExecute = gtk_tool_button_new (imgToolbar, _("Execute"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrExecute), TRUE);
+	g_signal_connect (G_OBJECT (btnTlbrExecute), "clicked", G_CALLBACK (gmysqlcc_gui_text_evt_btnTlbrExecute_clicked), gui_text);
+	gtk_widget_show(GTK_WIDGET(btnTlbrExecute));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrExecute), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrExecute), tooltips, _("Execute sql file"), NULL);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -148,6 +169,29 @@ void gmysqlcc_gui_text_init_widget (p_gmysqlcc_gui_text gui_text) {
 }
 
 
+void gmysqlcc_gui_text_load_from_file (p_gmysqlcc_gui_text gui_text, const gchar * filename) {
+	gchar * content = NULL;
+	GtkTextBuffer * txtBuffer;
+	GIOChannel * loadFile;
+	GError * err = NULL;
+	gssize nbBytes;
+	
+	g_return_if_fail (filename != NULL);
+	
+	g_free(gui_text->filename);
+	gui_text->filename = g_strdup(filename);
+	
+	loadFile = g_io_channel_new_file(filename, "r", &err);
+	g_io_channel_set_encoding(loadFile, "ISO-8859-15", &err);
+	if (g_io_channel_read_to_end(loadFile, &content, &nbBytes, &err) != G_IO_STATUS_NORMAL) {
+		content = NULL;
+	}
+	g_io_channel_unref(loadFile);
+	
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui_text->txtContent));
+	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), content, -1);
+}
+
 void gmysqlcc_gui_text_save_to_file (p_gmysqlcc_gui_text gui_text, const gchar * filename) {
 	gchar * content = NULL;
 	GtkTextBuffer * txtBuffer;
@@ -157,8 +201,6 @@ void gmysqlcc_gui_text_save_to_file (p_gmysqlcc_gui_text gui_text, const gchar *
 	gssize nbBytes;
 	
 	g_return_if_fail (filename != NULL);
-	
-	/*g_print("Save file : '%s'\n", filename);*/
 	
 	g_free(gui_text->filename);
 	gui_text->filename = g_strdup(filename);
@@ -172,7 +214,30 @@ void gmysqlcc_gui_text_save_to_file (p_gmysqlcc_gui_text gui_text, const gchar *
 	g_io_channel_set_encoding(saveFile, "ISO-8859-15", &err);
 	g_io_channel_write_chars(saveFile, content, -1, &nbBytes, &err);
 	g_io_channel_unref(saveFile);
+}
 
+void gmysqlcc_gui_text_evt_btnTlbrLoad_clicked (GtkWidget *widget, gpointer user_data){
+	p_gmysqlcc_gui_text gui_text = (p_gmysqlcc_gui_text)user_data;
+	GtkWidget *chooser;
+	gint response;
+	
+	chooser = gtk_file_chooser_dialog_new (_("Load sql file"), GTK_WINDOW(gui_text->window), GTK_FILE_CHOOSER_ACTION_OPEN,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+	
+	gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), gui_text->filename);
+	
+	response = gtk_dialog_run (GTK_DIALOG (chooser));
+	if (response == GTK_RESPONSE_OK) {
+		gchar *filename;
+		
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+		if (filename != NULL) {
+			gmysqlcc_gui_text_load_from_file (gui_text, filename);
+			g_free (filename);
+		}
+	}
+	
+	gtk_widget_destroy (chooser);
 }
 
 void gmysqlcc_gui_text_evt_btnTlbrSave_clicked (GtkWidget *widget, gpointer user_data) {
@@ -180,7 +245,7 @@ void gmysqlcc_gui_text_evt_btnTlbrSave_clicked (GtkWidget *widget, gpointer user
 	GtkWidget *chooser;
 	gint response;
 	
-	chooser = gtk_file_chooser_dialog_new (_("Save text"), GTK_WINDOW(gui_text->window), GTK_FILE_CHOOSER_ACTION_SAVE,
+	chooser = gtk_file_chooser_dialog_new (_("Save sql file"), GTK_WINDOW(gui_text->window), GTK_FILE_CHOOSER_ACTION_SAVE,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 	
 	gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), gui_text->filename);
@@ -199,6 +264,22 @@ void gmysqlcc_gui_text_evt_btnTlbrSave_clicked (GtkWidget *widget, gpointer user
 	gtk_widget_destroy (chooser);
 }
 
+void gmysqlcc_gui_text_evt_btnTlbrExecute_clicked (GtkWidget *widget, gpointer user_data){
+	p_gmysqlcc_gui_text gui_text = (p_gmysqlcc_gui_text)user_data;
+	p_gmysqlcc_gui_exec_file gui_xcfl;
+	const gchar * content;
+	GtkTextBuffer * txtBuffer;
+	GtkTextIter begin, end;
+	
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui_text->txtContent));
+	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
+	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
+	content = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
+	
+	gui_xcfl = gmysqlcc_gui_exec_file_new();
+	gmysqlcc_gui_exec_file_set_content(gui_xcfl, content);
+	gmysqlcc_gui_exec_file_display(gui_xcfl, TRUE);
+}
 void gmysqlcc_gui_text_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_text gui_text = (p_gmysqlcc_gui_text)user_data;
 	

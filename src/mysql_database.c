@@ -1,18 +1,47 @@
 
 #include "mysql_db_all.h"
 
+p_mysql_database mysql_database_new_create(p_mysql_server mysql_srv, const gchar * db_name) {
+	p_mysql_query mysql_qry;
+	GString * query;
+	gboolean b_ret;
+	
+	if (db_name == NULL) {
+		return NULL;
+	}
+	
+	mysql_qry = mysql_server_query(mysql_srv, NULL);
+	if (mysql_qry == NULL) {
+		return NULL;
+	}
+	
+	query = g_string_new("");
+	g_string_printf(query, "CREATE DATABASE `%s`", db_name);
+	
+	b_ret = mysql_query_execute_query(mysql_qry, query->str, FALSE);
+	
+	mysql_query_delete(mysql_qry);
+	g_string_free (query, TRUE);
+	
+	if (b_ret) {
+		return mysql_database_new(mysql_srv, db_name);
+	} else {
+		return NULL;
+	}
+}
+
 p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	p_mysql_database mysql_db;
 	
 	mysql_db = (p_mysql_database) g_try_malloc(sizeof(s_mysql_database));
 	
-	if (mysql_db == (p_mysql_database)NULL) {
-		return (p_mysql_database)NULL; /* return NULL pointer */
+	if (mysql_db == NULL) {
+		return NULL; /* return NULL pointer */
 	}
 	
 	mysql_db->mysql_srv = mysql_srv;
 	mysql_db->name = g_strdup(db_name);
-	mysql_db->lstTables = (GList *) NULL;
+	mysql_db->lstTables = NULL;
 	mysql_db->hshTables = g_hash_table_new(&g_str_hash, &g_str_equal);
 	mysql_db->found = TRUE;
 		
@@ -21,7 +50,7 @@ p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_n
 
 gboolean mysql_database_delete(p_mysql_database mysql_db) {
 	
-	if (mysql_db == (p_mysql_database)NULL) {
+	if (mysql_db == NULL) {
 		return TRUE;
 	}
 	
@@ -45,8 +74,8 @@ gboolean mysql_database_clean_table_list (p_mysql_database mysql_db) {
 		return TRUE;
 	}
 
-	if (mysql_db->hshTables != (GHashTable *) NULL) {
-		g_hash_table_foreach_steal(mysql_db->hshTables, &htr_remove_table, (gpointer)NULL);
+	if (mysql_db->hshTables !=  NULL) {
+		g_hash_table_foreach_steal(mysql_db->hshTables, &htr_remove_table, NULL);
 		g_hash_table_destroy(mysql_db->hshTables);
 	}
 	
@@ -102,87 +131,3 @@ p_mysql_table mysql_database_get_table (p_mysql_database mysql_db, const gchar *
 }
 
 
-/*
-typedef struct _s_dump_db_info {
-	p_dump_database_params params;
-	GString * strRet;
-	GIOChannel * file;
-	gchar * charset;
-} s_dump_db_info;
-
-GString * mysql_database_dump (p_mysql_database mysql_db, const p_dump_database_params params) {
-	GString * strRet, * strTmp;
-	s_dump_db_info dumpInfo;
-
-	void htr_dump_table(gpointer key, gpointer value, gpointer user_data) {
-		GString * strTmp;
-		s_dump_db_info * dumpInfo = (s_dump_db_info *)user_data;
-		
-		strTmp = mysql_table_dump((p_mysql_table)value, &dumpInfo->params->table);
-		g_string_append(dumpInfo->strRet, strTmp->str);
-		g_string_free(strTmp, TRUE);
-	}
-	
-	strRet = g_string_new("");
-	
-	strTmp = mysql_dump_database_struct(mysql_db->name, params->drop_database, params->use_database);
-	g_string_append(strRet, strTmp->str);
-	g_string_free(strTmp, TRUE);
-	
-	dumpInfo.params = params;
-	dumpInfo.strRet = strRet;
-
-	g_hash_table_foreach(mysql_db->hshTables, &htr_dump_table, (gpointer)&dumpInfo);
-
-	if (params->sql_filename != (gchar *)NULL) {
-		GIOChannel * sqlFile;
-		GError * err = (GError *)NULL;
-		gssize nbBytes;
-		
-		sqlFile = g_io_channel_new_file(params->sql_filename, "w", &err);
-		g_io_channel_set_encoding(sqlFile, (gchar *)NULL, &err);
-		g_io_channel_write_chars(sqlFile, strRet->str, -1, &nbBytes, &err);
-		g_io_channel_unref(sqlFile);
-		g_string_free(strRet, TRUE);
-		return (GString *)NULL;
-	} else {
-		return strRet;
-	}
-}
-
-gboolean mysql_database_dump_direct (p_mysql_database mysql_db, const p_dump_database_params params, GIOChannel * file, const gchar * charset) {
-	GIOChannel * dumpFile;
-	GError * err = (GError *)NULL;
-	s_dump_db_info dumpInfo;
-
-	void htr_dump_table(gpointer key, gpointer value, gpointer user_data) {
-		s_dump_db_info * dumpInfo = (s_dump_db_info *)user_data;
-		
-		mysql_table_dump_direct((p_mysql_table)value, &dumpInfo->params->table, dumpInfo->file, dumpInfo->charset);
-	}
-	
-	if (file == (GIOChannel *)NULL) {
-		dumpFile = g_io_channel_new_file(params->sql_filename, "w", &err);
-		g_io_channel_set_encoding(dumpFile, charset, &err);
-	} else {
-		dumpFile = file;
-	}
-	
-	if (!mysql_dump_database_struct_direct (mysql_db->name, params->drop_database, params->use_database, dumpFile)) {
-		return FALSE;
-	}
-	
-	dumpInfo.params = params;
-	dumpInfo.strRet = (GString *)NULL;
-	dumpInfo.file = dumpFile;
-	dumpInfo.charset = (gchar *)charset;
-
-	g_hash_table_foreach(mysql_db->hshTables, &htr_dump_table, (gpointer)&dumpInfo);
-
-	if (file == (GIOChannel *)NULL) {
-		g_io_channel_unref(dumpFile);		
-	}
-	
-	return TRUE;
-}
-*/

@@ -510,6 +510,8 @@ void gmysqlcc_gui_server_evt_mnuTBLOpsShowCreate_activate (GtkWidget *widget, gp
 		g_string_printf(sqlFilename, "%s-%s-struct.sql", gui_server->curr_mysql_tbl->mysql_db->name, gui_server->curr_mysql_tbl->name);
 		structDump = mysql_table_get_sql_structure(gui_server->curr_mysql_tbl);
 		
+		g_print(structDump->str);
+		
 		gui_text = gmysqlcc_gui_text_new();
 		gmysqlcc_gui_text_set_content(gui_text, structDump->str, sqlFilename->str);
 		gmysqlcc_gui_text_display(gui_text, TRUE);
@@ -591,8 +593,11 @@ void gmysqlcc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer use
 
 void gmysqlcc_gui_server_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	p_gmysqlcc_gui_text gui_text;
 	
-	gmysqlcc_gui_server_open_query_window (gui_server, TRUE);
+	gui_text = gmysqlcc_gui_text_new();
+	gmysqlcc_gui_text_display(gui_text, TRUE);
+	/* gmysqlcc_gui_server_open_query_window (gui_server, TRUE); */
 }
 
 void gmysqlcc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {
@@ -603,9 +608,9 @@ void gmysqlcc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer u
 
 void gmysqlcc_gui_server_evt_btnDbAdd_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GString * dbname, * query;
+	GString * dbname;
 	GtkWidget * msgdlg;
-	p_mysql_query mysql_qry;
+	p_mysql_database mysql_db;
 	
 	dbname = askInfo("New database", "Give the name of the new database :", "new");
 	
@@ -613,21 +618,18 @@ void gmysqlcc_gui_server_evt_btnDbAdd_clicked (GtkWidget *widget, gpointer user_
 		
 		g_print("New database name : '%s'\n", dbname->str);
 		
-		query = g_string_new("");
-		g_string_printf(query, "CREATE DATABASE `%s`", dbname->str);
+		mysql_db = mysql_database_new_create(gui_server->mysql_srv, dbname->str);
 		
-		mysql_qry = mysql_server_query(gui_server->mysql_srv, NULL);
-		
-		if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
+		if (mysql_db != NULL) {
 			msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' created !"), dbname->str);
-			gtk_dialog_run (GTK_DIALOG (msgdlg));
-			gtk_widget_destroy (msgdlg);
-			
-			gmysqlcc_gui_server_fill_database_list (gui_server);
+			mysql_database_delete(mysql_db);
+		} else {
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create database '%s' !"), dbname->str);
 		}
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
 		
-		mysql_query_delete(mysql_qry);
-		g_string_free (query, TRUE);
+		
 	}
 	g_string_free (dbname, TRUE);
 }

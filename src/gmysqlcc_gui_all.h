@@ -24,7 +24,7 @@
 #ifndef __GMYSQLCC_MAIN_PART__
 
 extern int NbrWnd;
-/*extern p_gmysqlcc_config gmysqlcc_conf;*/
+extern p_gmysqlcc_config gmysqlcc_conf;
 
 #ifdef USE_GTKSOURCEVIEW
 extern GtkSourceLanguagesManager * LangManager;
@@ -125,24 +125,43 @@ gboolean gmysqlcc_gui_text_set_content (p_gmysqlcc_gui_text gui_text, const gcha
 gboolean gmysqlcc_gui_text_display (p_gmysqlcc_gui_text gui_text, gboolean display);
 gboolean gmysqlcc_gui_text_delete (p_gmysqlcc_gui_text gui_text);
 
-/* Dump window */
+/* Exec SQL File window */
 
-#define DUMP_LEVEL_NULL 0
-#define DUMP_LEVEL_SERVER 1
-#define DUMP_LEVEL_DATABASE 2
-#define DUMP_LEVEL_TABLE 3
-#define DUMP_LEVEL_REQUEST 4
+typedef struct _s_gmysqlcc_gui_exec_file {
+	GtkWidget * window;
+	GtkWidget * cmbDatabaseList;
+	GtkWidget * cmbServerList;
+  GtkWidget * rbtExistDatabase;
+  GtkWidget * rbtNewDatabase;
+	GtkWidget * txtNewDatabase;
+	GtkWidget * chkStopError;
+	GtkWidget * xpdResults;
+	GtkWidget * pgbWorking;
+	GtkWidget * lblExecutedQueries;
+	GtkWidget * lblErrorQueries;
+	
+	gchar * filename;
+	gchar * content;
+	p_mysql_server mysql_srv;
+	p_mysql_database mysql_db;
+	
+	p_mysql_multi_query mysql_mlt_qry;
+} s_gmysqlcc_gui_exec_file;
+typedef s_gmysqlcc_gui_exec_file * p_gmysqlcc_gui_exec_file;
+
+p_gmysqlcc_gui_exec_file gmysqlcc_gui_exec_file_new ();
+p_gmysqlcc_gui_exec_file gmysqlcc_gui_exec_file_new_open_file ();
+gboolean gmysqlcc_gui_exec_file_set_file (p_gmysqlcc_gui_exec_file gui_xcfl, const gchar * filename);
+gboolean gmysqlcc_gui_exec_file_set_content (p_gmysqlcc_gui_exec_file gui_xcfl, const gchar * content);
+gboolean gmysqlcc_gui_exec_file_display (p_gmysqlcc_gui_exec_file gui_xcfl, gboolean display);
+gboolean gmysqlcc_gui_exec_file_delete (p_gmysqlcc_gui_exec_file gui_xcfl);
+
+/* Dump window */
 
 #define DUMP_TYPE_NULL 0
 #define DUMP_TYPE_STRUCT 1
-#define DUMP_TYPE_STRUCT_DATA 2
-#define DUMP_TYPE_DATA 3
-
-#define DUMP_FORMAT_NULL 0
-#define DUMP_FORMAT_SQL 1
-#define DUMP_FORMAT_CSV 2
-#define DUMP_FORMAT_XML 3
-
+#define DUMP_TYPE_DATA 2
+#define DUMP_TYPE_STRUCT_DATA 3
 
 typedef struct _s_gmysqlcc_gui_dump {
 	GtkWidget * window;
@@ -173,9 +192,9 @@ typedef struct _s_gmysqlcc_gui_dump {
 	p_mysql_database mysql_db;
 	p_mysql_table mysql_tbl;
 	
-	gint16 dumpLevel;
+	e_dumpLevel dumpLevel;
+	e_dumpFormat dumpFormat;
 	gint16 dumpType;
-	gint16 dumpFormat;
 	gchar * sqlQuery;
 } s_gmysqlcc_gui_dump;
 
