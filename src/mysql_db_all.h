@@ -212,7 +212,7 @@ gboolean mysql_query_delete(p_mysql_query mysql_qry);
 p_mysql_query mysql_query_duplicate(p_mysql_query mysql_qry);
 p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry);
 
-gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean add_history);
+gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean force_write);
 gboolean mysql_query_free_query(p_mysql_query mysql_qry);
 
 GArray * mysql_query_get_headers(p_mysql_query mysql_qry);
@@ -228,6 +228,8 @@ gboolean mysql_query_get_can_edit (p_mysql_query mysql_qry);
 
 gchar * mysql_query_get_charset(p_mysql_query mysql_qry);
 gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * charset);
+
+gboolean mysql_query_is_read_query (p_mysql_query mysql_qry, const gchar * query);
 
 /***** Row functions *****/
 

@@ -240,16 +240,31 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 void gmysqlcc_gui_query_execute_query (p_gmysqlcc_gui_query gui_query, const gchar * query) {
 	GtkWidget * msgdlg;
 	
-	/*gmysql_history_add(gmysql_conf->queryHistory, gui_query->mysql_qry->mysql_srv->name, query, TRUE);*/
-	
 	mysql_query_free_query(gui_query->mysql_qry);
-	if (!mysql_query_execute_query(gui_query->mysql_qry, query, TRUE)) {
-		/* Query Not Ok */
-		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_query->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), gui_query->mysql_qry->errCode, gui_query->mysql_qry->errMsg);
-		gtk_dialog_run (GTK_DIALOG (msgdlg));
-		gtk_widget_destroy (msgdlg);
-		mysql_query_free_query(gui_query->mysql_qry);
-		return;
+	if (!mysql_query_execute_query(gui_query->mysql_qry, query, FALSE)) {
+		/* if is it a write warning */
+		if (gui_query->mysql_qry->mysql_srv->write_warning && gui_query->mysql_qry->errCode == -1001) {
+			if (askYesno(_("Write Warning !!!"), _("Warning !!! This server has been marked with Write Warning flags !!!\nIt is dangerous for the data ... :)\n\nDo you want force the execution of the query ?"))) {
+				if (!mysql_query_execute_query(gui_query->mysql_qry, query, TRUE)) {
+					/* Query Not Ok */
+					msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_query->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), gui_query->mysql_qry->errCode, gui_query->mysql_qry->errMsg);
+					gtk_dialog_run (GTK_DIALOG (msgdlg));
+					gtk_widget_destroy (msgdlg);
+					mysql_query_free_query(gui_query->mysql_qry);
+					return;
+				}
+			} else {
+				mysql_query_free_query(gui_query->mysql_qry);
+				return;
+			}
+		} else { /* It is really an error */
+			/* Query Not Ok */
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_query->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), gui_query->mysql_qry->errCode, gui_query->mysql_qry->errMsg);
+			gtk_dialog_run (GTK_DIALOG (msgdlg));
+			gtk_widget_destroy (msgdlg);
+			mysql_query_free_query(gui_query->mysql_qry);
+			return;
+		}
 	}
 	
 	/* Query Ok ... Continue */
