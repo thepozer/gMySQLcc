@@ -4,7 +4,22 @@
 #include <glib.h>
 #include <errno.h>
 
-#include "gTableUtils.h"
+#define FTC_TV_NONE					0
+#define FTC_TV_LENGTH				1
+#define FTC_TV_LENGTH_DECI	2
+#define FTC_TV_LIST_VALUE		3
+
+typedef struct _fieldTypeCapability {
+	char * name;
+	int typeValue; /* 0 - none, 1 - Length, 2 - Length and decials, 3 - List of value */
+	gboolean unsign;
+	gboolean zerofill;
+	gboolean binary;
+	gboolean autoincr;
+} fieldTypeCapability;
+
+typedef fieldTypeCapability * p_fieldTypeCapability;
+
 
 #ifndef __VAR_ARFIELDTYPES__
 
