@@ -1,0 +1,5 @@
+gmysqlcc
+.tm*
+*.prj
+*.bak
+*.pws
