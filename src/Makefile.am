@@ -33,7 +33,8 @@ gmysqlcc_SOURCES = \
 	mysql_table.c\
 	gTableUtils.h\
 	mysql_user.c\
-	gmysql_gui.h
+	gmysql_gui.h\
+	gText.c
 
 gmysqlcc_LDFLAGS = 
 

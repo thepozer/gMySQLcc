@@ -89,6 +89,20 @@ execSqlWnd * create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gcha
 /*void ExecSql (execSqlWnd * stWnd, const char * sqlQuery);*/
 
 
+/* Text window */
+
+
+typedef struct _textWnd {
+	GtkWidget * wndText;
+	GtkWidget * txtContent;
+	
+	gchar * filename;
+} textWnd;
+typedef textWnd * p_textWnd;
+
+p_textWnd create_wndText (gboolean display, gchar * content, gchar * filename);
+
+
 /* History window */
 
 
@@ -165,7 +179,6 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
 
 
 /* Misc gui functiond */
-
 
 typedef struct _askFilenameInfos {
 	GtkWidget * dialog;
