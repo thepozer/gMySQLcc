@@ -1,0 +1,4 @@
+gtk+2 >= 2.4.0
+mysql >= 3.23.0
+gtksourceview >= 1.0.0
+
