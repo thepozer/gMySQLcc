@@ -155,7 +155,7 @@ struct _xmlReadState{
 	GString * localSock;
 } xmlReadState;
 
-char * defaultConf = "<?xml version=\"1.0\" ?><servers><server><name><![CDATA[Localhost]]></name><host><![CDATA[localhost]]></host><port>3306</port><login><![CDATA[root]]></login><passwd><![CDATA[]]></passwd><alloweddbs><![CDATA[]]></alloweddbs><localsock><![CDATA[]]></localsock><options></options></server></servers>";
+char * defaultConf = "<?xml version=\"1.0\" ?><servers><server><name><![CDATA[Localhost]]></name><host><![CDATA[localhost]]></host><port>3306</port><login><![CDATA[root]]></login><passwd><![CDATA[]]></passwd><alloweddbs><![CDATA[]]></alloweddbs><localsock><![CDATA[/var/run/mysqld/mysqld.sock]]></localsock><options></options></server></servers>";
 
 /* xml read functions */
 
