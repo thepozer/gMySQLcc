@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-21 15:16+0200\n"
+"POT-Creation-Date: 2004-10-20 13:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgid "Dump file name"
 msgstr ""
 
 #. Query Not Ok
-#: src/gDump.c:258 src/gExecSql.c:70
+#: src/gDump.c:258 src/gExecSql.c:184
 #, c-format
 msgid "Error during the query : (%d) %s"
 msgstr ""
@@ -123,59 +123,59 @@ msgstr ""
 msgid "_Dump"
 msgstr ""
 
-#: src/gExecSql.c:82
-#, c-format
-msgid "Affected row : %d\n"
-msgstr ""
-
-#: src/gExecSql.c:160
+#: src/gExecSql.c:162
 #, c-format
 msgid "Records : %d"
 msgstr ""
 
-#: src/gExecSql.c:253
+#: src/gExecSql.c:196
+#, c-format
+msgid "Affected row : %d\n"
+msgstr ""
+
+#: src/gExecSql.c:294
 #, c-format
 msgid "Can't use the charset : '%s'"
 msgstr ""
 
-#: src/gExecSql.c:468
+#: src/gExecSql.c:513
 #, c-format
 msgid "SQL Request - %s - %s"
 msgstr ""
 
-#: src/gExecSql.c:487
+#: src/gExecSql.c:532
 msgid "Execute"
 msgstr ""
 
-#: src/gExecSql.c:492
+#: src/gExecSql.c:537
 msgid "Execute SQL query"
 msgstr ""
 
-#: src/gExecSql.c:507
+#: src/gExecSql.c:552
 msgid "Select output charset"
 msgstr ""
 
-#: src/gExecSql.c:511
+#: src/gExecSql.c:556
 msgid "Duplicate"
 msgstr ""
 
-#: src/gExecSql.c:516
+#: src/gExecSql.c:561
 msgid "Duplicate SQL Windows"
 msgstr ""
 
-#: src/gExecSql.c:520 src/gServer.c:586
+#: src/gExecSql.c:565 src/gServer.c:586
 msgid "Dump"
 msgstr ""
 
-#: src/gExecSql.c:525
+#: src/gExecSql.c:570
 msgid "Dump with current query"
 msgstr ""
 
-#: src/gExecSql.c:540 src/gListServer.c:431 src/gServer.c:508 src/gText.c:138
+#: src/gExecSql.c:585 src/gListServer.c:431 src/gServer.c:508 src/gText.c:138
 msgid "Close"
 msgstr ""
 
-#: src/gExecSql.c:545 src/gListServer.c:436 src/gServer.c:513 src/gText.c:143
+#: src/gExecSql.c:590 src/gListServer.c:436 src/gServer.c:513 src/gText.c:143
 msgid "Close window"
 msgstr ""
 
@@ -372,8 +372,8 @@ msgstr ""
 msgid "Display create structure"
 msgstr ""
 
-#: src/gText.c:14
-msgid "Save Text"
+#: src/gText.c:14 src/gText.c:134
+msgid "Save text"
 msgstr ""
 
 #: src/gText.c:112
@@ -383,8 +383,4 @@ msgstr ""
 
 #: src/gText.c:129
 msgid "Save"
-msgstr ""
-
-#: src/gText.c:134
-msgid "Save text"
 msgstr ""

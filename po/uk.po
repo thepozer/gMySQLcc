@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gmysqlcc 0.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-21 15:16+0200\n"
+"POT-Creation-Date: 2004-10-20 13:45+0200\n"
 "PO-Revision-Date: 2004-06-22 09:13+0200\n"
 "Last-Translator: Debian User <gmysqlcc@thepozer.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -38,7 +38,7 @@ msgid "Dump file name"
 msgstr "Dump file name"
 
 #. Query Not Ok
-#: src/gDump.c:258 src/gExecSql.c:70
+#: src/gDump.c:258 src/gExecSql.c:184
 #, c-format
 msgid "Error during the query : (%d) %s"
 msgstr "Error during the query : (%d) %s"
@@ -123,60 +123,60 @@ msgstr "_Close"
 msgid "_Dump"
 msgstr "_Dump"
 
-#: src/gExecSql.c:82
+#: src/gExecSql.c:162
+#, c-format
+msgid "Records : %d"
+msgstr "Records : %d"
+
+#: src/gExecSql.c:196
 #, c-format
 msgid "Affected row : %d\n"
 msgstr "Affected row : %d\n"
 
-#: src/gExecSql.c:160
-#, c-format
-msgid "Records : %d"
-msgstr ""
-
-#: src/gExecSql.c:253
+#: src/gExecSql.c:294
 #, c-format
 msgid "Can't use the charset : '%s'"
 msgstr "Can't use the charset : '%s'"
 
-#: src/gExecSql.c:468
+#: src/gExecSql.c:513
 #, c-format
 msgid "SQL Request - %s - %s"
 msgstr "SQL Request - %s - %s"
 
-#: src/gExecSql.c:487
+#: src/gExecSql.c:532
 msgid "Execute"
 msgstr "Execute"
 
-#: src/gExecSql.c:492
+#: src/gExecSql.c:537
 msgid "Execute SQL query"
 msgstr "Execute SQL query"
 
-#: src/gExecSql.c:507
+#: src/gExecSql.c:552
 #, fuzzy
 msgid "Select output charset"
 msgstr "Output charset :"
 
-#: src/gExecSql.c:511
+#: src/gExecSql.c:556
 msgid "Duplicate"
 msgstr "Duplicate"
 
-#: src/gExecSql.c:516
+#: src/gExecSql.c:561
 msgid "Duplicate SQL Windows"
 msgstr "Duplicate SQL Windows"
 
-#: src/gExecSql.c:520 src/gServer.c:586
+#: src/gExecSql.c:565 src/gServer.c:586
 msgid "Dump"
 msgstr "Dump"
 
-#: src/gExecSql.c:525
+#: src/gExecSql.c:570
 msgid "Dump with current query"
 msgstr "Dump with current query"
 
-#: src/gExecSql.c:540 src/gListServer.c:431 src/gServer.c:508 src/gText.c:138
+#: src/gExecSql.c:585 src/gListServer.c:431 src/gServer.c:508 src/gText.c:138
 msgid "Close"
 msgstr "Close"
 
-#: src/gExecSql.c:545 src/gListServer.c:436 src/gServer.c:513 src/gText.c:143
+#: src/gExecSql.c:590 src/gListServer.c:436 src/gServer.c:513 src/gText.c:143
 msgid "Close window"
 msgstr "Close window"
 
@@ -375,9 +375,9 @@ msgstr "Display all create structures"
 msgid "Display create structure"
 msgstr "Display create structure"
 
-#: src/gText.c:14
-msgid "Save Text"
-msgstr "Save Text"
+#: src/gText.c:14 src/gText.c:134
+msgid "Save text"
+msgstr "Save text"
 
 #: src/gText.c:112
 #, c-format
@@ -389,6 +389,5 @@ msgstr "Text Window - File name : %s"
 msgid "Save"
 msgstr "Save"
 
-#: src/gText.c:134
-msgid "Save text"
-msgstr "Save text"
+#~ msgid "Save Text"
+#~ msgstr "Save Text"
