@@ -1,5 +1,5 @@
 
-#include "gUtils.h"
+#include "gmysql_gui.h"
 
 void closeAskFilename (GtkWidget *widget, gpointer user_data);
 
@@ -145,4 +145,3 @@ GtkWidget * createIconButton(const char * icon, const char * title) {
 	
 	return btn;
 }
-

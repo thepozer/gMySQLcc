@@ -1,7 +1,5 @@
 
-#include "gServer.h"
-
-extern int NbrWnd;
+#include "gmysql_gui.h"
 
 void initDataServer (p_servWnd pSrvWnd);
 void fillBaseList (p_servWnd pSrvWnd);
@@ -138,21 +136,19 @@ static gboolean lsttable_btnpress(GtkWidget *widget, GdkEventButton *event, gpoi
 static void btntlbrsql_clicked (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	execSqlWnd * psqlWnd;
-	GtkTextBuffer * txtBuffer;
 	GString * sqlQuery;
 	p_mysql_query mysql_qry;
 
 	/*if (pSrvWnd->currDbName->len > 0) {*/
 	if (pSrvWnd->curr_mysql_db != (p_mysql_database) NULL) {
 		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, pSrvWnd->curr_mysql_db->name);
-		psqlWnd = create_wndSQL(TRUE, mysql_qry, FALSE);
 		if (pSrvWnd->currTblName->len > 0) {
-			txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(psqlWnd->txtSQLRequest));
 			sqlQuery = g_string_new("");
 			g_string_printf(sqlQuery, "SELECT * \nFROM %s\nWHERE 1\nLIMIT 1000", pSrvWnd->currTblName->str);
-			gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), sqlQuery->str, -1);
-			ExecSql (psqlWnd, sqlQuery->str);
+			psqlWnd = create_wndSQL(TRUE, mysql_qry, sqlQuery->str, TRUE);
 			g_string_free(sqlQuery, TRUE);
+		} else {
+			psqlWnd = create_wndSQL(TRUE, mysql_qry, (gchar *)NULL, FALSE);
 		}
 	}
 }
@@ -164,7 +160,7 @@ static void btntlbrsqlfile_clicked (GtkWidget *widget, gpointer user_data) {
 	
 	if (pSrvWnd->curr_mysql_db != (p_mysql_database)NULL) {
 		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, pSrvWnd->curr_mysql_db->name);
-		psqlWnd = create_wndSQL(TRUE, mysql_qry, TRUE);
+		psqlWnd = create_wndSQL(TRUE, mysql_qry, (gchar *)NULL, FALSE);
 	}
 }
 
@@ -188,7 +184,7 @@ static void btndbadd_clicked (GtkWidget *widget, gpointer user_data) {
 		query = g_string_new("");
 		g_string_printf(query, "CREATE DATABASE `%s`", dbname->str);
 		mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
-		if (mysql_query_execute_query(mysql_qry, query->str)) {
+		if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
 			msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' created !"), dbname->str);
 			gtk_dialog_run (GTK_DIALOG (msgdlg));
 			gtk_widget_destroy (msgdlg);
@@ -215,7 +211,7 @@ static void btndbdel_clicked (GtkWidget *widget, gpointer user_data) {
 			g_string_printf(query, "DROP DATABASE `%s`", pSrvWnd->curr_mysql_db->name);
 			
 			mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
-			if (mysql_query_execute_query(mysql_qry, query->str)) {
+			if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
 				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' deleted !"), pSrvWnd->curr_mysql_db->name);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));
 				gtk_widget_destroy (msgdlg);
@@ -275,7 +271,7 @@ static void btntbldel_clicked (GtkWidget *widget, gpointer user_data) {
 			query = g_string_new("");
 			g_string_printf(query, "DROP TABLE `%s`.`%s`", pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
 			mysql_qry = mysql_server_query(pSrvWnd->mysql_srv, (gchar *)NULL);
-			if (mysql_query_execute_query(mysql_qry, query->str)) {
+			if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
 				msgdlg = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Table '%s'.'%s' deleted !"), pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));
 				gtk_widget_destroy (msgdlg);

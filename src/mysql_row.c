@@ -65,7 +65,7 @@ gchar * mysql_row_set_field_value(p_mysql_row mysql_rw, int idx, const gchar * n
 	g_string_append_printf(strSql, "%s SET `%s` = '%s' WHERE %s", mysql_rw->abs_tbl_name, field->name, new_value, mysql_rw->primary_where_part);
 	g_print("Update SQL : '%s'\n", strSql->str);
 	
-	ret = mysql_query_execute_query(mysql_qry, strSql->str);
+	ret = mysql_query_execute_query(mysql_qry, strSql->str, FALSE);
 	mysql_query_delete(mysql_qry);
 	
 	g_string_free(strSql, TRUE);
@@ -91,7 +91,7 @@ gboolean mysql_row_delete(p_mysql_row mysql_rw) {
 	g_string_printf(strSql, "DELETE FROM %s WHERE %s", mysql_rw->abs_tbl_name, mysql_rw->primary_where_part);
 	g_print("Delete SQL : '%s'\n", strSql->str);
 	
-	ret = mysql_query_execute_query(mysql_qry, strSql->str);
+	ret = mysql_query_execute_query(mysql_qry, strSql->str, FALSE);
 	mysql_query_delete(mysql_qry);
 	
 	g_string_free(strSql, TRUE);

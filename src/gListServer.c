@@ -1,7 +1,5 @@
 
-#include "gListServer.h"
-
-extern int NbrWnd;
+#include "gmysql_gui.h"
 
 char * arFieldNames[] = {"Name", "Host", "Port", "Login", "Password"};
 

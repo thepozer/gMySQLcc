@@ -48,7 +48,7 @@ GString * mysql_dump_table_struct (p_mysql_query mysql_qry, const gchar * tbl_na
 	}
 	g_string_printf(strSql, "SHOW CREATE TABLE `%s`.`%s`", mysql_qry->db_name, tbl_name);
 	g_print("gmysql_dump_query_table - with_struct - sql : '%s'\n", strSql->str);
-	if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 		arRow = mysql_query_get_next_record(mysql_qry);
 		if (arRow != (GArray *)NULL) {
 			g_string_append(strRet, g_array_index(arRow, gchar *, 1));
@@ -76,7 +76,7 @@ GString * mysql_dump_table_data (p_mysql_query mysql_qry, const gchar * tbl_name
 	g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_qry->db_name, tbl_name);
 	g_print("gmysql_dump_query_table - with_data - sql : '%s'\n", strSql->str);
 	
-	if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 
 		if (complete_insert) {
 			g_string_printf(strInsert, "INSERT INTO `%s` (", tbl_name);
@@ -238,7 +238,7 @@ gboolean mysql_dump_table_struct_direct (p_mysql_query mysql_qry, const gchar * 
 	
 	g_string_printf(strSql, "SHOW CREATE TABLE `%s`.`%s`", mysql_qry->db_name, tbl_name);
 	g_print("gmysql_dump_query_table - with_struct - sql : '%s'\n", strSql->str);
-	if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 		arRow = mysql_query_get_next_record(mysql_qry);
 		if (arRow != (GArray *)NULL) {
 			strRet = g_string_new(g_array_index(arRow, gchar *, 1));
@@ -271,7 +271,7 @@ gboolean mysql_dump_table_data_direct (p_mysql_query mysql_qry, const gchar * tb
 	g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_qry->db_name, tbl_name);
 	g_print("gmysql_dump_query_table - with_data - sql : '%s'\n", strSql->str);
 	
-	if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 
 		if (complete_insert) {
 			g_string_printf(strInsert, "INSERT INTO `%s` (", tbl_name);

@@ -4,6 +4,7 @@
 #include "gmysql_utils.h"
 
 #include <errno.h>
+#include <string.h>
 
 p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	p_mysql_query mysql_qry;
@@ -154,7 +155,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 p_mysql_database mysql_query_get_database(p_mysql_query mysql_qry) {
 	return mysql_server_get_database (mysql_qry->mysql_srv, mysql_qry->db_name);
 }
-gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query) {
+gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query, gboolean user_query) {
 	int errcode;
 	
 	if (mysql_qry == (p_mysql_query)NULL) {
@@ -169,6 +170,9 @@ gboolean mysql_query_execute_query(p_mysql_query mysql_qry, const gchar * query)
 	
 	/* Ping mysql host to reconnect if needeed */
 	mysql_ping (mysql_qry->mysql_link);
+	
+	/* Clear old query infos */
+	mysql_query_free_query(mysql_qry);
 	
 	/* Execute Query */
 	errcode = mysql_real_query(mysql_qry->mysql_link, mysql_qry->query, strlen(mysql_qry->query));
@@ -224,7 +228,6 @@ gboolean mysql_query_free_query(p_mysql_query mysql_qry) {
 		g_array_free(mysql_qry->rawHeaders, TRUE);
 		mysql_qry->rawHeaders = (GArray *)NULL;
 	}
-	
 	
 	mysql_qry->mysql_result = (MYSQL_RES *)NULL;
 	mysql_qry->query = (gchar *)NULL;
