@@ -64,7 +64,7 @@ gboolean mysql_table_dump_direct (p_mysql_table mysql_tbl, const p_dump_table_pa
 		strSql = g_string_new("");
 		g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_qry->db_name, mysql_tbl->name);
 		g_print("mysql_table_dump_direct - with_data - sql : '%s'\n", strSql->str);
-		if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+		if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 			if (!mysql_dump_query_sql_direct (mysql_qry, params->data_complete_insert, file)) {
 				return FALSE;
 			}
@@ -100,7 +100,7 @@ GString * mysql_table_dump (p_mysql_table mysql_tbl, const p_dump_table_params p
 		strSql = g_string_new("");
 		g_string_printf(strSql, "SELECT * FROM `%s`.`%s`", mysql_qry->db_name, mysql_tbl->name);
 		g_print("mysql_table_dump - with_data - sql : '%s'\n", strSql->str);
-		if (mysql_query_execute_query(mysql_qry, strSql->str)) {
+		if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 			strTmp = mysql_dump_table_data (mysql_qry, mysql_tbl->name, params->data_complete_insert);
 			g_string_append(strRet, strTmp->str);
 			g_string_free(strTmp, TRUE);
@@ -125,7 +125,4 @@ GString * mysql_table_dump (p_mysql_table mysql_tbl, const p_dump_table_params p
 	} else {
 		return strRet;
 	}
-}
-gboolean mysql_table_set_status_infos (p_mysql_table mysql_tbl, guint64 nbrRow, guint64 size, const gchar * type) {
-	return TRUE;
 }

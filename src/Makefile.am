@@ -15,15 +15,10 @@ bin_PROGRAMS = gmysqlcc
 
 gmysqlcc_SOURCES = \
 	gDump.c\
-	gDump.h\
 	gExecSql.c\
-	gExecSql.h\
 	gListServer.c\
-	gListServer.h\
 	gServer.c\
-	gServer.h\
 	gUtils.c\
-	gUtils.h\
 	gmysql_conf.c\
 	gmysql_conf.h\
 	gmysql_utils.c\
@@ -35,7 +30,10 @@ gmysqlcc_SOURCES = \
 	mysql_query.c\
 	mysql_row.c\
 	mysql_server.c\
-	mysql_table.c
+	mysql_table.c\
+	gTableUtils.h\
+	mysql_user.c\
+	gmysql_gui.h
 
 gmysqlcc_LDFLAGS = 
 

@@ -3,43 +3,78 @@
 
 /* gmysql_config functions */
 p_gmysql_config gmysql_config_new () {
-	p_gmysql_config gmsql_conf;
+	p_gmysql_config gmysql_conf;
+	GString * filePath;
+
+	gmysql_conf = (p_gmysql_config) g_try_malloc(sizeof(s_gmysql_config));
 	
-	gmsql_conf = (p_gmysql_config) g_try_malloc(sizeof(gmysql_config));
-	
-	if (gmsql_conf == (p_gmysql_config)NULL) {
+	if (gmysql_conf == (p_gmysql_config)NULL) {
 		return (p_gmysql_config)NULL; /* return NULL pointer */
 	}
 	
-	gmsql_conf->lstServers = (GList *) NULL;
+	filePath = g_string_new("");
 	
-	return gmsql_conf;
+	g_string_printf(filePath, "%s/%s/%s", g_get_home_dir(), CONF_DIR, XML_FILE);
+	gmysql_conf->configFileName = g_strdup(filePath->str);
+
+	/*g_string_printf(filePath, "%s/%s/%s", g_get_home_dir(), CONF_DIR, QUERY_HISTORY_FILE);
+	gmysql_conf->queryHistory = gmysql_history_new(filePath->str);*/
+
+	gmysql_conf->lstServers = (GList *) NULL;
+	
+	g_string_free(filePath, TRUE);
+	
+	return gmysql_conf;
 }
 
-gboolean gmysql_config_delete (p_gmysql_config gmsql_conf) {
+gboolean gmysql_config_init (p_gmysql_config gmysql_conf) {
+	GString * filePath;
+
+	if (gmysql_conf == (p_gmysql_config)NULL) {
+		return FALSE;
+	}
+	
+	filePath = g_string_new("");
+	
+	g_string_printf(filePath, "%s/%s", g_get_home_dir(), CONF_DIR);
+	if (!g_file_test(filePath->str, (G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS))) {
+		mkdir (filePath->str, 0700);
+	}
+	
+	g_string_free(filePath, TRUE);
+	
+	gmysql_config_read_xml(gmysql_conf);
+	
+	/*gmysql_history_read(gmysql_conf->queryHistory);*/
+	
+	return TRUE;
+}
+
+gboolean gmysql_config_delete (p_gmysql_config gmysql_conf) {
 	GList * lstServersIdx;
 	
-	if (gmsql_conf != (p_gmysql_config)NULL) {
-		if (gmsql_conf->lstServers != (GList *) NULL) {
-			lstServersIdx = g_list_first(gmsql_conf->lstServers);
+	if (gmysql_conf != (p_gmysql_config)NULL) {
+		if (gmysql_conf->lstServers != (GList *) NULL) {
+			lstServersIdx = g_list_first(gmysql_conf->lstServers);
 			while (lstServersIdx != (GList *)NULL) {
 				 mysql_server_delete((p_mysql_server)lstServersIdx->data); 
 				lstServersIdx = g_list_next(lstServersIdx);
 			}
 		}
 		
-		g_list_free(gmsql_conf->lstServers);
+		g_list_free(gmysql_conf->lstServers);
 		
-		g_free(gmsql_conf);
+		g_free(gmysql_conf->configFileName);
+		g_free(gmysql_conf);
 	}
 	
 	return TRUE;
 }
 
-gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
+gboolean gmysql_config_add_server (p_gmysql_config gmysql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
 	p_mysql_server msql_srv;
 	
-	msql_srv = gmysql_config_get_server(gmsql_conf, name);
+	msql_srv = gmysql_config_get_server(gmysql_conf, name);
 	
 	if (msql_srv != (p_mysql_server)NULL) {
 		return FALSE;
@@ -58,15 +93,15 @@ gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gch
 	msql_srv->allowedDbs = g_strdup(dbAllowedList);
 	msql_srv->localSock= g_strdup(localSock);
 	
-	gmsql_conf->lstServers = g_list_append(gmsql_conf->lstServers, msql_srv);
+	gmysql_conf->lstServers = g_list_append(gmysql_conf->lstServers, msql_srv);
 	
 	return TRUE;
 }
 
-gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
+gboolean gmysql_config_update_server (p_gmysql_config gmysql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
 	p_mysql_server msql_srv;
 	
-	msql_srv = gmysql_config_get_server(gmsql_conf, oldname);
+	msql_srv = gmysql_config_get_server(gmysql_conf, oldname);
 	
 	if (msql_srv != (p_mysql_server)NULL) {
 
@@ -93,17 +128,17 @@ gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * 
 	return FALSE;
 }
 
-gboolean gmysql_config_del_server (p_gmysql_config gmsql_conf, const gchar * name) {
+gboolean gmysql_config_del_server (p_gmysql_config gmysql_conf, const gchar * name) {
 	p_mysql_server msql_srv;
 	GList * lstServersIdx;
 	
-	lstServersIdx = g_list_first(gmsql_conf->lstServers);
+	lstServersIdx = g_list_first(gmysql_conf->lstServers);
 	
 	while (lstServersIdx != (GList *)NULL) {
 		msql_srv = (p_mysql_server) lstServersIdx->data;
 		if (g_ascii_strcasecmp(msql_srv->name, name) == 0) {
 			mysql_server_delete(msql_srv);
-			gmsql_conf->lstServers = g_list_delete_link(gmsql_conf->lstServers, lstServersIdx);
+			gmysql_conf->lstServers = g_list_delete_link(gmysql_conf->lstServers, lstServersIdx);
 			return TRUE;
 		}
 		lstServersIdx = g_list_next(lstServersIdx);
@@ -112,11 +147,11 @@ gboolean gmysql_config_del_server (p_gmysql_config gmsql_conf, const gchar * nam
 	return FALSE;
 }
 
-p_mysql_server gmysql_config_get_server (p_gmysql_config gmsql_conf, const gchar * name) {
+p_mysql_server gmysql_config_get_server (p_gmysql_config gmysql_conf, const gchar * name) {
 	p_mysql_server msql_srv;
 	GList * lstServersIdx;
 	
-	lstServersIdx = g_list_first(gmsql_conf->lstServers);
+	lstServersIdx = g_list_first(gmysql_conf->lstServers);
 	
 	while (lstServersIdx != (GList *)NULL) {
 		msql_srv = (p_mysql_server) lstServersIdx->data;
@@ -164,7 +199,7 @@ void xmlConfEnd (GMarkupParseContext *context, const gchar * element_name, gpoin
 void xmlConfText (GMarkupParseContext *context, const gchar * text, gsize text_len, gpointer user_data, GError ** error);
 void xmlConfPassthrough (GMarkupParseContext *context, const gchar * passthrough_text, gsize text_len, gpointer user_data, GError **error);
 
-gboolean gmysql_config_read_xml (p_gmysql_config gmsql_conf, const gchar * filename) {
+gboolean gmysql_config_read_xml (p_gmysql_config gmysql_conf) {
 
 	GMarkupParser xmlParse;
 	GMarkupParseContext * xmlContext;
@@ -173,12 +208,12 @@ gboolean gmysql_config_read_xml (p_gmysql_config gmsql_conf, const gchar * filen
 	gchar sbuf[257];
 	int szRead;
 	
-	if (filename == (gchar *)NULL) {
-		return FALSE;
+	if (gmysql_conf == (p_gmysql_config)NULL) {
+		return FALSE; 
 	}
 	
-	if (gmsql_conf == (p_gmysql_config)NULL) {
-		return FALSE; 
+	if (gmysql_conf->configFileName == (gchar *)NULL) {
+		return FALSE;
 	}
 	
 	/* Init XMl parser Struct */
@@ -199,10 +234,10 @@ gboolean gmysql_config_read_xml (p_gmysql_config gmsql_conf, const gchar * filen
 	xmlReadState.localSock = g_string_sized_new(48);
 
 	/* Create XML Parser */
-	xmlContext = g_markup_parse_context_new(&xmlParse, 0, (gpointer)gmsql_conf, (GDestroyNotify)NULL);
+	xmlContext = g_markup_parse_context_new(&xmlParse, 0, (gpointer)gmysql_conf, (GDestroyNotify)NULL);
 	
-	/*g_print("File open : '%s'\n", filename);*/
-	xmlFile = fopen(filename, "r");
+	/*g_print("File open : '%s'\n", gmysql_conf->configFileName);*/
+	xmlFile = fopen(gmysql_conf->configFileName, "r");
 	if (xmlFile == (FILE *)NULL) { /* Not found conf file -> use default conf */
 		g_printerr("Error file open : %s. -> read default configuration\n", strerror(errno));
 		g_markup_parse_context_parse(xmlContext, defaultConf, strlen(defaultConf), &gerr);
@@ -225,19 +260,23 @@ gboolean gmysql_config_read_xml (p_gmysql_config gmsql_conf, const gchar * filen
 	return TRUE;
 }
 
-gboolean gmysql_config_write_xml (p_gmysql_config gmsql_conf, const gchar * filename) {
+gboolean gmysql_config_write_xml (p_gmysql_config gmysql_conf) {
 	GString * xmlContent;
 	GList * lstServersIdx;
 	p_mysql_server msql_srv;
 	FILE * xmlFile;
 	
-	if (filename == (gchar *)NULL) {
+	if (gmysql_conf == (p_gmysql_config)NULL) {
+		return FALSE; 
+	}
+	
+	if (gmysql_conf->configFileName == (gchar *)NULL) {
 		return FALSE;
 	}
 	
 	xmlContent = g_string_new("<?xml version=\"1.0\" ?>\n<servers>\n");
 	
-	lstServersIdx = g_list_first(gmsql_conf->lstServers);
+	lstServersIdx = g_list_first(gmysql_conf->lstServers);
 	
 	while (lstServersIdx != (GList *)NULL) {
 		msql_srv = (p_mysql_server) lstServersIdx->data;
@@ -263,7 +302,7 @@ gboolean gmysql_config_write_xml (p_gmysql_config gmsql_conf, const gchar * file
 
 	g_string_append(xmlContent, "</servers>\n");
 	
-	xmlFile = fopen(filename, "w");
+	xmlFile = fopen(gmysql_conf->configFileName, "w");
 	if (xmlFile == (FILE *)NULL) {
 		g_printerr("Error file open : %s.\n", strerror(errno));
 		return FALSE;
@@ -310,12 +349,12 @@ void xmlConfStart (GMarkupParseContext *context, const gchar * element_name, con
 }
 
 void xmlConfEnd (GMarkupParseContext *context, const gchar * element_name, gpointer user_data, GError ** error) {
-	p_gmysql_config gmsql_conf = (p_gmysql_config)user_data;
+	p_gmysql_config gmysql_conf = (p_gmysql_config)user_data;
 
 	if (g_ascii_strcasecmp(element_name, "servers") == 0 && xmlReadState.state == X_IN_ROOT) {
 		xmlReadState.state = X_OUT_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "server") == 0 && xmlReadState.state == X_IN_SERVER) {
-		gmysql_config_add_server(gmsql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str, xmlReadState.localSock->str);
+		gmysql_config_add_server(gmysql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str, xmlReadState.localSock->str);
 		xmlReadState.state = X_IN_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xmlReadState.state == X_IN_NAME) {
 		xmlReadState.state = X_IN_SERVER;

@@ -65,7 +65,7 @@ gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
 	ssql = g_string_new("");
 	g_string_printf(ssql, "SHOW TABLE STATUS FROM `%s`", mysql_db->name);
 	
-	if (mysql_query_execute_query(mysql_qry, ssql->str)) {
+	if (mysql_query_execute_query(mysql_qry, ssql->str, FALSE)) {
 	
 		arRow = mysql_query_get_next_record(mysql_qry);
 		

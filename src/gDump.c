@@ -1,7 +1,5 @@
 
-#include "gDump.h"
-
-extern int NbrWnd;
+#include "gmysql_gui.h"
 
 void initDump (p_dumpWnd p_wnd);
 void dumpSql (GtkWidget *widget, gpointer user_data);
@@ -250,7 +248,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 				mysql_qry = mysql_database_query(p_wnd->mysql_db);
 			}
 			
-			if (!mysql_query_execute_query(mysql_qry, sqlRequest)) {
+			if (!mysql_query_execute_query(mysql_qry, sqlRequest, FALSE)) {
 				/* Query Not Ok */
 				msgdlg = gtk_message_dialog_new(GTK_WINDOW(p_wnd->wndDump), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), mysql_qry->errCode, mysql_qry->errMsg);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));

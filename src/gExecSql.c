@@ -1,7 +1,5 @@
 
-#include "gExecSql.h"
-
-extern int NbrWnd;
+#include "gmysql_gui.h"
 
 /* Definitions of all locals functions */
 GString * protectUnderscore (const gchar * str);
@@ -42,8 +40,9 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	p_mysql_row mysql_rw;
 	s_cols_nfo * ar_cols_nfo;
 	
-	int i, nbrcol;
-
+	int i, nbrcol, count;
+	guint sbContext, sbItemId;
+	
 	GType * arTypes;
 	GArray * arRow;
 	GtkListStore * ls;
@@ -54,10 +53,11 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	GValue gvalpoint = {0, };
 	GValue gvalbool = {0, };
 	GtkWidget * msgdlg;
-	GString * colTitle;
-	
+	GString * colTitle, *strSttsBar;
 	
 	mysql_qry = pExecWnd->mysql_qry;
+	
+	/*gmysql_history_add(gmysql_conf->queryHistory, mysql_qry->mysql_srv->name, sqlQuery, TRUE);*/
 	
 	/* Delete old Columns */
 	while ((currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(pExecWnd->lstSQLResult), 0)) != (GtkTreeViewColumn *)NULL) {
@@ -65,7 +65,7 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	}
 	
 	mysql_query_free_query(mysql_qry);
-	if (!mysql_query_execute_query(mysql_qry, sqlQuery)) {
+	if (!mysql_query_execute_query(mysql_qry, sqlQuery, TRUE)) {
 		/* Query Not Ok */
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pExecWnd->wndMain), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), mysql_qry->errCode, mysql_qry->errMsg);
 		gtk_dialog_run (GTK_DIALOG (msgdlg));
@@ -96,10 +96,11 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 	arTypes[mysql_qry->nbrField] = G_TYPE_POINTER;
 	
 	ls = gtk_list_store_newv(nbrcol, arTypes);
-	
+	count = 0;
 	g_value_init(&gval, G_TYPE_STRING);
 	g_value_init(&gvalpoint, G_TYPE_POINTER);
-	while (mysql_rw = mysql_row_new_next_record(mysql_qry)) {
+	while ((mysql_rw = mysql_row_new_next_record(mysql_qry))) {
+		count ++;
 		
 		gtk_list_store_append(ls, &iter);
 		
@@ -155,8 +156,14 @@ void ExecSql (p_execSqlWnd pExecWnd, const char * sqlQuery) {
 		g_array_free(arRow, FALSE);
 	}
 	
-	//mysql_query_free_query(mysql_qry);
+	strSttsBar = g_string_new("");
+	g_string_printf(strSttsBar, _("Records : %d"), count);
 	
+	g_print("%s\n", strSttsBar->str);
+	sbContext = gtk_statusbar_get_context_id(GTK_STATUSBAR(pExecWnd->statusbarSQL), "SQL_Nb_Record");
+	sbItemId = gtk_statusbar_push(GTK_STATUSBAR(pExecWnd->statusbarSQL), sbContext, strSttsBar->str);
+	
+	g_string_free(strSttsBar, TRUE);
 }
 
 gboolean ExecSqlEvent (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
@@ -175,7 +182,7 @@ void btnduplicatesql_clicked (GtkWidget *widget, gpointer user_data) {
 	GtkTextIter begin, end;
 	gchar * sqlQuery;
 	
-	psqlWnd = create_wndSQL(TRUE, mysql_query_duplicate(pExecWnd->mysql_qry), FALSE);
+	psqlWnd = create_wndSQL(TRUE, mysql_query_duplicate(pExecWnd->mysql_qry), (gchar *)NULL, FALSE);
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pExecWnd->txtSQLRequest));
 	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
 	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
@@ -220,6 +227,12 @@ void btnexecsql_clicked (GtkWidget *widget, gpointer user_data) {
 	/*g_print("SQL Query : '%s'\n", csql);*/
 	
 	ExecSql(pExecWnd, csql);
+}
+
+void btnHistory_clicked (GtkWidget *widget, gpointer user_data) {
+	/*p_execSqlWnd pExecWnd = (p_execSqlWnd)user_data;*/
+	
+	/*create_wndHistory(TRUE);*/
 }
 
 void btnclose_clicked (GtkWidget *widget, gpointer user_data) {
@@ -370,7 +383,7 @@ static void destroy(GtkWidget *widget, gpointer user_data) {
 	
 	/* Destroy Application if needed */
 	NbrWnd--;
-	g_printerr("Destruction main window - nbrWnd : %d\n", NbrWnd);
+	g_printerr("Destruction Exec SQL window - nbrWnd : %d\n", NbrWnd);
 	if (NbrWnd <= 0) {
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
@@ -551,7 +564,10 @@ void init_sqlTags(GtkTextBuffer *buffer) {
 	gtk_text_buffer_create_tag(buffer, "number", "foreground", "#007777", NULL);
 }
 
-p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean multiple) {
+
+
+
+p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, const gchar * query, gboolean execNow) {
 	p_execSqlWnd pExecWnd;
 	GString * sTitle;
 	gint idx;
@@ -564,12 +580,14 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean m
 	GtkToolItem *ticmbCharset;
 	GtkToolItem *btnDumpSql;
 	GtkToolItem *btnDuplicateSql;
+	GtkToolItem *btnHistory;
 	GtkToolItem *btnClose;
 	GtkTooltips * tooltips;
 	GtkWidget * imgToolbar;
 	GtkWidget * tlbSql;
 	
 	GtkTreeSelection *select;
+	GtkTextBuffer * txtBuffer;
 
 	/* Init structure */
 	pExecWnd = (p_execSqlWnd) g_try_malloc(sizeof(execSqlWnd));
@@ -644,7 +662,18 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean m
 	gtk_widget_show(GTK_WIDGET(btnDumpSql));
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnDumpSql), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDumpSql), tooltips, _("Dump with current query"), NULL);
-		
+	
+	/*
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnHistory = gtk_tool_button_new (imgToolbar, _("History"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnHistory), TRUE);
+	g_signal_connect (G_OBJECT (btnHistory), "clicked", G_CALLBACK (btnHistory_clicked), pExecWnd);
+	gtk_widget_show(GTK_WIDGET(btnHistory));
+	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnHistory), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnHistory), tooltips, _("Queries history"), NULL);
+	*/
+	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnClose = gtk_tool_button_new (imgToolbar, _("Close"));
@@ -690,6 +719,14 @@ p_execSqlWnd create_wndSQL(gboolean display, p_mysql_query mysql_qry, gboolean m
 		gtk_widget_show (pExecWnd->wndMain);
 		NbrWnd ++;
 	}		
-
+	
+	if (query != (gchar *) NULL) {
+		txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pExecWnd->txtSQLRequest));
+		gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), query, -1);
+		if (execNow) {
+			ExecSql (pExecWnd, query);
+		}
+	}
+	
 	return pExecWnd;
 }
