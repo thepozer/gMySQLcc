@@ -44,7 +44,7 @@ fi
 dnl Gettext part
 GETTEXT_PACKAGE=gmysqlcc
 AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Package name for gettext])
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Package name for gettext])
 
 ALL_LINGUAS="uk fr"
 AM_GNU_GETTEXT
@@ -52,14 +52,14 @@ AM_GNU_GETTEXT_VERSION(0.14.1)
 
 dnl Set PACKAGE_LOCALE_DIR in config.h.
 if test "x${prefix}" = "xNONE"; then
-  AC_DEFINE(PACKAGE_LOCALE_DIR, "${ac_default_prefix}/${DATADIRNAME}/locale", [Set PACKAGE_LOCALE_DIR in config.h])
+	AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${ac_default_prefix}/${DATADIRNAME}/locale", [Set PACKAGE_LOCALE_DIR in config.h])
 else
-  AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/${DATADIRNAME}/locale", [Set PACKAGE_LOCALE_DIR in config.h])
+	AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${prefix}/${DATADIRNAME}/locale", [Set PACKAGE_LOCALE_DIR in config.h])
 fi
 
 dnl Set PACKAGE SOURCE DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
-AC_DEFINE(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Set PACKAGE SOURCE DIR in config.h])
+AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Set PACKAGE SOURCE DIR in config.h])
 
 dnl Output files
 AC_OUTPUT([Makefile
