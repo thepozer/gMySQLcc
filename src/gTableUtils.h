@@ -20,12 +20,6 @@ typedef struct _fieldTypeCapability {
 } fieldTypeCapability;
 typedef fieldTypeCapability * p_fieldTypeCapability;
 
-#ifndef __VAR_ARFIELDTYPES__
-
-extern p_fieldTypeCapability * arFieldTypes;
-extern int szarFieldTypes;
-
-#endif /* __VAR_ARFIELDTYPES__ */
 
 #define STTS_ORIGIN -1
 #define STTS_ADD     1
