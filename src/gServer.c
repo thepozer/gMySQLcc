@@ -127,8 +127,19 @@ static gboolean lstbase_btnpress(GtkWidget *widget, GdkEventButton *event, gpoin
 }
 
 static gboolean lsttable_btnpress(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	if (event->type == GDK_2BUTTON_PRESS) {
-		btntlbrsql_clicked(widget, user_data);
+	p_servWnd pSrvWnd = (p_servWnd)user_data;
+
+	switch (event->button) {
+		case 1 : /* Left button */
+			if (event->type == GDK_2BUTTON_PRESS) {
+				btntlbrsql_clicked(widget, user_data);
+			}
+			break;
+		case 3 : /* Right button */
+			if (event->type == GDK_BUTTON_PRESS) {
+				gtk_menu_popup(GTK_MENU(pSrvWnd->mnuTblOps), GTK_WIDGET(NULL), GTK_WIDGET(NULL), (void *)NULL, user_data, event->button, event->time);
+			}
+			break;
 	}
 	return FALSE;
 }
@@ -283,10 +294,25 @@ static void btntbldel_clicked (GtkWidget *widget, gpointer user_data) {
 	}
 }
 
-void mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
+static void mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
 	p_servWnd pSrvWnd = (p_servWnd)user_data;
 	
 	initDataServer (pSrvWnd);
+}
+
+static void mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
+	p_servWnd pSrvWnd = (p_servWnd)user_data;
+	execSqlWnd * psqlWnd;
+	GString * sqlQuery;
+	p_mysql_query mysql_qry;
+	
+	if (pSrvWnd->curr_mysql_tbl != (p_mysql_table)NULL) {
+		mysql_qry = mysql_table_query(pSrvWnd->curr_mysql_tbl);
+		sqlQuery = g_string_new("");
+		g_string_printf(sqlQuery, "SHOW CREATE TABLE `%s`.`%s`", pSrvWnd->curr_mysql_db->name, pSrvWnd->curr_mysql_tbl->name);
+		psqlWnd = create_wndSQL(TRUE, mysql_qry, sqlQuery->str, TRUE);
+		g_string_free(sqlQuery, TRUE);
+	}
 }
 
 static void baseSelected (GtkTreeSelection *selection, gpointer data) {
@@ -353,6 +379,7 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 	GtkWidget *btnDBAdd, *btnDBDel;
   GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
 	GtkWidget *mnuDBOpsRefresh;
+	GtkWidget *mnuTBLOpsShowCreate;
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
 	GString * sTitle;
@@ -539,6 +566,14 @@ p_servWnd create_wndServer (gboolean display, p_mysql_server mysql_srv) {
 	gtk_widget_show (mnuDBOpsRefresh);
 	gtk_menu_append (GTK_MENU_SHELL(p_svr->mnuBdOps), mnuDBOpsRefresh);
 	g_signal_connect (G_OBJECT (mnuDBOpsRefresh), "activate", G_CALLBACK (mnuDBOpsRefresh_activate), (gpointer)p_svr);
+	
+	p_svr->mnuTblOps = gtk_menu_new();
+	gtk_widget_show (p_svr->mnuTblOps);
+
+	mnuTBLOpsShowCreate = gtk_menu_item_new_with_label(_("Display create structure"));
+	gtk_widget_show (mnuTBLOpsShowCreate);
+	gtk_menu_append (GTK_MENU_SHELL(p_svr->mnuTblOps), mnuTBLOpsShowCreate);
+	g_signal_connect (G_OBJECT (mnuTBLOpsShowCreate), "activate", G_CALLBACK (mnuTBLOpsShowCreate_activate), (gpointer)p_svr);
 	
 	initDataServer(p_svr);
 	
