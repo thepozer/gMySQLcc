@@ -27,5 +27,7 @@ src/mysql_query.c
 src/mysql_row.c
 src/mysql_server.c
 src/mysql_table.c
+src/gTableUtils.h
+src/mysql_user.c
 
 
