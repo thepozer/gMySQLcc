@@ -48,7 +48,9 @@ typedef struct _s_gmysqlcc_gui_list_server {
 	GtkWidget * chkWriteWarning;
 	
 	GtkWidget * lstListHosts;
+	GtkWidget * vbxEditPart;
 	
+	gboolean show_edit_part;
 	p_mysql_server curr_mysql_srv;
 	p_gmysqlcc_config gmysqlcc_conf;
 } s_gmysqlcc_gui_list_server;
