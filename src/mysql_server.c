@@ -20,6 +20,10 @@ p_mysql_server mysql_server_new () {
 	mysql_srv->passwd = (gchar *) NULL;
 	mysql_srv->allowedDbs = (gchar *) NULL;
 	mysql_srv->localSock = (gchar *) NULL;
+	
+	mysql_srv->read_only = FALSE;
+	mysql_srv->write_warning = FALSE;
+	
 	mysql_srv->hshDbs = g_hash_table_new(&g_str_hash, &g_str_equal);
 	mysql_srv->hshUsers = g_hash_table_new(&g_str_hash, &g_str_equal);
 	

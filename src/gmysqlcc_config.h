@@ -29,8 +29,8 @@ gboolean gmysqlcc_config_delete (p_gmysqlcc_config gmysqlcc_conf);
 
 gboolean gmysqlcc_config_init (p_gmysqlcc_config gmysqlcc_conf);
 
-gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock);
-gboolean gmysqlcc_config_update_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock);
+gboolean gmysqlcc_config_add_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * name, const gchar * host, const gint port, const gchar * login, const gchar * passwd, const gchar * dbAllowedList, const gchar * localSock, const gboolean read_only, const gboolean write_warning);
+gboolean gmysqlcc_config_update_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * oldname, const gchar * name, const gchar * host, const gint port, const gchar * login, const gchar * passwd, const gchar * dbAllowedList, const gchar * localSock, const gboolean read_only, const gboolean write_warning);
 gboolean gmysqlcc_config_del_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * name);
 p_mysql_server gmysqlcc_config_get_server (p_gmysqlcc_config gmysqlcc_conf, const gchar * name);
 

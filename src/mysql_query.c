@@ -419,7 +419,7 @@ gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) 
 }
 
 gboolean mysql_query_is_editable (p_mysql_query mysql_qry) {
-	return (mysql_qry->abs_tbl_name != (gchar *) NULL) && mysql_qry->can_edit;
+	return (mysql_qry->abs_tbl_name != NULL) && mysql_qry->can_edit && !mysql_qry->mysql_srv->read_only;
 }
 
 gboolean mysql_query_set_can_edit (p_mysql_query mysql_qry, gboolean new_value) {
