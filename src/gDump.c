@@ -177,7 +177,7 @@ void chkSeparateFile_toggle (GtkToggleButton *togglebutton, gpointer user_data) 
 }
 
 void btnDump_clicked (GtkWidget *widget, gpointer user_data) {
-	askFilename("Load sql file", (gchar *) NULL, dumpSql, user_data);
+	askFilename("Dump file name", (gchar *) NULL, dumpSql, user_data);
 }
 
 void dumpSql (GtkWidget *widget, gpointer user_data) {
