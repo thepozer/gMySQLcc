@@ -14,56 +14,45 @@ void btnDump_clicked (GtkWidget *widget, gpointer user_data);
 void btnClose_clicked (GtkWidget *widget, gpointer user_data);
 void destroy(GtkWidget *widget, gpointer user_data);
 
-gchar * arOutputCharsets [] = {
-	"ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7",
-	"ISO-8859-8", "ISO-8859-9", "ISO-8859-15", "latin 1", "latin 2", "UTF-8", 
-	(gchar *)NULL };
-
-
 void initDump (p_dumpWnd p_wnd) {
 	GList * cmbDataFormat_items = (GList *)NULL;
 	GList * cmbOutputCharset_items = (GList *)NULL;
-	gchar * * pCurrCharset = (gchar * *)NULL;
 	
 	p_wnd->dumpLevel = DUMP_LEVEL_NULL;
 	p_wnd->dumpType = DUMP_TYPE_NULL;
 	p_wnd->dumpFormat = DUMP_FORMAT_NULL;
 
 	/* Fill format combo box */
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) "CSV");
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) "XML");
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) "SQL");
+	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("CSV"));
+	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
+	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
 	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbDataFormat), cmbDataFormat_items);
   g_list_free (cmbDataFormat_items);
 	
 	/* Fill output charset combo box */
-	pCurrCharset = arOutputCharsets;
-	while (*pCurrCharset != (gchar *)NULL) {
-		cmbOutputCharset_items = g_list_append (cmbOutputCharset_items, (gpointer) *pCurrCharset);
-		pCurrCharset ++;
-	}
+	cmbOutputCharset_items = gmysql_charset_list_new();
 	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbOutputCharset), cmbOutputCharset_items);
   g_list_free (cmbOutputCharset_items);
 	
 	/* Check datas */
 	if (p_wnd->mysql_tbl != (p_mysql_table)NULL) {
-g_printf("Find a table ... \n");
+g_print("Find a table ... \n");
 		p_wnd->mysql_db = p_wnd->mysql_tbl->mysql_db;
 		p_wnd->mysql_srv = p_wnd->mysql_db->mysql_srv;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpTable), TRUE);
 	} else if (p_wnd->mysql_db != (p_mysql_database)NULL) {
-g_printf("Find a database ... \n");
+g_print("Find a database ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_srv = p_wnd->mysql_db->mysql_srv;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpDatabase), TRUE);
 	} else if (p_wnd->mysql_srv != (p_mysql_server)NULL) {
-g_printf("Find a server ... \n");
+g_print("Find a server ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_db = (p_mysql_database)NULL;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpRequest), TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpServer), TRUE);
 	} else {
-g_printf("Don't find anything ... \n");
+g_print("Don't find anything ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_db = (p_mysql_database)NULL;
 		p_wnd->mysql_srv = (p_mysql_server)NULL;
@@ -73,19 +62,19 @@ g_printf("Don't find anything ... \n");
 	if (p_wnd->mysql_srv != (p_mysql_server)NULL) {
 		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpServerName), p_wnd->mysql_srv->name);
 	} else {
-		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpServerName), "-");
+		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpServerName), _("-"));
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpServer), FALSE);
 	}
 	if (p_wnd->mysql_db != (p_mysql_database)NULL) {
 		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpDatabaseName), p_wnd->mysql_db->name);
 	} else {
-		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpDatabaseName), "-");
+		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpDatabaseName), _("-"));
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpDatabase), FALSE);
 	}
 	if (p_wnd->mysql_tbl != (p_mysql_table)NULL) {
 		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpTableName), p_wnd->mysql_tbl->name);
 	} else {
-		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpTableName), "-");
+		gtk_label_set_text(GTK_LABEL(p_wnd->lblDumpTableName), _("-"));
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpTable), FALSE);
 	}
 
@@ -104,7 +93,7 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpServer))) {
-		g_printf("server button selected !!!\n");
+		g_print("server button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -116,7 +105,7 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_SERVER;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpDatabase))) {
-		g_printf("database button selected !!!\n");
+		g_print("database button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -127,7 +116,7 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_DATABASE;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpTable))) {
-		g_printf("table button selected !!!\n");
+		g_print("table button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -138,7 +127,7 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_TABLE;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpRequest))) {
-		g_printf("request button selected !!!\n");
+		g_print("request button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -156,17 +145,17 @@ void rdoDumpType_select (GtkRadioButton *radiobutton, gpointer user_data) {
 	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpStruct))) {
-		g_printf("structure dump (SQL) !!!\n");
+		g_print("structure dump (SQL) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), FALSE);
 		p_wnd->dumpType = DUMP_TYPE_STRUCT;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpStructData))) {
-		g_printf("structure and data dump (SQL) !!!\n");
+		g_print("structure and data dump (SQL) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), TRUE);
 		p_wnd->dumpType = DUMP_TYPE_STRUCT_DATA;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpData))) {
-		g_printf("data only dump (SQL or XML) !!!\n");
+		g_print("data only dump (SQL or XML) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), TRUE);
 		p_wnd->dumpType = DUMP_TYPE_DATA;
@@ -177,7 +166,7 @@ void cmbDataFormat_change (GtkList *list, GtkWidget *widget, gpointer user_data)
 	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
 	
 	p_wnd->dumpFormat = gtk_list_child_position(list, widget) + 1;
-	g_printf("format selected : %d\n", p_wnd->dumpFormat);
+	g_print("format selected : %d\n", p_wnd->dumpFormat);
 }
 
 void chkSeparateFile_toggle (GtkToggleButton *togglebutton, gpointer user_data) {
@@ -193,7 +182,7 @@ void chkSeparateFile_toggle (GtkToggleButton *togglebutton, gpointer user_data) 
 }
 
 void btnDump_clicked (GtkWidget *widget, gpointer user_data) {
-	askFilename("Dump file name", (gchar *) NULL, dumpSql, user_data);
+	askFilename(_("Dump file name"), (gchar *) NULL, dumpSql, user_data);
 }
 
 void dumpSql (GtkWidget *widget, gpointer user_data) {
@@ -204,10 +193,8 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	GtkTextBuffer * txtBuffer;
 	GtkTextIter begin, end;
 	GtkWidget * msgdlg;
-	GString * tmpStr = (GString *)NULL;
 	GIOChannel * dumpFile;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
 	gchar * sqlFilename = (gchar *)NULL;
 	gchar * sqlRequest = (gchar *)NULL;
 	gint selOutputCharset;
@@ -240,20 +227,20 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	dump_param_srv.database.table.sql_filename = sqlFilename;
 	
 	selOutputCharset = gtk_combo_box_get_active(GTK_COMBO_BOX(p_wnd->cmbOutputCharset));
-	g_print("Selected charset : '%s'\n", arOutputCharsets[selOutputCharset]);
+	g_print("Selected charset : '%s'\n", gmysql_charset_list_get_by_index(selOutputCharset));
 	
 	switch (p_wnd->dumpLevel) {
 		case DUMP_LEVEL_SERVER : /* Dump the server */
 			dump_param_srv.database.sql_filename = (gchar *)NULL;
 			dump_param_srv.database.table.sql_filename = (gchar *)NULL;
-			mysql_server_dump_direct(p_wnd->mysql_srv, &dump_param_srv, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
+			mysql_server_dump_direct(p_wnd->mysql_srv, &dump_param_srv, (GIOChannel *)NULL, gmysql_charset_list_get_by_index(selOutputCharset));
 			break;
 		case DUMP_LEVEL_DATABASE : /* Dump the database */
 			dump_param_srv.database.table.sql_filename = (gchar *)NULL;
-			mysql_database_dump_direct(p_wnd->mysql_db, &dump_param_srv.database, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
+			mysql_database_dump_direct(p_wnd->mysql_db, &dump_param_srv.database, (GIOChannel *)NULL, gmysql_charset_list_get_by_index(selOutputCharset));
 			break;
 		case DUMP_LEVEL_TABLE : /* Dump the table */
-			mysql_table_dump_direct(p_wnd->mysql_tbl, &dump_param_srv.database.table, (GIOChannel *)NULL, arOutputCharsets[selOutputCharset]);
+			mysql_table_dump_direct(p_wnd->mysql_tbl, &dump_param_srv.database.table, (GIOChannel *)NULL, gmysql_charset_list_get_by_index(selOutputCharset));
 			break;
 		case DUMP_LEVEL_REQUEST : /* Dump with the request */
 			
@@ -265,7 +252,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 			
 			if (!mysql_query_execute_query(mysql_qry, sqlRequest)) {
 				/* Query Not Ok */
-				msgdlg = gtk_message_dialog_new(GTK_WINDOW(p_wnd->wndDump), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Error during the query : (%d) %s", mysql_qry->errCode, mysql_qry->errMsg);
+				msgdlg = gtk_message_dialog_new(GTK_WINDOW(p_wnd->wndDump), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), mysql_qry->errCode, mysql_qry->errMsg);
 				gtk_dialog_run (GTK_DIALOG (msgdlg));
 				gtk_widget_destroy (msgdlg);
 				mysql_query_free_query(mysql_qry);
@@ -273,7 +260,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 			}
 			
 			dumpFile = g_io_channel_new_file(sqlFilename, "w", &err);
-			g_io_channel_set_encoding(dumpFile, arOutputCharsets[selOutputCharset], &err);
+			g_io_channel_set_encoding(dumpFile, gmysql_charset_list_get_by_index(selOutputCharset), &err);
 
 			switch(p_wnd->dumpFormat) {
 				case DUMP_FORMAT_CSV : /* CSV Format */
@@ -328,7 +315,6 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   GtkWidget *frame1, *frame2, *frame3;
   GtkWidget *table1;
   GtkWidget *label5, *label6, *label7, *label8, *label9;
-  GtkWidget *combo_entry1;
   GtkWidget *hbuttonbox1;
   GtkWidget *btnCancel, *btnOk;
 	GtkWidget *scrlwndSQLRequest;
@@ -353,7 +339,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
 	
   p_wnd->wndDump = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (p_wnd->wndDump), 2);
-  gtk_window_set_title (GTK_WINDOW (p_wnd->wndDump), "Dump SQL");
+  gtk_window_set_title (GTK_WINDOW (p_wnd->wndDump), _("Dump SQL"));
 	gtk_window_set_default_size (GTK_WINDOW (p_wnd->wndDump), 400, 300);
 	g_signal_connect (G_OBJECT (p_wnd->wndDump), "destroy", G_CALLBACK (destroy), p_wnd);
 
@@ -369,7 +355,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (table1);
   gtk_container_add (GTK_CONTAINER (frame1), table1);
 
-  p_wnd->rdoDumpServer = gtk_radio_button_new_with_mnemonic (NULL, "Server name :");
+  p_wnd->rdoDumpServer = gtk_radio_button_new_with_mnemonic (NULL, _("Server name :"));
   gtk_widget_show (p_wnd->rdoDumpServer);
   gtk_table_attach (GTK_TABLE (table1), p_wnd->rdoDumpServer, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -378,7 +364,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   rdoDumpLevel_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpServer));
 	g_signal_connect (G_OBJECT (p_wnd->rdoDumpServer), "toggled", G_CALLBACK (rdoDumpLevel_select), p_wnd);
 
-  p_wnd->rdoDumpDatabase = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, "Database name :");
+  p_wnd->rdoDumpDatabase = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, _("Database name :"));
   gtk_widget_show (p_wnd->rdoDumpDatabase);
   gtk_table_attach (GTK_TABLE (table1), p_wnd->rdoDumpDatabase, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -387,7 +373,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   rdoDumpLevel_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpDatabase));
 	g_signal_connect (G_OBJECT (p_wnd->rdoDumpDatabase), "toggled", G_CALLBACK (rdoDumpLevel_select), p_wnd);
 
-  p_wnd->rdoDumpTable = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, "Table name :");
+  p_wnd->rdoDumpTable = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, _("Table name :"));
   gtk_widget_show (p_wnd->rdoDumpTable);
   gtk_table_attach (GTK_TABLE (table1), p_wnd->rdoDumpTable, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -396,7 +382,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   rdoDumpLevel_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpTable));
 	g_signal_connect (G_OBJECT (p_wnd->rdoDumpTable), "toggled", G_CALLBACK (rdoDumpLevel_select), p_wnd);
 
-  p_wnd->rdoDumpRequest = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, "SQL query :");
+  p_wnd->rdoDumpRequest = gtk_radio_button_new_with_mnemonic (rdoDumpLevel_group, _("SQL query :"));
   gtk_widget_show (p_wnd->rdoDumpRequest);
   gtk_table_attach (GTK_TABLE (table1), p_wnd->rdoDumpRequest, 0, 2, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
@@ -440,7 +426,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
                     (GtkAttachOptions) (0), 0, 0);
   gtk_label_set_justify (GTK_LABEL (p_wnd->lblDumpDatabaseName), GTK_JUSTIFY_CENTER);
 
-  label5 = gtk_label_new ("Selection :");
+  label5 = gtk_label_new (_("Selection :"));
   gtk_widget_show (label5);
   gtk_frame_set_label_widget (GTK_FRAME (frame1), label5);
 
@@ -452,7 +438,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (vbox2);
   gtk_container_add (GTK_CONTAINER (frame2), vbox2);
 
-	p_wnd->chkSeparateFile = gtk_check_button_new_with_mnemonic ("One file par database");
+	p_wnd->chkSeparateFile = gtk_check_button_new_with_mnemonic (_("Selection :"));
   gtk_widget_show (p_wnd->chkSeparateFile);
   gtk_box_pack_start (GTK_BOX (vbox2), p_wnd->chkSeparateFile, FALSE, FALSE, 0);
 	g_signal_connect (G_OBJECT (p_wnd->chkSeparateFile), "toggled", G_CALLBACK (chkSeparateFile_toggle), p_wnd);
@@ -461,7 +447,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox2, FALSE, FALSE, 0);
 	
-	p_wnd->chkGroupInDirectory = gtk_check_button_new_with_mnemonic ("All files in a directory");
+	p_wnd->chkGroupInDirectory = gtk_check_button_new_with_mnemonic (_("All files in a directory"));
   gtk_widget_show (p_wnd->chkGroupInDirectory);
   gtk_box_pack_start (GTK_BOX (hbox2), p_wnd->chkGroupInDirectory, FALSE, FALSE, 0);
 	
@@ -469,19 +455,19 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (p_wnd->txtNewDirectory);
   gtk_box_pack_start (GTK_BOX (hbox2), p_wnd->txtNewDirectory, TRUE, TRUE, 0);
 	
-  p_wnd->chkDropDb = gtk_check_button_new_with_mnemonic ("Drop database if exist");
+  p_wnd->chkDropDb = gtk_check_button_new_with_mnemonic (_("Drop database if exist"));
   gtk_widget_show (p_wnd->chkDropDb);
   gtk_box_pack_start (GTK_BOX (vbox2), p_wnd->chkDropDb, FALSE, FALSE, 0);
 
-  p_wnd->chkAddUse = gtk_check_button_new_with_mnemonic ("Add USE database");
+  p_wnd->chkAddUse = gtk_check_button_new_with_mnemonic (_("Add USE database"));
   gtk_widget_show (p_wnd->chkAddUse);
   gtk_box_pack_start (GTK_BOX (vbox2), p_wnd->chkAddUse, FALSE, FALSE, 0);
 
-  p_wnd->chkDropTable = gtk_check_button_new_with_mnemonic ("Drop table if exist");
+  p_wnd->chkDropTable = gtk_check_button_new_with_mnemonic (_("Drop table if exist"));
   gtk_widget_show (p_wnd->chkDropTable);
   gtk_box_pack_start (GTK_BOX (vbox2), p_wnd->chkDropTable, FALSE, FALSE, 0);
 
-  p_wnd->chkCompleteInsert = gtk_check_button_new_with_mnemonic ("Complete inserts");
+  p_wnd->chkCompleteInsert = gtk_check_button_new_with_mnemonic (_("Complete inserts"));
   gtk_widget_show (p_wnd->chkCompleteInsert);
   gtk_box_pack_start (GTK_BOX (vbox2), p_wnd->chkCompleteInsert, FALSE, FALSE, 0);
 
@@ -495,13 +481,13 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_container_add (GTK_CONTAINER (frame3), vbox3);
   gtk_container_set_border_width (GTK_CONTAINER (vbox3), 3);
 
-  p_wnd->rdoDumpStruct = gtk_radio_button_new_with_mnemonic (NULL, "Structure");
+  p_wnd->rdoDumpStruct = gtk_radio_button_new_with_mnemonic (NULL, _("Structure"));
   gtk_widget_show (p_wnd->rdoDumpStruct);
   gtk_box_pack_start (GTK_BOX (vbox3), p_wnd->rdoDumpStruct, FALSE, FALSE, 0);
   rdoDumpType_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpStruct));
 	g_signal_connect (G_OBJECT (p_wnd->rdoDumpStruct), "toggled", G_CALLBACK (rdoDumpType_select), p_wnd);
 
-  p_wnd->rdoDumpStructData = gtk_radio_button_new_with_mnemonic (rdoDumpType_group, "Structure and data");
+  p_wnd->rdoDumpStructData = gtk_radio_button_new_with_mnemonic (rdoDumpType_group, _("Structure and data"));
   gtk_widget_show (p_wnd->rdoDumpStructData);
   gtk_box_pack_start (GTK_BOX (vbox3), p_wnd->rdoDumpStructData, FALSE, FALSE, 0);
   rdoDumpType_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpStructData));
@@ -511,13 +497,13 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (hbox1);
   gtk_box_pack_start (GTK_BOX (vbox3), hbox1, FALSE, FALSE, 0);
 
-  p_wnd->rdoDumpData = gtk_radio_button_new_with_mnemonic (rdoDumpType_group, "Data only");
+  p_wnd->rdoDumpData = gtk_radio_button_new_with_mnemonic (rdoDumpType_group, _("Data only"));
   gtk_widget_show (p_wnd->rdoDumpData);
   gtk_box_pack_start (GTK_BOX (hbox1), p_wnd->rdoDumpData, FALSE, FALSE, 0);
   rdoDumpType_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (p_wnd->rdoDumpData));
 	g_signal_connect (G_OBJECT (p_wnd->rdoDumpData), "toggled", G_CALLBACK (rdoDumpType_select), p_wnd);
 
-  label8 = gtk_label_new ("Format :");
+  label8 = gtk_label_new (_("Format :"));
   gtk_widget_show (label8);
   gtk_box_pack_start (GTK_BOX (hbox1), label8, TRUE, FALSE, 0);
 
@@ -527,11 +513,11 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_combo_set_value_in_list (GTK_COMBO (p_wnd->cmbDataFormat), TRUE, FALSE);
 	g_signal_connect (G_OBJECT (GTK_COMBO(p_wnd->cmbDataFormat)->list), "select-child", G_CALLBACK (cmbDataFormat_change), (gpointer)p_wnd);
 
-  label7 = gtk_label_new ("Table :");
+  label7 = gtk_label_new (_("Table :"));
   gtk_widget_show (label7);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label7);
 
-  label6 = gtk_label_new ("Options :");
+  label6 = gtk_label_new (_("Options :"));
   gtk_widget_show (label6);
   gtk_frame_set_label_widget (GTK_FRAME (frame2), label6);
 
@@ -539,7 +525,7 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox3, FALSE, FALSE, 0);
 	
-  label9 = gtk_label_new ("Output charset :");
+  label9 = gtk_label_new (_("Output charset :"));
   gtk_widget_show (label9);
   gtk_box_pack_start (GTK_BOX (hbox3), label9, TRUE, FALSE, 0);
 
@@ -553,12 +539,12 @@ p_dumpWnd create_wndDump (gboolean display, p_mysql_server mysql_srv, p_mysql_da
   gtk_box_pack_start (GTK_BOX (vbox1), hbuttonbox1, FALSE, TRUE, 3);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_SPREAD);
 
-	btnCancel = createIconButton("gtk-cancel", "_Close");
+	btnCancel = createIconButton("gtk-cancel", _("_Close"));
   gtk_widget_show (btnCancel);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), btnCancel);
 	g_signal_connect (G_OBJECT (btnCancel), "clicked", G_CALLBACK (btnClose_clicked), (gpointer)p_wnd);
 
- 	btnOk = createIconButton("gtk-ok", "_Dump");
+ 	btnOk = createIconButton("gtk-ok", _("_Dump"));
   gtk_widget_show (btnOk);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), btnOk);
   GTK_WIDGET_SET_FLAGS (btnOk, GTK_CAN_DEFAULT);

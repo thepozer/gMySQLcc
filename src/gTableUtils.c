@@ -121,7 +121,7 @@ GString * fieldToSQL (p_fieldInfo p_fi, GString * table) {
 		/* Set type */
 		g_string_append_printf(sql, " %s", arFieldTypes[p_fi->update->type_idx]->name);
 		/* Set Length or Length and decimals or List of value if needed */
-		g_printf("Type name(%d) : '%s'\n", p_fi->update->type_idx, arFieldTypes[p_fi->update->type_idx]->name);
+		g_print("Type name(%d) : '%s'\n", p_fi->update->type_idx, arFieldTypes[p_fi->update->type_idx]->name);
 		switch(arFieldTypes[p_fi->update->type_idx]->typeValue) {
 			case 1 : /* Length */
 				g_string_append_printf(sql, "(%i)", p_fi->update->length);

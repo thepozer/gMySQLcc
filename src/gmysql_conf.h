@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 
 #include "mysql_db_all.h"

@@ -83,7 +83,8 @@ typedef struct _s_mysql_row {
 typedef s_mysql_row * p_mysql_row;
 
 
-/* Dump informations */
+/***** Dump informations *****/
+
 typedef struct _s_dump_table_params {
 	gboolean drop_table;
 	gboolean structure;
@@ -114,7 +115,8 @@ typedef struct _s_dump_server_params {
 
 typedef s_dump_server_params * p_dump_server_params;
 
-/* Server functions */
+/***** Server functions *****/
+
 p_mysql_server mysql_server_new ();
 gboolean mysql_server_delete (p_mysql_server mysql_srv);
 
@@ -128,7 +130,11 @@ p_mysql_database mysql_server_get_database (p_mysql_server mysql_srv, const gcha
 GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_params params);
 gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server_params params, GIOChannel * file, const gchar * charset);
 
-/* Database functions */
+GArray * mysql_server_get_status (p_mysql_server mysql_srv);
+gboolean mysql_server_flush_status (p_mysql_server mysql_srv);
+
+/***** Database functions *****/
+
 p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_name);
 gboolean mysql_database_delete(p_mysql_database mysql_db);
 
@@ -141,7 +147,8 @@ p_mysql_table mysql_database_get_table (p_mysql_database mysql_db, const gchar *
 GString * mysql_database_dump (p_mysql_database mysql_db, const p_dump_database_params params);
 gboolean mysql_database_dump_direct (p_mysql_database mysql_db, const p_dump_database_params params, GIOChannel * file, const gchar * charset);
 
-/* Table functions */
+/***** Table functions *****/
+
 p_mysql_table mysql_table_new(p_mysql_database mysql_db, const gchar * tbl_name);
 gboolean mysql_table_delete(p_mysql_table mysql_tbl);
 
@@ -150,7 +157,8 @@ p_mysql_query mysql_table_query (p_mysql_table mysql_tbl);
 GString * mysql_table_dump (p_mysql_table mysql_tbl, const p_dump_table_params params);
 gboolean mysql_table_dump_direct (p_mysql_table mysql_tbl, const p_dump_table_params params, GIOChannel * file, const gchar * charset);
 
-/* Query functions */
+/***** Query functions *****/
+
 p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name);
 gboolean mysql_query_delete(p_mysql_query mysql_qry);
 
@@ -172,8 +180,10 @@ gboolean mysql_query_set_can_edit (p_mysql_query mysql_qry, gboolean new_value);
 gboolean mysql_query_get_can_edit (p_mysql_query mysql_qry);
 
 gchar * mysql_query_get_charset(p_mysql_query mysql_qry);
+gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * charset);
 
-/* Row functions */
+/***** Row functions *****/
+
 p_mysql_row mysql_row_new_next_record (p_mysql_query mysql_qry);
 gboolean mysql_row_free (p_mysql_row mysql_rw);
 
@@ -182,7 +192,7 @@ gchar * mysql_row_get_field_value(p_mysql_row mysql_rw, int idx);
 gchar * mysql_row_set_field_value(p_mysql_row mysql_rw, int idx, const gchar * new_value);
 gboolean mysql_row_delete(p_mysql_row mysql_rw);
 
-/* Dump functions */
+/***** Dump functions ******/
 
 GString * mysql_dump_database_struct (const gchar * db_name, gboolean drop_database, gboolean use_database);
 GString * mysql_dump_table_struct (p_mysql_query mysql_qry, const gchar * tbl_name, gboolean drop_table);

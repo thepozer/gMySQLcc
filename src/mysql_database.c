@@ -49,7 +49,8 @@ gboolean mysql_database_clean_table_list (p_mysql_database mysql_db) {
 		g_hash_table_foreach_steal(mysql_db->hshTables, &htr_remove_table, (gpointer)NULL);
 		g_hash_table_destroy(mysql_db->hshTables);
 	}
-
+	
+	return TRUE;
 }
 
 gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
@@ -57,7 +58,6 @@ gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
 	p_mysql_table mysql_tbl;
 	GArray * arRow;
 	GString * ssql;
-	GList * lstIdxTabl;
 	gchar * tbl_name;
 	
 	mysql_qry = mysql_database_query(mysql_db);
@@ -111,7 +111,6 @@ typedef struct _s_dump_db_info {
 
 GString * mysql_database_dump (p_mysql_database mysql_db, const p_dump_database_params params) {
 	GString * strRet, * strTmp;
-	p_mysql_query mysql_qry;
 	s_dump_db_info dumpInfo;
 
 	void htr_dump_table(gpointer key, gpointer value, gpointer user_data) {

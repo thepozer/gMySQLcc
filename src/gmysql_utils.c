@@ -6,8 +6,57 @@
 p_fieldTypeCapability * arFieldTypes;
 int szarFieldTypes = -1;
 
-/* Field capabilities */
+#define __VAR_ARCHARSETLIST__
 
+gchar * arOutputCharsets [] = {
+	"ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7",
+	"ISO-8859-8", "ISO-8859-9", "ISO-8859-15", "LATIN 1", "LATIN 2", "UTF-8", 
+	(gchar *)NULL };
+
+/* 
+		Charsets list functions
+*/
+GList * gmysql_charset_list_new () {
+	GList * lstCharset_items = (GList *)NULL;
+	gchar * * pCurrCharset = (gchar * *)NULL;
+	
+	/* Fill output charset */
+	pCurrCharset = arOutputCharsets;
+	while (*pCurrCharset != (gchar *)NULL) {
+		lstCharset_items = g_list_append (lstCharset_items, (gpointer) *pCurrCharset);
+		pCurrCharset ++;
+	}
+	
+	return lstCharset_items;
+}
+
+gchar * gmysql_charset_list_get_by_index (gint idx) {
+	return arOutputCharsets[idx];
+}
+
+gint gmysql_charset_list_get_by_name (const gchar * name) {
+	gchar * * pCurrCharset = (gchar * *)NULL;
+	gchar * charset;
+	
+	charset = g_ascii_strup(name, -1);
+	
+	/* search charset */
+	pCurrCharset = arOutputCharsets;
+	while (*pCurrCharset != (gchar *)NULL) {
+		if (g_ascii_strcasecmp(charset, *pCurrCharset)) {
+			g_free(charset);
+			return (pCurrCharset - arOutputCharsets) / sizeof(gchar *);
+		}
+		pCurrCharset ++;
+	}
+	
+	g_free(charset);
+	return -1;
+}
+
+/* 
+		Field capabilities
+*/
 p_fieldTypeCapability createFieldTypeCapability (char * name, int value, gboolean unsign, gboolean zerofill, gboolean binary, gboolean autoincr) {
 	p_fieldTypeCapability p_ftc;
 	
@@ -61,7 +110,9 @@ void initFieldTypeCapabilities () {
 
 
 
-/* Character conversion helpers */
+/*
+		Character conversion helpers
+*/
 
 int gmysql_count_noascii_character (const unsigned char * string) {
 	int i, size, retNbr = 0;
@@ -81,14 +132,13 @@ int gmysql_count_noascii_character (const unsigned char * string) {
 
 gchar * gmysql_alloc_iconv(GIConv icv, const char * source) {
 	gchar * tmpstrRead, * tmpstrWrite, * tmpstr = (gchar *)NULL;
-	int size;
 	size_t retIcv;
 	gsize nbRead, nbWrite;
 	
 	if (icv > 0) {
 		tmpstrRead = (gchar *)source;
 		nbRead = strlen(tmpstrRead);
-		nbWrite = nbRead + gmysql_count_noascii_character(source) + 1;
+		nbWrite = nbRead + (gmysql_count_noascii_character(source) * 3) + 1;
 		tmpstr = g_try_malloc((nbWrite) * sizeof(gchar));
 		if (tmpstr != (gchar *)NULL) {
 			*tmpstr = '\0';

@@ -65,10 +65,10 @@ gboolean mysql_server_clean_database_list (p_mysql_server mysql_srv, gboolean on
 		g_hash_table_foreach_steal(mysql_srv->hshDbs, &htr_remove_database, (gpointer)&only_not_found);
 	}
 	
+	return TRUE;
 }
 
 void mysql_server_mark_found_all_databases (p_mysql_server mysql_srv, gboolean found) {
-	p_mysql_database mysql_db;
 
 	void ht_mark_found_database(gpointer key, gpointer value, gpointer user_data) {
 		((p_mysql_database)value)->found = *((gboolean *)user_data);
@@ -149,7 +149,7 @@ GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_param
 			} else {
 				g_string_printf(strTmp, "%s/%s.sql", dumpInfo->params->base_directory, mysql_db->name);
 			}
-		g_printf("Write separate files : %s\n", strTmp->str);
+		g_print("Write separate files : %s\n", strTmp->str);
 			dumpInfo->params->database.sql_filename = strTmp->str;
 			mysql_database_dump(mysql_db, &dumpInfo->params->database);
 			g_string_free(strTmp, TRUE);
@@ -167,7 +167,7 @@ GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_param
 	if (params->separate_file && params->group_in_directory) {
 		strTmp = g_string_new("");
 		g_string_printf(strTmp, "%s/%s", params->base_directory, params->group_directory);
-		g_printf("New directory : %s\n", strTmp->str);
+		g_print("New directory : %s\n", strTmp->str);
 		if (mkdir((char *)strTmp->str, 0755) != 0) {
 			params->group_in_directory = FALSE;
 		}
@@ -178,7 +178,7 @@ GString * mysql_server_dump (p_mysql_server mysql_srv, const p_dump_server_param
 	
 	if (!params->separate_file) {
 		/* all databases in the same file */
-		g_printf("Write unique file : %s\n", params->sql_filename);
+		g_print("Write unique file : %s\n", params->sql_filename);
 		sqlFile = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(sqlFile, (gchar *)NULL, &err);
 		g_io_channel_write_chars(sqlFile, dumpInfo.strRet->str, -1, &nbBytes, &err);
@@ -210,7 +210,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 				g_string_printf(strTmp, "%s/%s.sql", dumpInfo->params->base_directory, mysql_db->name);
 			}
 			
-			g_printf("Write separate files : %s\n", strTmp->str);
+			g_print("Write separate files : %s\n", strTmp->str);
 			dumpInfo->params->database.sql_filename = strTmp->str;
 			
 			mysql_database_dump_direct(mysql_db, &dumpInfo->params->database, (GIOChannel *)NULL, dumpInfo->charset);
@@ -227,7 +227,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 
 	if (!params->separate_file && file == (GIOChannel *)NULL) {
 		/* all databases in the same file */
-		g_printf("Write unique file : %s\n", params->sql_filename);
+		g_print("Write unique file : %s\n", params->sql_filename);
 		dumpInfo.file = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(dumpInfo.file, charset, &err);
 	} else {
@@ -237,7 +237,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	if (params->separate_file && params->group_in_directory) {
 		strTmp = g_string_new("");
 		g_string_printf(strTmp, "%s/%s", params->base_directory, params->group_directory);
-		g_printf("New directory : %s\n", strTmp->str);
+		g_print("New directory : %s\n", strTmp->str);
 		if (mkdir((char *)strTmp->str, 0755) != 0) {
 			params->group_in_directory = FALSE;
 		}
@@ -246,7 +246,7 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	
 	if (!params->separate_file) {
 		/* all databases in the same file */
-		g_printf("Write unique file : %s\n", params->sql_filename);
+		g_print("Write unique file : %s\n", params->sql_filename);
 		dumpInfo.file = g_io_channel_new_file(params->sql_filename, "w", &err);
 		g_io_channel_set_encoding(dumpInfo.file, charset, &err);
 	}
@@ -258,4 +258,34 @@ gboolean mysql_server_dump_direct (p_mysql_server mysql_srv, const p_dump_server
 	}
 	
 	return TRUE;
+}
+
+GArray * mysql_server_get_status (p_mysql_server mysql_srv) {
+	p_mysql_query mysql_qry;
+	GArray * arStatus = (GArray *)NULL;
+	
+	mysql_qry = mysql_server_query(mysql_srv, "mysql");
+	
+	if (!mysql_query_execute_query(mysql_qry, "SHOW STATUS")) {
+		
+		arStatus = mysql_query_get_all_records(mysql_qry);
+		
+	}
+	
+	mysql_query_delete(mysql_qry);
+
+	return arStatus;
+}
+
+gboolean mysql_server_flush_status (p_mysql_server mysql_srv) {
+	p_mysql_query mysql_qry;
+	gboolean ret;
+	
+	mysql_qry = mysql_server_query(mysql_srv, "mysql");
+	
+	ret = mysql_query_execute_query(mysql_qry, "FLUSH STATUS;");
+	
+	mysql_query_delete(mysql_qry);
+
+	return ret;
 }
