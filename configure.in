@@ -1,0 +1,33 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_INIT([gmysqlcc], [0.2.0], [gmysqlcc@thepozer.net])
+AM_INIT_AUTOMAKE([gmysqlcc], [0.2.0])
+AC_CONFIG_SRCDIR([src/gmysqlcc.c])
+#AM_CONFIG_HEADER([config.h])
+
+# Checks for programs.
+AC_PROG_CC
+AC_HEADER_STDC
+
+# Checks for libraries.
+PKG_CHECK_MODULES([GTK], [gtk+-2.0 gdk-2.0],,[AC_MSG_ERROR([Sorry, can't found GTK+ 2.x])])
+AC_SUBST([GTK_LIBS])
+AC_SUBST([GTK_CFLAGS])
+
+AC_CHECK_LIB([mysqlclient], [mysql_get_client_info],,[AC_MSG_ERROR([Sorry, can't found MySQL client library])])
+AC_SUBST([MySQLc_LIB], [-lmysqlclient])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADER([mysql/mysql.h],,[AC_MSG_ERROR([Sorry, can't found MySQL hedaer])])
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+
+# Add parameters
+AC_ARG_ENABLE([debug-infos], AS_HELP_STRING ([--enable-debug-infos], [Add debug infos in gmysqlcc program]), AC_SUBST([Debug_Flags], [-ggdb]), AC_SUBST([Debug_Flags], [ ]))
+#AC_ARG_ENABLE([debug-infos], [Add debug infos in gmysqlcc program], AC_SUBST([Debug_Flags], [-ggdb]), AC_SUBST([Debug_Flags], [ ]))
+
+AC_OUTPUT([Makefile src/Makefile])
