@@ -171,6 +171,7 @@ gchar * mysql_dump_do_to_memory (p_mysql_dump mysql_dmp) {
 		case DumpFormat_Xml :
 			break;
 		case DumpFormat_Csv :
+			return mysql_dump_csv_do_to_memory(mysql_dmp);
 			break;
 		default :
 			return NULL;
