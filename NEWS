@@ -1,0 +1,18 @@
+* 2004-06-04
+	Less than 1 month between 2 versions, it's great ...  :) (Version : 0.2.0)
+	Gmysqlcc use configure now, so the compilation method has changed.
+	I have modified dump system, Now it write datas directly to the disk, not store them in memory ...
+	I have also corrected a small bug in the structure dump (bad tables name).
+	You can dump data in SQL or CVS, XML format will come soon.
+	Another corrected bug, you can see and edit values with accents or other things. I do a convertion into server charset for each query ...
+
+* 2004-05-09
+	Yes a new version ... 4 month after (I try to reduce the tim between 2 version next time ... ;)) (Version : 0.1.0)
+	I have rewrited completly access to mysql database, add dump to file function, and now you can edit value directly in the reslut table.
+
+* 2004-01-14
+	Yes a new version ... 3 month after :( (Version : 0.0.2)
+	Now you can execute a SQL file but not manage it yet ... (next version :) )
+
+* 2003-09-03
+	First public version (Version : 0.0.1 :) )
