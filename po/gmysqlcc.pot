@@ -1,0 +1,357 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-06-22 09:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Fill format combo box
+#: src/gDump.c:26
+msgid "CSV"
+msgstr ""
+
+#: src/gDump.c:27 src/gDump.c:28
+msgid "XML"
+msgstr ""
+
+#: src/gDump.c:65 src/gDump.c:71 src/gDump.c:77
+msgid "-"
+msgstr ""
+
+#: src/gDump.c:185
+msgid "Dump file name"
+msgstr ""
+
+#. Query Not Ok
+#: src/gDump.c:255 src/gExecSql.c:70
+#, c-format
+msgid "Error during the query : (%d) %s"
+msgstr ""
+
+#: src/gDump.c:342
+msgid "Dump SQL"
+msgstr ""
+
+#: src/gDump.c:358
+msgid "Server name :"
+msgstr ""
+
+#: src/gDump.c:367
+msgid "Database name :"
+msgstr ""
+
+#: src/gDump.c:376
+msgid "Table name :"
+msgstr ""
+
+#: src/gDump.c:385
+msgid "SQL query :"
+msgstr ""
+
+#: src/gDump.c:429 src/gDump.c:441
+msgid "Selection :"
+msgstr ""
+
+#: src/gDump.c:450
+msgid "All files in a directory"
+msgstr ""
+
+#: src/gDump.c:458
+msgid "Drop database if exist"
+msgstr ""
+
+#: src/gDump.c:462
+msgid "Add USE database"
+msgstr ""
+
+#: src/gDump.c:466
+msgid "Drop table if exist"
+msgstr ""
+
+#: src/gDump.c:470
+msgid "Complete inserts"
+msgstr ""
+
+#: src/gDump.c:484
+msgid "Structure"
+msgstr ""
+
+#: src/gDump.c:490
+msgid "Structure and data"
+msgstr ""
+
+#: src/gDump.c:500
+msgid "Data only"
+msgstr ""
+
+#: src/gDump.c:506
+msgid "Format :"
+msgstr ""
+
+#: src/gDump.c:516
+msgid "Table :"
+msgstr ""
+
+#: src/gDump.c:520
+msgid "Options :"
+msgstr ""
+
+#: src/gDump.c:528
+msgid "Output charset :"
+msgstr ""
+
+#: src/gDump.c:542
+msgid "_Close"
+msgstr ""
+
+#: src/gDump.c:547
+msgid "_Dump"
+msgstr ""
+
+#: src/gExecSql.c:82
+#, c-format
+msgid "Affected row : %d\n"
+msgstr ""
+
+#: src/gExecSql.c:240
+#, c-format
+msgid "Can't use the charset : '%s'"
+msgstr ""
+
+#: src/gExecSql.c:589
+#, c-format
+msgid "SQL Request - %s - %s"
+msgstr ""
+
+#: src/gExecSql.c:608
+msgid "Execute"
+msgstr ""
+
+#: src/gExecSql.c:612
+msgid "Execute SQL query"
+msgstr ""
+
+#: src/gExecSql.c:630
+msgid "Duplicate"
+msgstr ""
+
+#: src/gExecSql.c:634
+msgid "Duplicate SQL Windows"
+msgstr ""
+
+#: src/gExecSql.c:638 src/gServer.c:482
+msgid "Dump"
+msgstr ""
+
+#: src/gExecSql.c:642
+msgid "Dump with current query"
+msgstr ""
+
+#: src/gExecSql.c:646 src/gListServer.c:426 src/gServer.c:407
+msgid "Close"
+msgstr ""
+
+#: src/gExecSql.c:650 src/gListServer.c:426 src/gServer.c:407
+msgid "Close window"
+msgstr ""
+
+#: src/gListServer.c:84
+msgid "Server name"
+msgstr ""
+
+#: src/gListServer.c:130 src/gListServer.c:207 src/gListServer.c:275
+msgid "Please select a database"
+msgstr ""
+
+#. check if not empty
+#: src/gListServer.c:161 src/gListServer.c:224
+#, c-format
+msgid "Field %s cannot be empty !!!"
+msgstr ""
+
+#: src/gListServer.c:168 src/gListServer.c:231
+#, c-format
+msgid "Field %s can only contain digits !!!"
+msgstr ""
+
+#: src/gListServer.c:179 src/gListServer.c:243
+msgid ""
+"Name already taken !\n"
+"Please set another one."
+msgstr ""
+
+#: src/gListServer.c:268
+msgid "Can't delete this server !!!"
+msgstr ""
+
+#: src/gListServer.c:314
+msgid "Can't move up more !!!"
+msgstr ""
+
+#: src/gListServer.c:349
+msgid "Can't move down more !!!"
+msgstr ""
+
+#. gtk_container_set_border_width (GTK_CONTAINER (p_lstsvr->wndListServer), 5);
+#: src/gListServer.c:406
+msgid "Servers list"
+msgstr ""
+
+#: src/gListServer.c:421
+msgid "Connection"
+msgstr ""
+
+#: src/gListServer.c:421
+msgid "Connect to a server"
+msgstr ""
+
+#: src/gListServer.c:455
+msgid "_Up"
+msgstr ""
+
+#: src/gListServer.c:459
+msgid "_Down"
+msgstr ""
+
+#: src/gListServer.c:471 src/gServer.c:512
+msgid "Server"
+msgstr ""
+
+#: src/gListServer.c:486
+msgid "Name :"
+msgstr ""
+
+#: src/gListServer.c:500
+msgid "Host :"
+msgstr ""
+
+#: src/gListServer.c:514
+msgid "Port :"
+msgstr ""
+
+#: src/gListServer.c:529
+msgid "User name :"
+msgstr ""
+
+#: src/gListServer.c:543
+msgid "Password :"
+msgstr ""
+
+#: src/gListServer.c:557
+msgid "Local socket file :"
+msgstr ""
+
+#: src/gListServer.c:571
+msgid "_New"
+msgstr ""
+
+#: src/gListServer.c:576
+msgid "_Add"
+msgstr ""
+
+#: src/gListServer.c:581
+msgid "_Modify"
+msgstr ""
+
+#: src/gListServer.c:586
+msgid "D_elete"
+msgstr ""
+
+#: src/gServer.c:62 src/gServer.c:492
+msgid "Databases"
+msgstr ""
+
+#: src/gServer.c:100
+msgid "Table name"
+msgstr ""
+
+#: src/gServer.c:102
+msgid "Rows"
+msgstr ""
+
+#: src/gServer.c:104
+msgid "Size"
+msgstr ""
+
+#: src/gServer.c:106
+msgid "Type"
+msgstr ""
+
+#: src/gServer.c:192
+#, c-format
+msgid "Database '%s' created !"
+msgstr ""
+
+#: src/gServer.c:219
+#, c-format
+msgid "Database '%s' deleted !"
+msgstr ""
+
+#: src/gServer.c:272
+msgid "Delete Table"
+msgstr ""
+
+#: src/gServer.c:272
+msgid "Are you sure ?"
+msgstr ""
+
+#: src/gServer.c:279
+#, c-format
+msgid "Table '%s'.'%s' deleted !"
+msgstr ""
+
+#: src/gServer.c:381
+#, c-format
+msgid "Server : %s"
+msgstr ""
+
+#: src/gServer.c:397
+msgid "SQL"
+msgstr ""
+
+#: src/gServer.c:397
+msgid "Exec SQL Query"
+msgstr ""
+
+#: src/gServer.c:402
+msgid "SQL File"
+msgstr ""
+
+#: src/gServer.c:402
+msgid "Exec SQL File"
+msgstr ""
+
+#: src/gServer.c:441 src/gServer.c:472
+msgid "Add"
+msgstr ""
+
+#: src/gServer.c:446 src/gServer.c:487
+msgid "Delete"
+msgstr ""
+
+#: src/gServer.c:477
+msgid "Modify"
+msgstr ""
+
+#: src/gServer.c:497 src/gServer.c:507
+msgid "In construction"
+msgstr ""
+
+#: src/gServer.c:502
+msgid "Users"
+msgstr ""
+
+#: src/gServer.c:526
+msgid "Refresh"
+msgstr ""

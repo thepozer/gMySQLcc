@@ -1,0 +1,31 @@
+# List of source files containing translatable strings.
+
+## Created by Anjuta - will be overwritten
+## If you don't want it to overwrite it,
+## 	Please disable it in the Anjuta project configuration
+
+# Source files
+src/gDump.c
+src/gDump.h
+src/gExecSql.c
+src/gExecSql.h
+src/gListServer.c
+src/gListServer.h
+src/gServer.c
+src/gServer.h
+src/gUtils.c
+src/gUtils.h
+src/gmysql_conf.c
+src/gmysql_conf.h
+src/gmysql_utils.c
+src/gmysql_utils.h
+src/gmysqlcc.c
+src/mysql_database.c
+src/mysql_db_all.h
+src/mysql_dump.c
+src/mysql_query.c
+src/mysql_row.c
+src/mysql_server.c
+src/mysql_table.c
+
+
