@@ -60,7 +60,7 @@ gint gmysql_charset_list_get_by_name (const gchar * name) {
 p_fieldTypeCapability createFieldTypeCapability (char * name, int value, gboolean unsign, gboolean zerofill, gboolean binary, gboolean autoincr) {
 	p_fieldTypeCapability p_ftc;
 	
-	p_ftc = (p_fieldTypeCapability) g_try_malloc(sizeof(p_fieldTypeCapability));
+	p_ftc = (p_fieldTypeCapability) g_try_malloc(sizeof(fieldTypeCapability));
 	if (p_ftc != (p_fieldTypeCapability)NULL) {
 		p_ftc->name = name;
 		p_ftc->typeValue = value;
