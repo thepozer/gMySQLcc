@@ -31,12 +31,14 @@ void displayCurrentDB (p_listServWnd pLstSrvWnd) {
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPort), tmpPort);
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLogin), currSrvr->user);
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPasswd), currSrvr->passwd);
+		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock), ((currSrvr->localSock != (gchar *)NULL) ? currSrvr->localSock : ""));
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtName), "");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtHost), "");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPort), "3306");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLogin), "");
 		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtPasswd), "");
+		gtk_entry_set_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock), "");
 	}
 }
 
@@ -151,7 +153,7 @@ static void btnadd_clicked (GtkWidget *widget, gpointer user_data) {
 	infos[2] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtPort)));
 	infos[3] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtLogin)));
 	infos[4] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtPasswd)));
-	infos[5] = (GString *)NULL;
+	infos[5] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock)));
 	
 	/* Check data */
 	for (i = 0; i < 4; i++) {
@@ -182,7 +184,7 @@ static void btnadd_clicked (GtkWidget *widget, gpointer user_data) {
 	
 	/* Insert data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, (gchar **)NULL, 10);
-	if (gmysql_config_add_server(pLstSrvWnd->gmsql_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, (gchar *) NULL)) {
+	if (gmysql_config_add_server(pLstSrvWnd->gmsql_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, (gchar *) NULL, infos[5]->str)) {
 		newSrvr = gmysql_config_get_server(pLstSrvWnd->gmsql_conf, infos[0]->str);
 		showListServer(pLstSrvWnd, newSrvr);
 	}
@@ -214,7 +216,7 @@ static void btnedit_clicked (GtkWidget *widget, gpointer user_data) {
 	infos[2] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtPort)));
 	infos[3] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtLogin)));
 	infos[4] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtPasswd)));
-	infos[5] = (GString *)NULL;
+	infos[5] = g_string_new(gtk_entry_get_text(GTK_ENTRY(pLstSrvWnd->txtLocalSock)));
 	
 	/* Check data */
 	for (i = 0; i < 4; i++) {
@@ -246,7 +248,7 @@ static void btnedit_clicked (GtkWidget *widget, gpointer user_data) {
 	
 	/* Update data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, (gchar **)NULL, 10);
-	if (gmysql_config_update_server(pLstSrvWnd->gmsql_conf, pLstSrvWnd->selSrvr->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, (gchar *)NULL)) {
+	if (gmysql_config_update_server(pLstSrvWnd->gmsql_conf, pLstSrvWnd->selSrvr->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, (gchar *)NULL, infos[5]->str)) {
 		showListServer(pLstSrvWnd, pLstSrvWnd->selSrvr);
 	}
 	
@@ -379,8 +381,8 @@ static void destroy(GtkWidget *widget, gpointer user_data) {
 listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf) {
   GtkWidget *frame1;
   GtkWidget *vbox4, *vbox5, *vbox6, *vbox7;
-  GtkWidget *hbox, *hbox5, *hbox6, *hbox7, *hbox8, *hbox10, *hbox11, *hbox12, *hbox13, *hbox14;
-  GtkWidget *label9, *label10, *label11, *label12, *label13, *label14, *label16;
+  GtkWidget *hbox, *hbox5, *hbox6, *hbox7, *hbox8, *hbox10, *hbox11, *hbox12, *hbox13, *hbox14, *hbox15;
+  GtkWidget *label9, *label10, *label11, *label12, *label13, *label14, *label16, *label17;
 	GtkWidget *scrolledwindow3;
   GtkWidget *btnNew, *btnAdd, *btnEdit, *btnDel, *btnServerUp, *btnServerDown;
 	
@@ -547,6 +549,20 @@ listServWnd * create_wndListServer (gboolean display, p_gmysql_config gmsql_conf
   p_lstsvr->txtPasswd = gtk_entry_new ();
   gtk_widget_show (p_lstsvr->txtPasswd);
   gtk_box_pack_start (GTK_BOX (hbox13), p_lstsvr->txtPasswd, TRUE, TRUE, 2);
+
+  hbox15 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox15);
+  gtk_box_pack_start (GTK_BOX (vbox5), hbox15, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox15), 2);
+
+  label17 = gtk_label_new ("Local socket file :");
+  gtk_widget_show (label17);
+  gtk_box_pack_start (GTK_BOX (hbox15), label17, FALSE, FALSE, 0);
+  gtk_label_set_justify (GTK_LABEL (label17), GTK_JUSTIFY_LEFT);
+
+  p_lstsvr->txtLocalSock = gtk_entry_new ();
+  gtk_widget_show (p_lstsvr->txtLocalSock);
+  gtk_box_pack_start (GTK_BOX (hbox15), p_lstsvr->txtLocalSock, TRUE, TRUE, 2);
 
   hbox5 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox5);

@@ -38,7 +38,7 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 		return mysql_qry;
 	}
 	
-	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_srv->host, mysql_srv->user, mysql_srv->passwd, db_name, mysql_srv->port, (char *)NULL, 0)) {
+	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_srv->host, mysql_srv->user, mysql_srv->passwd, db_name, mysql_srv->port, mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
 		mysql_qry->mysql_link == (MYSQL *)NULL;
@@ -128,7 +128,7 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 		return mysql_qry;
 	}
 	
-	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_qry->mysql_srv->host, mysql_qry->mysql_srv->user, mysql_qry->mysql_srv->passwd, mysql_qry->db_name, mysql_qry->mysql_srv->port, (char *)NULL, 0)) {
+	if (!mysql_real_connect(mysql_qry->mysql_link, mysql_qry->mysql_srv->host, mysql_qry->mysql_srv->user, mysql_qry->mysql_srv->passwd, mysql_qry->db_name, mysql_qry->mysql_srv->port, mysql_qry->mysql_srv->localSock, 0)) {
 		mysql_qry->errCode = mysql_errno(mysql_qry->mysql_link);
 		mysql_qry->errMsg = (gchar *)mysql_error(mysql_qry->mysql_link);
 		mysql_qry->mysql_link == (MYSQL *)NULL;

@@ -36,7 +36,7 @@ gboolean gmysql_config_delete (p_gmysql_config gmsql_conf) {
 	return TRUE;
 }
 
-gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList) {
+gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
 	p_mysql_server msql_srv;
 	
 	msql_srv = gmysql_config_get_server(gmsql_conf, name);
@@ -56,13 +56,14 @@ gboolean gmysql_config_add_server (p_gmysql_config gmsql_conf, gchar * name, gch
 	msql_srv->user = g_strdup(login);
 	msql_srv->passwd = g_strdup(passwd);
 	msql_srv->allowedDbs = g_strdup(dbAllowedList);
+	msql_srv->localSock= g_strdup(localSock);
 	
 	gmsql_conf->lstServers = g_list_append(gmsql_conf->lstServers, msql_srv);
 	
 	return TRUE;
 }
 
-gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList) {
+gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * oldname, gchar * name, gchar * host, gint port, gchar * login, gchar * passwd, gchar * dbAllowedList, gchar * localSock) {
 	p_mysql_server msql_srv;
 	
 	msql_srv = gmysql_config_get_server(gmsql_conf, oldname);
@@ -75,6 +76,7 @@ gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * 
 		g_free(msql_srv->user);
 		g_free(msql_srv->passwd);
 		g_free(msql_srv->allowedDbs);
+		g_free(msql_srv->localSock);
 
 		/* Add new ones */
 		msql_srv->name = g_strdup(name);
@@ -83,6 +85,7 @@ gboolean gmysql_config_update_server (p_gmysql_config gmsql_conf, const gchar * 
 		msql_srv->user = g_strdup(login);
 		msql_srv->passwd = g_strdup(passwd);
 		msql_srv->allowedDbs = g_strdup(passwd);
+		msql_srv->localSock= g_strdup(localSock);
 		
 		return TRUE;
 	}
@@ -140,7 +143,8 @@ struct _xmlReadState{
 			X_IN_LOGIN = 6,
 			X_IN_PASSWD = 7,
 			X_IN_ALLOWED_DBS = 8,
-			X_IN_OPTIONS = 9
+			X_IN_LOCAL_SOCK = 9,
+			X_IN_OPTIONS = 10
 		} state;
 	GString * name;
 	GString * host;
@@ -148,9 +152,10 @@ struct _xmlReadState{
 	GString * login;
 	GString * passwd;
 	GString * allowedDbs;
+	GString * localSock;
 } xmlReadState;
 
-char * defaultConf = "<?xml version=\"1.0\" ?><servers><server><name><![CDATA[Localhost]]></name><host><![CDATA[localhost]]></host><port>3306</port><login><![CDATA[root]]></login><passwd><![CDATA[]]></passwd><alloweddbs><![CDATA[]]></alloweddbs><options></options></server></servers>";
+char * defaultConf = "<?xml version=\"1.0\" ?><servers><server><name><![CDATA[Localhost]]></name><host><![CDATA[localhost]]></host><port>3306</port><login><![CDATA[root]]></login><passwd><![CDATA[]]></passwd><alloweddbs><![CDATA[]]></alloweddbs><localsock><![CDATA[]]></localsock><options></options></server></servers>";
 
 /* xml read functions */
 
@@ -191,6 +196,7 @@ gboolean gmysql_config_read_xml (p_gmysql_config gmsql_conf, const gchar * filen
 	xmlReadState.login = g_string_sized_new(16);
 	xmlReadState.passwd = g_string_sized_new(16);
 	xmlReadState.allowedDbs = g_string_sized_new(48);
+	xmlReadState.localSock = g_string_sized_new(48);
 
 	/* Create XML Parser */
 	xmlContext = g_markup_parse_context_new(&xmlParse, 0, (gpointer)gmsql_conf, (GDestroyNotify)NULL);
@@ -235,14 +241,23 @@ gboolean gmysql_config_write_xml (p_gmysql_config gmsql_conf, const gchar * file
 	
 	while (lstServersIdx != (GList *)NULL) {
 		msql_srv = (p_mysql_server) lstServersIdx->data;
-		g_string_append(xmlContent, "<server>\n");
-		g_string_append_printf(xmlContent, "<name><![CDATA[%s]]></name>\n", msql_srv->name);
-		g_string_append_printf(xmlContent, "<host><![CDATA[%s]]></host>\n", msql_srv->host);
-		g_string_append_printf(xmlContent, "<port>%d</port>\n", msql_srv->port);
-		g_string_append_printf(xmlContent, "<login><![CDATA[%s]]></login>\n", msql_srv->user);
-		g_string_append_printf(xmlContent, "<passwd><![CDATA[%s]]></passwd>\n", msql_srv->passwd);
-		g_string_append_printf(xmlContent, "<alloweddbs><![CDATA[%s]]></alloweddbs>\n", msql_srv->allowedDbs);
-		g_string_append(xmlContent, "<options></options>\n</server>\n");
+		g_string_append(xmlContent, "\t<server>\n");
+		g_string_append_printf(xmlContent, "\t\t<name><![CDATA[%s]]></name>\n", msql_srv->name);
+		g_string_append_printf(xmlContent, "\t\t<host><![CDATA[%s]]></host>\n", msql_srv->host);
+		g_string_append_printf(xmlContent, "\t\t<port>%d</port>\n", msql_srv->port);
+		g_string_append_printf(xmlContent, "\t\t<login><![CDATA[%s]]></login>\n", msql_srv->user);
+		g_string_append_printf(xmlContent, "\t\t<passwd><![CDATA[%s]]></passwd>\n", msql_srv->passwd);
+		if (msql_srv->allowedDbs != (gchar *)NULL) {
+			g_string_append_printf(xmlContent, "\t\t<alloweddbs><![CDATA[%s]]></alloweddbs>\n", msql_srv->allowedDbs);
+		} else {
+			g_string_append_printf(xmlContent, "\t\t<alloweddbs><![CDATA[]]></alloweddbs>\n");
+		}
+		if (msql_srv->localSock != (gchar *)NULL) {
+			g_string_append_printf(xmlContent, "\t\t<localsock><![CDATA[%s]]></localsock>\n", msql_srv->localSock);
+		} else {
+			g_string_append_printf(xmlContent, "\t\t<localsock><![CDATA[]]></localsock>\n");
+		}
+		g_string_append(xmlContent, "\t\t<options></options>\n\t</server>\n");
 		lstServersIdx = g_list_next(lstServersIdx);
 	}
 
@@ -272,6 +287,7 @@ void xmlConfStart (GMarkupParseContext *context, const gchar * element_name, con
 		g_string_erase(xmlReadState.login, 0, -1);
 		g_string_erase(xmlReadState.passwd, 0, -1);
 		g_string_erase(xmlReadState.allowedDbs, 0, -1);
+		g_string_erase(xmlReadState.localSock, 0, -1);
 		xmlReadState.port = 0;
 		xmlReadState.state = X_IN_SERVER;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xmlReadState.state == X_IN_SERVER) {
@@ -286,6 +302,8 @@ void xmlConfStart (GMarkupParseContext *context, const gchar * element_name, con
 		xmlReadState.state = X_IN_PASSWD;
 	} else if (g_ascii_strcasecmp(element_name, "alloweddbs") == 0 && xmlReadState.state == X_IN_SERVER) {
 		xmlReadState.state = X_IN_ALLOWED_DBS;
+	} else if (g_ascii_strcasecmp(element_name, "localsock") == 0 && xmlReadState.state == X_IN_SERVER) {
+		xmlReadState.state = X_IN_LOCAL_SOCK;
 	} else if (g_ascii_strcasecmp(element_name, "options") == 0 && xmlReadState.state == X_IN_SERVER) {
 		xmlReadState.state = X_IN_OPTIONS;
 	}
@@ -297,7 +315,7 @@ void xmlConfEnd (GMarkupParseContext *context, const gchar * element_name, gpoin
 	if (g_ascii_strcasecmp(element_name, "servers") == 0 && xmlReadState.state == X_IN_ROOT) {
 		xmlReadState.state = X_OUT_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "server") == 0 && xmlReadState.state == X_IN_SERVER) {
-		gmysql_config_add_server(gmsql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str);
+		gmysql_config_add_server(gmsql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str, xmlReadState.allowedDbs->str);
 		xmlReadState.state = X_IN_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xmlReadState.state == X_IN_NAME) {
 		xmlReadState.state = X_IN_SERVER;
@@ -310,6 +328,8 @@ void xmlConfEnd (GMarkupParseContext *context, const gchar * element_name, gpoin
 	} else if (g_ascii_strcasecmp(element_name, "passwd") == 0 && xmlReadState.state == X_IN_PASSWD) {
 		xmlReadState.state = X_IN_SERVER;
 	} else if (g_ascii_strcasecmp(element_name, "alloweddbs") == 0 && xmlReadState.state == X_IN_ALLOWED_DBS) {
+		xmlReadState.state = X_IN_SERVER;
+	} else if (g_ascii_strcasecmp(element_name, "localsock") == 0 && xmlReadState.state == X_IN_LOCAL_SOCK) {
 		xmlReadState.state = X_IN_SERVER;
 	} else if (g_ascii_strcasecmp(element_name, "options") == 0 && xmlReadState.state == X_IN_OPTIONS) {
 		xmlReadState.state = X_IN_SERVER;
@@ -342,6 +362,9 @@ void xmlConfPassthrough (GMarkupParseContext *context, const gchar * passthrough
 			break;
 		case X_IN_ALLOWED_DBS :
 			g_string_append_len(xmlReadState.allowedDbs, passthrough_text + 9, text_len - 12);
+			break;
+		case X_IN_LOCAL_SOCK :
+			g_string_append_len(xmlReadState.localSock, passthrough_text + 9, text_len - 12);
 			break;
 		default :
 			break;
