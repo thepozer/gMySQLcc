@@ -2,7 +2,8 @@
 #include "gmysql_gui.h"
 
 void initDump (p_dumpWnd p_wnd);
-void dumpSql (GtkWidget *widget, gpointer user_data);
+/*void dumpSql (GtkWidget *widget, gpointer user_data);*/
+void dumpSql (p_dumpWnd p_wnd, gchar * sqlFilename);
 
 void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data);
 void rdoDumpType_select (GtkRadioButton *radiobutton, gpointer user_data);
@@ -23,7 +24,7 @@ void initDump (p_dumpWnd p_wnd) {
 	/* Fill format combo box */
 	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("CSV"));
 	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
-	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("XML"));
+	cmbDataFormat_items = g_list_append (cmbDataFormat_items, (gpointer) _("SQL"));
 	gtk_combo_set_popdown_strings (GTK_COMBO (p_wnd->cmbDataFormat), cmbDataFormat_items);
   g_list_free (cmbDataFormat_items);
 	
@@ -34,23 +35,19 @@ void initDump (p_dumpWnd p_wnd) {
 	
 	/* Check datas */
 	if (p_wnd->mysql_tbl != (p_mysql_table)NULL) {
-g_print("Find a table ... \n");
 		p_wnd->mysql_db = p_wnd->mysql_tbl->mysql_db;
 		p_wnd->mysql_srv = p_wnd->mysql_db->mysql_srv;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpTable), TRUE);
 	} else if (p_wnd->mysql_db != (p_mysql_database)NULL) {
-g_print("Find a database ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_srv = p_wnd->mysql_db->mysql_srv;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpDatabase), TRUE);
 	} else if (p_wnd->mysql_srv != (p_mysql_server)NULL) {
-g_print("Find a server ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_db = (p_mysql_database)NULL;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpRequest), TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(p_wnd->rdoDumpServer), TRUE);
 	} else {
-g_print("Don't find anything ... \n");
 		p_wnd->mysql_tbl = (p_mysql_table)NULL;
 		p_wnd->mysql_db = (p_mysql_database)NULL;
 		p_wnd->mysql_srv = (p_mysql_server)NULL;
@@ -91,7 +88,6 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpServer))) {
-		g_print("server button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -103,7 +99,6 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_SERVER;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpDatabase))) {
-		g_print("database button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -114,7 +109,6 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_DATABASE;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpTable))) {
-		g_print("table button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -125,7 +119,6 @@ void rdoDumpLevel_select (GtkRadioButton *radiobutton, gpointer user_data) {
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->rdoDumpStructData), TRUE);
 		p_wnd->dumpLevel = DUMP_LEVEL_TABLE;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpRequest))) {
-		g_print("request button selected !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkSeparateFile), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkGroupInDirectory), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->txtNewDirectory), FALSE);
@@ -143,17 +136,14 @@ void rdoDumpType_select (GtkRadioButton *radiobutton, gpointer user_data) {
 	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpStruct))) {
-		g_print("structure dump (SQL) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), FALSE);
 		p_wnd->dumpType = DUMP_TYPE_STRUCT;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpStructData))) {
-		g_print("structure and data dump (SQL) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), TRUE);
 		p_wnd->dumpType = DUMP_TYPE_STRUCT_DATA;
 	} else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (p_wnd->rdoDumpData))) {
-		g_print("data only dump (SQL or XML) !!!\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->cmbDataFormat), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(p_wnd->chkCompleteInsert), TRUE);
 		p_wnd->dumpType = DUMP_TYPE_DATA;
@@ -180,12 +170,30 @@ void chkSeparateFile_toggle (GtkToggleButton *togglebutton, gpointer user_data) 
 }
 
 void btnDump_clicked (GtkWidget *widget, gpointer user_data) {
-	askFilename(_("Dump file name"), (gchar *) NULL, dumpSql, user_data);
+	p_dumpWnd p_wnd = (p_dumpWnd)user_data;
+	GtkWidget *chooser;
+	gint response;
+	gchar *filename;
+	
+	chooser = gtk_file_chooser_dialog_new (_("Dump file name"), GTK_WINDOW(p_wnd->wndDump), GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+	
+	response = gtk_dialog_run (GTK_DIALOG (chooser));
+	if (response == GTK_RESPONSE_OK) {
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+	} else {
+		filename = NULL;
+	}
+	
+	gtk_widget_destroy (chooser);
+		
+	if (filename != NULL) {
+		dumpSql (p_wnd, filename);
+		g_free (filename);
+	}
 }
 
-void dumpSql (GtkWidget *widget, gpointer user_data) {
-	p_askFilenameInfos paskFnInf = (p_askFilenameInfos)user_data;
-	p_dumpWnd p_wnd = (p_dumpWnd)paskFnInf->userData;
+void dumpSql (p_dumpWnd p_wnd, gchar * sqlFilename) {
 	s_dump_server_params dump_param_srv;
 	p_mysql_query mysql_qry;
 	GtkTextBuffer * txtBuffer;
@@ -193,7 +201,6 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	GtkWidget * msgdlg;
 	GIOChannel * dumpFile;
 	GError * err = (GError *)NULL;
-	gchar * sqlFilename = (gchar *)NULL;
 	gchar * sqlRequest = (gchar *)NULL;
 	gint selOutputCharset;
 	
@@ -202,8 +209,6 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
 	sqlRequest = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 
-	sqlFilename = (gchar *)gtk_file_selection_get_filename(GTK_FILE_SELECTION (paskFnInf->dialog));
-	
 	dump_param_srv.separate_file = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(p_wnd->chkSeparateFile));
 	dump_param_srv.group_in_directory = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(p_wnd->chkGroupInDirectory));
 	dump_param_srv.sql_filename = sqlFilename;
@@ -265,7 +270,7 @@ void dumpSql (GtkWidget *widget, gpointer user_data) {
 					mysql_dump_query_csv_direct(mysql_qry, dumpFile);
 					break;
 				case DUMP_FORMAT_XML : /* XML Format */
-					mysql_dump_query_xml_direct(mysql_qry, dumpFile);
+					mysql_dump_query_xml_direct(mysql_qry, dumpFile, TRUE, TRUE, TRUE, TRUE);
 					break;
 				case DUMP_FORMAT_SQL : /* SQL Format */
 					mysql_dump_query_sql_direct(mysql_qry, dump_param_srv.database.table.data_complete_insert, dumpFile);
