@@ -315,7 +315,7 @@ void xmlConfEnd (GMarkupParseContext *context, const gchar * element_name, gpoin
 	if (g_ascii_strcasecmp(element_name, "servers") == 0 && xmlReadState.state == X_IN_ROOT) {
 		xmlReadState.state = X_OUT_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "server") == 0 && xmlReadState.state == X_IN_SERVER) {
-		gmysql_config_add_server(gmsql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str, xmlReadState.allowedDbs->str);
+		gmysql_config_add_server(gmsql_conf, xmlReadState.name->str, xmlReadState.host->str,  xmlReadState.port, xmlReadState.login->str, xmlReadState.passwd->str, xmlReadState.allowedDbs->str, xmlReadState.localSock->str);
 		xmlReadState.state = X_IN_ROOT;
 	} else if (g_ascii_strcasecmp(element_name, "name") == 0 && xmlReadState.state == X_IN_NAME) {
 		xmlReadState.state = X_IN_SERVER;
