@@ -216,7 +216,7 @@ msgstr "Connexion"
 
 #: src/gListServer.c:421
 msgid "Connect to a server"
-msgstr "Coneexion a un serveur"
+msgstr "Connexion a un serveur"
 
 #: src/gListServer.c:455
 msgid "_Up"
