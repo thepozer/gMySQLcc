@@ -50,12 +50,12 @@ p_mysql_query mysql_query_new(p_mysql_server mysql_srv, const gchar * db_name) {
 	
 	mysql_qry->iconv_from = g_iconv_open("UTF-8", mysql_qry->charset);
 	if (mysql_qry->iconv_from < 0) {
-		g_printerr("Iconv from open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv from open error (%d) : '%s'\n", errno, strerror(errno));
 	}
 	
 	mysql_qry->iconv_to = g_iconv_open(mysql_qry->charset, "UTF-8");
 	if (mysql_qry->iconv_to < 0) {
-		g_printerr("Iconv to open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv to open error (%d) : '%s'\n", errno, strerror(errno));
 	}
 
 	return mysql_qry;
@@ -140,12 +140,12 @@ p_mysql_query mysql_query_duplicate(p_mysql_query base_mysql_qry) {
 	
 	mysql_qry->iconv_from = g_iconv_open("UTF-8", mysql_qry->charset);
 	if (mysql_qry->iconv_from < 0) {
-		g_printerr("Iconv open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv open error (%d) : '%s'\n", errno, strerror(errno));
 	}
 	
 	mysql_qry->iconv_to = g_iconv_open(mysql_qry->charset, "UTF-8");
 	if (mysql_qry->iconv_to < 0) {
-		g_printerr("Iconv open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv open error (%d) : '%s'\n", errno, strerror(errno));
 	}
 	
 	return mysql_qry;
@@ -449,13 +449,13 @@ gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * char
 	/* Create iconv converter based on given charset */
 	iconv_from = g_iconv_open("UTF-8", charset);
 	if (iconv_from < 0) {
-		g_printerr("Iconv from open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv from open error (%d) : '%s'\n", errno, strerror(errno));
 		return FALSE;
 	}
 	
 	iconv_to = g_iconv_open(charset, "UTF-8");
 	if (iconv_to < 0) {
-		g_printerr("Iconv to open error (%d) : '%s'\n", errno, strerrror(errno));
+		g_printerr("Iconv to open error (%d) : '%s'\n", errno, strerror(errno));
 		g_iconv_close(iconv_from);
 		return FALSE;
 	}
