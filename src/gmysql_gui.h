@@ -21,7 +21,7 @@
 
 #define _(String) gettext (String)
 
-#ifndef __GMYSQL_MAIN_PART__
+#ifndef __GMYSQLCC_MAIN_PART__
 
 extern int NbrWnd;
 extern p_gmysql_config gmysql_conf;
@@ -30,7 +30,7 @@ extern p_gmysql_config gmysql_conf;
 extern GtkSourceLanguagesManager * LangManager;
 #endif /* USE_GTKSOURCEVIEW */
 
-#endif /* __GMYSQL_MAIN_PART__ */
+#endif /* __GMYSQLCC_MAIN_PART__ */
 
 /* List server window */
 
