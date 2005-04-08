@@ -168,21 +168,56 @@ gboolean mysql_dump_csv_table_to_disk (p_mysql_dump mysql_dmp) {
 }
 
 gboolean mysql_dump_csv_query_to_disk (p_mysql_dump mysql_dmp) {
-	gboolean bRet;
-	GString * strTmp;
+	p_mysql_query mysql_qry;
+	GString * strRet, * tmpField, * strTmp;
+	GArray * arRow;
 	GError * err = (GError *)NULL;
 	gssize nbBytes;
+	gchar * s_absTableName = NULL;
+	int i;
 	
-	strTmp = g_string_new("");
-	g_string_printf(strTmp, "\"\";\n\"* Database : '%s' - Table : '%s'\";\n\"Query : '%s'\";\n\"\";\n", mysql_dmp->mysql_db->name, mysql_dmp->mysql_tbl->name, mysql_dmp->qry_string);
-	g_io_channel_write_chars(mysql_dmp->file, strTmp->str, -1, &nbBytes, &err);
-	g_string_free(strTmp, TRUE);
+	mysql_qry = mysql_database_query(mysql_dmp->mysql_db);
 	
-	g_print("mysql_dump_csv_query_to_disk - with_data - sql : '%s'\n", mysql_dmp->qry_string);
+	if (mysql_query_execute_query(mysql_qry, mysql_dmp->qry_string, FALSE)) {
+		
+		s_absTableName = mysql_query_get_absolute_table_name(mysql_qry, TRUE);
+		
+		if (s_absTableName == NULL) {
+			s_absTableName = g_strdup("");
+		}
+		
+		strTmp = g_string_new("");
+		g_string_printf(strTmp, "\"\";\n\"* Database : '%s' - Table : '%s'\";\n\"Query : '%s'\";\n\"\";\n", mysql_dmp->mysql_db->name, s_absTableName, mysql_dmp->qry_string);
+		g_io_channel_write_chars(mysql_dmp->file, strTmp->str, -1, &nbBytes, &err);
+		g_string_free(strTmp, TRUE);
+		
+		g_print("mysql_dump_csv_query_to_disk - with_data - sql : '%s'\n", mysql_dmp->qry_string);
+		
+		strRet = g_string_new("");
+		
+		arRow = mysql_query_get_next_record(mysql_qry);
+		while (arRow != (GArray *)NULL) {
+			g_string_assign (strRet, "");
+			
+			for (i = 0; i < arRow->len; i++) {
+				tmpField = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
+				g_string_append_printf(strRet, (i == 0) ? "\"%s\"" : ";\"%s\"" , tmpField->str);
+				g_string_free(tmpField, TRUE);
+			}
+			
+			g_string_append(strRet, "\n");
+			g_io_channel_write_chars(mysql_dmp->file, strRet->str, -1, &nbBytes, &err);
 	
-	bRet = mysql_dump_csv_data_query_to_disk(mysql_dmp);
+			g_array_free(arRow, TRUE);
+			arRow = mysql_query_get_next_record(mysql_qry);
+		}
 	
-	return bRet;
+		g_string_free (strRet, TRUE);
+		g_free(s_absTableName);
+	}
+	
+	mysql_query_delete(mysql_qry);
+	return TRUE;
 }
 
 gboolean mysql_dump_csv_struct_database_to_disk (p_mysql_dump mysql_dmp) {

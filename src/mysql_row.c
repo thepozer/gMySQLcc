@@ -23,7 +23,7 @@ p_mysql_row mysql_row_new_next_record (p_mysql_query mysql_qry) {
 	
 	mysql_rw->results = retData;
 	mysql_rw->mysql_qry = mysql_qry;
-	mysql_rw->abs_tbl_name = mysql_query_get_absolute_table_name(mysql_qry);
+	mysql_rw->abs_tbl_name = mysql_query_get_absolute_table_name(mysql_qry, FALSE);
 	if (mysql_rw->abs_tbl_name != (gchar *)NULL) {
 		mysql_rw->primary_where_part = mysql_query_get_primary_where(mysql_qry, mysql_rw->results);
 	} else {
