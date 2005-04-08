@@ -82,7 +82,7 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 	GtkWidget *hpaned1;
 	GtkWidget *toolbar1;
 	GtkWidget * imgToolbar;
-	GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrClose;
+	GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrClose, * btnTlbrLoad;
 
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
