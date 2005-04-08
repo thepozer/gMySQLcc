@@ -131,24 +131,24 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	
 	tooltips = gtk_tooltips_new();
 	
-  gui_query->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gui_query->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	sTitle = g_string_new("");
 	g_string_printf(sTitle, _("SQL Request - %s - %s"), gui_query->mysql_qry->mysql_srv->name, gui_query->mysql_qry->db_name);
-  gtk_window_set_title (GTK_WINDOW (gui_query->window), sTitle->str);
+	gtk_window_set_title (GTK_WINDOW (gui_query->window), sTitle->str);
 	g_string_free(sTitle, TRUE);
 	gtk_window_set_default_size (GTK_WINDOW (gui_query->window), 400, 300);
 	
 	g_signal_connect (G_OBJECT (gui_query->window), "key-release-event", G_CALLBACK (gmysqlcc_gui_query_evt_window_keyrelease), gui_query);
 	g_signal_connect (G_OBJECT (gui_query->window), "destroy", G_CALLBACK (gmysqlcc_gui_query_evt_destroy), gui_query);
 	
-  vbox2 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox2);
-  gtk_container_add (GTK_CONTAINER (gui_query->window), vbox2);
+	vbox2 = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (vbox2);
+	gtk_container_add (GTK_CONTAINER (gui_query->window), vbox2);
 
-  tlbSql = gtk_toolbar_new ();
-  gtk_widget_show (tlbSql);
-  gtk_box_pack_start (GTK_BOX (vbox2), tlbSql, FALSE, FALSE, 0);
-  gtk_toolbar_set_style (GTK_TOOLBAR (tlbSql), GTK_TOOLBAR_BOTH_HORIZ);
+	tlbSql = gtk_toolbar_new ();
+	gtk_widget_show (tlbSql);
+	gtk_box_pack_start (GTK_BOX (vbox2), tlbSql, FALSE, FALSE, 0);
+	gtk_toolbar_set_style (GTK_TOOLBAR (tlbSql), GTK_TOOLBAR_BOTH_HORIZ);
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -196,17 +196,17 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnClose), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnClose), tooltips, _("Close window"), NULL);
 
-  vpanedSQL = gtk_vpaned_new ();
-  gtk_widget_show (vpanedSQL);
-  gtk_box_pack_start (GTK_BOX (vbox2), vpanedSQL, TRUE, TRUE, 0);
-  gtk_paned_set_position (GTK_PANED (vpanedSQL), 100);
-
-  scrlwndSQLRequest = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrlwndSQLRequest);
-  gtk_paned_pack1 (GTK_PANED (vpanedSQL), scrlwndSQLRequest, FALSE, TRUE);
+	vpanedSQL = gtk_vpaned_new ();
+	gtk_widget_show (vpanedSQL);
+	gtk_box_pack_start (GTK_BOX (vbox2), vpanedSQL, TRUE, TRUE, 0);
+	gtk_paned_set_position (GTK_PANED (vpanedSQL), 100);
+	
+	scrlwndSQLRequest = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrlwndSQLRequest);
+	gtk_paned_pack1 (GTK_PANED (vpanedSQL), scrlwndSQLRequest, FALSE, TRUE);
 
 #ifdef USE_GTKSOURCEVIEW
-  gui_query->txtSQLRequest = gtk_source_view_new ();
+	gui_query->txtSQLRequest = gtk_source_view_new ();
 	gtk_source_view_set_show_line_numbers (GTK_SOURCE_VIEW(gui_query->txtSQLRequest), TRUE);
 	gtk_source_view_set_tabs_width (GTK_SOURCE_VIEW(gui_query->txtSQLRequest), 2);
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui_query->txtSQLRequest));
@@ -214,26 +214,26 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(txtBuffer), 
 			gtk_source_languages_manager_get_language_from_mime_type(LangManager, "text/x-sql"));
 #else /* USE_GTKSOURCEVIEW */
-  gui_query->txtSQLRequest = gtk_text_view_new ();
+	gui_query->txtSQLRequest = gtk_text_view_new ();
 #endif /* USE_GTKSOURCEVIEW */
-  gtk_widget_show (gui_query->txtSQLRequest);
-  gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), gui_query->txtSQLRequest);
+	gtk_widget_show (gui_query->txtSQLRequest);
+	gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), gui_query->txtSQLRequest);
   
-  gui_query->sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (gui_query->sclSQLResult);
-  gtk_paned_pack2 (GTK_PANED (vpanedSQL), gui_query->sclSQLResult, TRUE, TRUE);
+	gui_query->sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (gui_query->sclSQLResult);
+	gtk_paned_pack2 (GTK_PANED (vpanedSQL), gui_query->sclSQLResult, TRUE, TRUE);
 
-  gui_query->lstSQLResult = gtk_tree_view_new ();
-  gtk_widget_show (gui_query->lstSQLResult);
-  gtk_container_add (GTK_CONTAINER (gui_query->sclSQLResult), gui_query->lstSQLResult);
+	gui_query->lstSQLResult = gtk_tree_view_new ();
+	gtk_widget_show (gui_query->lstSQLResult);
+	gtk_container_add (GTK_CONTAINER (gui_query->sclSQLResult), gui_query->lstSQLResult);
 
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_query->lstSQLResult));
 	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 	g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (gmysqlcc_gui_query_evt_resultRow_selected), gui_query);
 
-  gui_query->statusbarSQL = gtk_statusbar_new ();
-  gtk_widget_show (gui_query->statusbarSQL);
-  gtk_box_pack_start (GTK_BOX (vbox2), gui_query->statusbarSQL, FALSE, FALSE, 0);
+	gui_query->statusbarSQL = gtk_statusbar_new ();
+	gtk_widget_show (gui_query->statusbarSQL);
+	gtk_box_pack_start (GTK_BOX (vbox2), gui_query->statusbarSQL, FALSE, FALSE, 0);
 	
 }
 
@@ -528,7 +528,7 @@ void gmysqlcc_gui_query_evt_btnDumpSql_clicked(GtkWidget *widget, gpointer user_
 	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
 	sqlQuery = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 	
-	g_print("Dump query ...\n");
+	g_print("Dump query ...\n%s\n", sqlQuery);
 	
 	gui_dump = gmysqlcc_gui_dump_new(NULL, mysql_query_get_database(gui_query->mysql_qry), NULL, sqlQuery);
 	gmysqlcc_gui_dump_display(gui_dump, TRUE);

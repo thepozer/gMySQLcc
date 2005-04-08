@@ -592,7 +592,7 @@ void gmysqlcc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer use
 }
 
 void gmysqlcc_gui_server_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	/*p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;*/
 	p_gmysqlcc_gui_text gui_text;
 	
 	gui_text = gmysqlcc_gui_text_new();

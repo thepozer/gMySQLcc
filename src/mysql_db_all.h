@@ -12,7 +12,7 @@ typedef struct _s_mysql_server {
 /* Connection infos */
 	gchar *				name;
 	gchar *				host;
-	unsigned int	port;
+	unsigned int		port;
 	gchar *				user;
 	gchar *				passwd;
 	gchar *				allowedDbs;
@@ -23,8 +23,8 @@ typedef struct _s_mysql_server {
 	gboolean			write_warning;
 
 /* Server datas */
-	GHashTable *	hshDbs;
-	GHashTable *	hshUsers;
+	GHashTable *		hshDbs;
+	GHashTable *		hshUsers;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
@@ -33,7 +33,7 @@ typedef struct _s_mysql_user {
 /* User Infos */
 	gchar *					login;
 	gchar *					host;
-	GHashTable *		hshRights;
+	GHashTable *			hshRights;
 	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
@@ -47,11 +47,11 @@ typedef s_mysql_user * p_mysql_user;
 typedef struct _s_mysql_database {
 /* Connection Infos */
 	gchar *					name;
-	p_mysql_server	mysql_srv;
+	p_mysql_server			mysql_srv;
 	
 /* Tables Informations */
 	GList *					lstTables;
-	GHashTable *		hshTables;
+	GHashTable *			hshTables;
 	
 /* Update database list informations */
 	gboolean				found;
@@ -62,7 +62,7 @@ typedef s_mysql_database * p_mysql_database;
 typedef struct _s_mysql_table {
 /* Connection Infos */
 	gchar *						name;
-	p_mysql_database	mysql_db;
+	p_mysql_database			mysql_db;
 	
 /* Status infos */
 	gchar *						nbrRow;
@@ -74,29 +74,30 @@ typedef s_mysql_table * p_mysql_table;
 
 typedef struct _s_mysql_query {
 /* Query Infos */
-	gchar *					query;
+	gchar *						query;
 	
 /* Result Infos */
 	int							nbrField;
 	int							editResult;
 	int							errCode;
-	gchar *					errMsg;
-	GArray *				rawHeaders;
-	gboolean				can_edit;
+	gchar *						errMsg;
+	GArray *					rawHeaders;
+	gboolean					can_edit;
 	
 /* Connection Infos */
-	p_mysql_server	mysql_srv;
-	gchar *					db_name;
-	gchar *					abs_tbl_name;
+	p_mysql_server				mysql_srv;
+	gchar *						db_name;
+	gchar *						abs_tbl_name;
+	gchar *						tbl_name;
 	
 /* Mysql Infos */
-	MYSQL *					mysql_link;
-	MYSQL_RES *			mysql_result;
+	MYSQL *						mysql_link;
+	MYSQL_RES *					mysql_result;
 	
 /* Charset Infos */
-	gchar *					charset;
-	GIConv					iconv_from;
-	GIConv					iconv_to;
+	gchar *						charset;
+	GIConv						iconv_from;
+	GIConv						iconv_to;
 } s_mysql_query;
 
 typedef s_mysql_query * p_mysql_query;
@@ -126,14 +127,14 @@ typedef s_mysql_multi_query * p_mysql_multi_query;
 	
 typedef struct _s_mysql_row {
 /* Data infos */
-	GArray *			results;
+	GArray *					results;
 	
 /* Connection infos */
-	p_mysql_query	mysql_qry;
+	p_mysql_query				mysql_qry;
 	
 /* Request for update infos */
-	gchar *				abs_tbl_name;
-	gchar *				primary_where_part;
+	gchar *						abs_tbl_name;
+	gchar *						primary_where_part;
 } s_mysql_row;
 
 typedef s_mysql_row * p_mysql_row;
@@ -257,7 +258,7 @@ GArray * mysql_query_get_headers(p_mysql_query mysql_qry);
 GArray * mysql_query_get_next_record(p_mysql_query mysql_qry);
 GArray * mysql_query_get_all_records(p_mysql_query mysql_qry);
 
-gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry);
+gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry, gboolean only_table_name);
 gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas);
 gboolean mysql_query_is_editable (p_mysql_query mysql_qry);
 

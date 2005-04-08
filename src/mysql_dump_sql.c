@@ -162,13 +162,68 @@ gboolean mysql_dump_sql_table_to_disk (p_mysql_dump mysql_dmp) {
 }
 
 gboolean mysql_dump_sql_query_to_disk (p_mysql_dump mysql_dmp) {
-	gboolean bRet;
+	p_mysql_query mysql_qry;
+	GString * strRet, * strInsert, * tmpField;
+	GArray * arRow;
+	GError * err = NULL;
+	gssize nbBytes;
+	gchar * s_absTableName = NULL;
+	int i;
 	
-	g_print("mysql_dump_sql_query_to_disk - with_data - sql : '%s'\n", mysql_dmp->qry_string);
+	mysql_qry = mysql_database_query(mysql_dmp->mysql_db);
+	strInsert = g_string_new("");
+
+	g_io_channel_write_chars(mysql_dmp->file, "\n# Dump datas\n\n", -1, &nbBytes, &err);
 	
-	bRet = mysql_dump_sql_data_query_to_disk(mysql_dmp);
+	g_print("mysql_dump_sql_query_to_disk - with_data : '%s'\n", mysql_dmp->qry_string);
 	
-	return bRet;
+	if (mysql_query_execute_query(mysql_qry, mysql_dmp->qry_string, FALSE)) {
+		
+		s_absTableName = mysql_query_get_absolute_table_name(mysql_qry, FALSE);
+		
+		if (s_absTableName == NULL) {
+			s_absTableName = g_strdup("`DUMMY_DB`.`DUMMY_TBL`");
+		}
+		
+		if (mysql_dmp->tbl_data_complete_insert) {
+			g_string_printf(strInsert, "INSERT INTO %s (", s_absTableName);
+			arRow = mysql_query_get_headers(mysql_qry);
+			for (i = 0; i < arRow->len; i++) {
+					g_string_append_printf(strInsert, (i == 0) ? "`%s`" : ", `%s`" , g_array_index(arRow, gchar *, i));
+			}
+			g_string_append(strInsert, ")");
+			g_array_free(arRow, TRUE);
+		} else {
+			g_string_printf(strInsert, "INSERT INTO %s", s_absTableName);
+		}
+		
+		strRet = g_string_new("");
+		arRow = mysql_query_get_next_record(mysql_qry);
+		while (arRow != (GArray *)NULL) {
+			g_string_assign(strRet, strInsert->str);
+			g_string_append(strRet, " VALUES (");
+			
+			for (i = 0; i < arRow->len; i++) {
+				tmpField = gmysqlcc_helpers_add_slashes(g_array_index(arRow, gchar *, i));
+				g_string_append_printf(strRet, (i == 0) ? "'%s'" : ", '%s'" , tmpField->str);
+				g_string_free(tmpField, TRUE);
+			}
+			
+			g_string_append(strRet, ");\n");
+			g_io_channel_write_chars(mysql_dmp->file, strRet->str, -1, &nbBytes, &err);
+			
+			g_array_free(arRow, TRUE);
+			arRow = mysql_query_get_next_record(mysql_qry);
+		}
+		
+		g_string_free(strRet, TRUE);
+		g_free(s_absTableName);
+	}
+	
+	g_string_free (strInsert, TRUE);
+	mysql_query_delete(mysql_qry);
+	
+	return TRUE;
 }
 
 gboolean mysql_dump_sql_struct_database_to_disk (p_mysql_dump mysql_dmp) {

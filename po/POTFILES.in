@@ -5,26 +5,26 @@
 ## 	Please disable it in the Anjuta project configuration
 
 # Source files
-src/gDump.c
-src/gExecSql.c
-src/gListServer.c
-src/gServer.c
-src/gUtils.c
-src/gmysql_conf.c
-src/gmysql_conf.h
-src/gmysql_utils.c
-src/gmysql_utils.h
-src/gmysqlcc.c
-src/mysql_database.c
+src/gmysqlcc_main.c
+src/gmysqlcc_config.c
+src/gmysqlcc_config.h
+src/gmysqlcc_helpers.c
+src/gmysqlcc_helpers.h
+src/gmysqlcc_gui_all.h
+src/gmysqlcc_gui_dump.c
+src/gmysqlcc_gui_list_server.c
+src/gmysqlcc_gui_query.c
+src/gmysqlcc_gui_server.c
+src/gmysqlcc_gui_text.c
+src/gmysqlcc_gui_misc.c
 src/mysql_db_all.h
+src/mysql_database.c
 src/mysql_dump.c
+src/mysql_dump_csv.c
+src/mysql_dump_sql.c
+src/mysql_dump_xml.c
 src/mysql_query.c
 src/mysql_row.c
 src/mysql_server.c
 src/mysql_table.c
-src/gTableUtils.h
 src/mysql_user.c
-src/gmysql_gui.h
-src/gText.c
-
-

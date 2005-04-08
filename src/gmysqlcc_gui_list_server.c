@@ -73,35 +73,35 @@ gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_se
 
 void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list_server) {
 	GtkWidget *frame1;
-  GtkWidget *vbox4, *vbox5, *vbox7;
-  GtkWidget *hbox5, *hbox6, *hbox7, *hbox8, *hbox12, *hbox13, *hbox14, *hbox15, *hbox16, *hbox17;
-  GtkWidget *label9, *label10, *label11, *label12, *label13, *label14, *label17;
+	GtkWidget *vbox4, *vbox5, *vbox7;
+	GtkWidget *hbox5, *hbox6, *hbox7, *hbox8, *hbox12, *hbox13, *hbox14, *hbox15, *hbox16, *hbox17;
+	GtkWidget *label9, *label10, *label11, *label12, *label13, *label14, *label17;
 	GtkWidget *scrolledwindow3;
-  GtkWidget *btnNew, *btnAdd, *btnEdit, *btnDel, *btnServerUp, *btnServerDown;
+	GtkWidget *btnNew, *btnAdd, *btnEdit, *btnDel, *btnServerUp, *btnServerDown;
 	
 	GtkWidget *hpaned1;
-  GtkWidget *toolbar1;
+	GtkWidget *toolbar1;
 	GtkWidget * imgToolbar;
-  GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrLoad, * btnTlbrClose;
+	GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrClose;
 
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
 	
 	tooltips = gtk_tooltips_new();
 	
-  gui_list_server->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (gui_list_server->window), _("Servers list"));
+	gui_list_server->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (gui_list_server->window), _("Servers list"));
 	g_signal_connect (G_OBJECT (gui_list_server->window), "destroy", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_destroy), gui_list_server);
 	gtk_window_set_default_size (GTK_WINDOW (gui_list_server->window), 500, 300);
 
-  vbox4 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox4);
-  gtk_container_add (GTK_CONTAINER (gui_list_server->window), vbox4);
+	vbox4 = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (vbox4);
+	gtk_container_add (GTK_CONTAINER (gui_list_server->window), vbox4);
 
-  toolbar1 = gtk_toolbar_new ();
-  gtk_widget_show (toolbar1);
-  gtk_box_pack_start (GTK_BOX (vbox4), toolbar1, FALSE, FALSE, 0);
+	toolbar1 = gtk_toolbar_new ();
+	gtk_widget_show (toolbar1);
+	gtk_box_pack_start (GTK_BOX (vbox4), toolbar1, FALSE, FALSE, 0);
 	gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
 
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);

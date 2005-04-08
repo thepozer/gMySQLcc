@@ -358,13 +358,14 @@ GArray * mysql_query_get_all_records(p_mysql_query mysql_qry) {
 	}
 }
 
-gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
+gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry, gboolean only_table_name) {
 	MYSQL_FIELD * field;
 	int i;
 	GString * abs_tbl_name, * abs_tbl_name_old;
 	GArray * hdrs;
+	gchar * s_tbl_name;
 	
-	if (mysql_qry->abs_tbl_name != NULL) {
+	if (mysql_qry->abs_tbl_name != NULL && !only_table_name) {
 		return g_strdup(mysql_qry->abs_tbl_name);
 	}
 
@@ -379,7 +380,11 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 	for(i = 0; i < mysql_qry->rawHeaders->len; i++) {
 		
 		field = g_array_index(mysql_qry->rawHeaders, MYSQL_FIELD *, i);
-		g_string_printf(abs_tbl_name, "`%s`.`%s`", mysql_qry->db_name, field->table);
+		if (only_table_name) {
+			g_string_printf(abs_tbl_name, "%s", field->table);
+		} else {
+			g_string_printf(abs_tbl_name, "`%s`.`%s`", mysql_qry->db_name, field->table);
+		}
 		
 		if (abs_tbl_name_old != NULL) {
 			
@@ -396,10 +401,17 @@ gchar * mysql_query_get_absolute_table_name (p_mysql_query mysql_qry) {
 		
 	}
 	
-	mysql_qry->abs_tbl_name = abs_tbl_name->str;
-	g_string_free(abs_tbl_name, FALSE);
-	g_string_free(abs_tbl_name_old, TRUE);
-	return g_strdup(mysql_qry->abs_tbl_name);
+	if (only_table_name) {
+		s_tbl_name = g_strdup(abs_tbl_name->str);
+		g_string_free(abs_tbl_name, TRUE);
+		g_string_free(abs_tbl_name_old, TRUE);
+		return s_tbl_name;
+	} else {
+		mysql_qry->abs_tbl_name = abs_tbl_name->str;
+		g_string_free(abs_tbl_name, FALSE);
+		g_string_free(abs_tbl_name_old, TRUE);
+		return g_strdup(mysql_qry->abs_tbl_name);
+	}
 }
 
 gchar * mysql_query_get_primary_where (p_mysql_query mysql_qry, GArray * datas) {
