@@ -96,22 +96,12 @@ gboolean mysql_multi_query_from_file(p_mysql_multi_query mysql_mlt_qry, const ch
 }
 
 gboolean mysql_multi_query_from_string(p_mysql_multi_query mysql_mlt_qry, const char * content, gboolean b_stop_on_error) {
-	GError * err;
-	GThread * thrd;
-	
 	mysql_mlt_qry->content = content;
 	mysql_mlt_qry->stop_error = b_stop_on_error;
 	mysql_mlt_qry->finished = FALSE;
 	mysql_mlt_qry->finish_ok = FALSE;
 	
-	if (g_thread_supported()) {
-		g_print("Use thread ...\n");
-		thrd = g_thread_create(mysql_multi_query_thread, mysql_mlt_qry, TRUE, &err);
-		return TRUE;
-	} else {
-		g_print("Not use thread !!!\n");
-		return mysql_multi_query_thread(mysql_mlt_qry) == mysql_mlt_qry ;
-	}
+	return mysql_multi_query_thread(mysql_mlt_qry) == mysql_mlt_qry ;
 }
 
 gpointer mysql_multi_query_thread(gpointer data) {
@@ -202,13 +192,8 @@ gpointer mysql_multi_query_thread(gpointer data) {
 	}
 	
 	g_string_free(sql_query, TRUE);
-	
-	if (g_thread_supported()) {
-		g_thread_exit((ret != NULL));
-		return NULL;
-	} else {
-		return ret;
-	}
+
+	return ret;
 }
 
 gboolean mysql_multi_query_execute_query(p_mysql_multi_query mysql_mlt_qry, const char * query) {
@@ -229,12 +214,6 @@ gboolean mysql_multi_query_execute_query(p_mysql_multi_query mysql_mlt_qry, cons
 	if (mysql_mlt_qry->status_callback != NULL) {
 		(*mysql_mlt_qry->status_callback)(mysql_mlt_qry, ret, mysql_mlt_qry->status_user_data);
 	}
-	
-/*
-	if ((mysql_mlt_qry->nbr_error + mysql_mlt_qry->nbr_query) % 50 == 0 && mysql_mlt_qry->nbr_query != 0) {
-		sleep(1); /* Wait 1 seconds to each 20th query * /
-	}
-*/
 	
 	return TRUE;
 }
