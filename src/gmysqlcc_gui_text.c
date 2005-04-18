@@ -85,28 +85,28 @@ gboolean gmysqlcc_gui_text_delete (p_gmysqlcc_gui_text gui_text) {
 
 void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
 	GtkWidget *vbox;
-  GtkWidget *toolbar;
-  GtkWidget *scrolledwindow;
+	GtkWidget *toolbar;
+	GtkWidget *scrolledwindow;
  	GtkWidget * imgToolbar;
-  GtkToolItem * btnTlbrLoad, * btnTlbrSave, * btnTlbrExecute, * btnTlbrClose;
+	GtkToolItem * btnTlbrLoad, * btnTlbrSave, * btnTlbrExecute, * btnTlbrClose;
 	GtkTooltips * tooltips;
 	GtkTextBuffer * txtBuffer;
 	
 	tooltips = gtk_tooltips_new();
 	
 	gui_text->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (gui_text->window), _("Text Window"));
+	gtk_window_set_title (GTK_WINDOW (gui_text->window), _("Text Window"));
  	gtk_window_set_default_size (GTK_WINDOW (gui_text->window), 400, 400);
 	g_signal_connect (G_OBJECT (gui_text->window), "destroy", G_CALLBACK (gmysqlcc_gui_text_evt_destroy), gui_text);
 
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox);
-  gtk_container_add (GTK_CONTAINER (gui_text->window), vbox);
+	vbox = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (vbox);
+	gtk_container_add (GTK_CONTAINER (gui_text->window), vbox);
 
-  toolbar = gtk_toolbar_new ();
-  gtk_widget_show (toolbar);
-  gtk_box_pack_start (GTK_BOX (vbox), toolbar, FALSE, FALSE, 0);
-  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+	toolbar = gtk_toolbar_new ();
+	gtk_widget_show (toolbar);
+	gtk_box_pack_start (GTK_BOX (vbox), toolbar, FALSE, FALSE, 0);
+	gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -143,13 +143,13 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
 	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrClose), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
-	
-  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow);
-  gtk_box_pack_start (GTK_BOX (vbox), scrolledwindow, TRUE, TRUE, 0);
+
+	scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow);
+	gtk_box_pack_start (GTK_BOX (vbox), scrolledwindow, TRUE, TRUE, 0);
 
 #ifdef USE_GTKSOURCEVIEW
-  gui_text->txtContent = gtk_source_view_new ();
+	gui_text->txtContent = gtk_source_view_new ();
 	gtk_source_view_set_show_line_numbers (GTK_SOURCE_VIEW(gui_text->txtContent), TRUE);
 	gtk_source_view_set_tabs_width (GTK_SOURCE_VIEW(gui_text->txtContent), 2);
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui_text->txtContent));
@@ -157,11 +157,11 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
 	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(txtBuffer), 
 			gtk_source_languages_manager_get_language_from_mime_type(LangManager, "text/x-sql"));
 #else /* USE_GTKSOURCEVIEW */
-  gui_text->txtContent = gtk_text_view_new ();
+	gui_text->txtContent = gtk_text_view_new ();
 #endif /* USE_GTKSOURCEVIEW */
-  gtk_widget_show (gui_text->txtContent);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_text->txtContent);
-	
+	gtk_widget_show (gui_text->txtContent);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_text->txtContent);
+
 }
 
 void gmysqlcc_gui_text_init_widget (p_gmysqlcc_gui_text gui_text) {
@@ -280,6 +280,7 @@ void gmysqlcc_gui_text_evt_btnTlbrExecute_clicked (GtkWidget *widget, gpointer u
 	gmysqlcc_gui_exec_file_set_content(gui_xcfl, content);
 	gmysqlcc_gui_exec_file_display(gui_xcfl, TRUE);
 }
+
 void gmysqlcc_gui_text_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_text gui_text = (p_gmysqlcc_gui_text)user_data;
 	

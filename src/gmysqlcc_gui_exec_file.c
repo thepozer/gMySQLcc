@@ -79,7 +79,7 @@ void gmysqlcc_gui_exec_file_create_widget (p_gmysqlcc_gui_exec_file gui_xcfl) {
 	GtkWidget *table4, *table5;
 	GtkWidget *label39, *label41, *label42, *label43;
 	GtkWidget *btnShowReport, *btnExecute, *btnCancel;
-  GSList *rbtDatabase_group = NULL;
+	GSList *rbtDatabase_group = NULL;
 	
 	gui_xcfl->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_container_set_border_width (GTK_CONTAINER (gui_xcfl->window), 3);
@@ -113,13 +113,13 @@ void gmysqlcc_gui_exec_file_create_widget (p_gmysqlcc_gui_exec_file gui_xcfl) {
 										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 	g_signal_connect (G_OBJECT (gui_xcfl->cmbServerList), "changed", G_CALLBACK (gmysqlcc_gui_exec_file_evt_cmbServerList_changed), gui_xcfl);
 	
-  gui_xcfl->rbtExistDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("Select _database :"));
-  gtk_widget_show (gui_xcfl->rbtExistDatabase);
-  gtk_table_attach (GTK_TABLE (table4), gui_xcfl->rbtExistDatabase, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_xcfl->rbtExistDatabase), rbtDatabase_group);
-  rbtDatabase_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_xcfl->rbtExistDatabase));
+	gui_xcfl->rbtExistDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("Select _database :"));
+	gtk_widget_show (gui_xcfl->rbtExistDatabase);
+	gtk_table_attach (GTK_TABLE (table4), gui_xcfl->rbtExistDatabase, 0, 1, 1, 2,
+	                (GtkAttachOptions) (GTK_FILL),
+	                (GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_xcfl->rbtExistDatabase), rbtDatabase_group);
+	rbtDatabase_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_xcfl->rbtExistDatabase));
 	g_signal_connect (G_OBJECT (gui_xcfl->rbtExistDatabase), "clicked", G_CALLBACK (gmysqlcc_gui_exec_file_evt_rbtDatabase_clicked), gui_xcfl);
 
 	gui_xcfl->cmbDatabaseList = gtk_combo_box_new_text ();
@@ -129,20 +129,20 @@ void gmysqlcc_gui_exec_file_create_widget (p_gmysqlcc_gui_exec_file gui_xcfl) {
 										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 	g_signal_connect (G_OBJECT (gui_xcfl->cmbDatabaseList), "changed", G_CALLBACK (gmysqlcc_gui_exec_file_evt_cmbDatabaseList_changed), gui_xcfl);
 	
-  gui_xcfl->rbtNewDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("_Create database :"));
-  gtk_widget_show (gui_xcfl->rbtNewDatabase);
-  gtk_table_attach (GTK_TABLE (table4), gui_xcfl->rbtNewDatabase, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_xcfl->rbtNewDatabase), rbtDatabase_group);
-  rbtDatabase_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_xcfl->rbtNewDatabase));
+	gui_xcfl->rbtNewDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("_Create database :"));
+	gtk_widget_show (gui_xcfl->rbtNewDatabase);
+	gtk_table_attach (GTK_TABLE (table4), gui_xcfl->rbtNewDatabase, 0, 1, 2, 3,
+	                (GtkAttachOptions) (GTK_FILL),
+	                (GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_xcfl->rbtNewDatabase), rbtDatabase_group);
+	rbtDatabase_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_xcfl->rbtNewDatabase));
 	g_signal_connect (G_OBJECT (gui_xcfl->rbtNewDatabase), "clicked", G_CALLBACK (gmysqlcc_gui_exec_file_evt_rbtDatabase_clicked), gui_xcfl);
 
-  gui_xcfl->txtNewDatabase = gtk_entry_new ();
-  gtk_widget_show (gui_xcfl->txtNewDatabase);
-  gtk_table_attach (GTK_TABLE (table4), gui_xcfl->txtNewDatabase, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+	gui_xcfl->txtNewDatabase = gtk_entry_new ();
+	gtk_widget_show (gui_xcfl->txtNewDatabase);
+	gtk_table_attach (GTK_TABLE (table4), gui_xcfl->txtNewDatabase, 1, 2, 2, 3,
+	                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+	                (GtkAttachOptions) (0), 0, 0);
 
 	gui_xcfl->chkStopError = gtk_check_button_new_with_mnemonic (_("Stop on _error"));
 	gtk_widget_show (gui_xcfl->chkStopError);
@@ -407,7 +407,7 @@ void gmysqlcc_gui_exec_file_evt_btnExecute_clicked(GtkWidget *widget, gpointer u
 	if (gui_xcfl->filename != NULL && gui_xcfl->content == NULL) {
 		mysql_multi_query_from_file(gui_xcfl->mysql_mlt_qry, gui_xcfl->filename, b_stop_error);
 	} else if (gui_xcfl->filename == NULL && gui_xcfl->content != NULL) {
-		mysql_multi_query_from_string(gui_xcfl->mysql_mlt_qry, gui_xcfl->filename, b_stop_error);
+		mysql_multi_query_from_string(gui_xcfl->mysql_mlt_qry, gui_xcfl->content, b_stop_error);
 	}
 	
 	g_print("Report : \n%s", mysql_multi_query_get_report(gui_xcfl->mysql_mlt_qry));
