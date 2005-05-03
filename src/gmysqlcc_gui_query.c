@@ -116,7 +116,7 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	
 	GtkWidget *vbox2;
 	GtkWidget *vpanedSQL;
-  GtkWidget *scrlwndSQLRequest;
+	GtkWidget *scrlwndSQLRequest;
 	GtkToolItem *btnExecSql;
 	GtkToolItem *ticmbCharset;
 	GtkToolItem *btnDumpSql;
@@ -225,6 +225,7 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 
 	gui_query->lstSQLResult = gtk_tree_view_new ();
 	gtk_widget_show (gui_query->lstSQLResult);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_query->lstSQLResult), TRUE);
 	gtk_container_add (GTK_CONTAINER (gui_query->sclSQLResult), gui_query->lstSQLResult);
 
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_query->lstSQLResult));

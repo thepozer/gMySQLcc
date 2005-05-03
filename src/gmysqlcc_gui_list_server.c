@@ -143,23 +143,24 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar1), GTK_TOOL_ITEM(btnTlbrClose), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
-	
-  hpaned1 = gtk_hpaned_new ();
-  gtk_widget_show (hpaned1);
-  gtk_container_add (GTK_CONTAINER (vbox4), hpaned1);
-  gtk_paned_set_position (GTK_PANED (hpaned1), 200);
 
-  vbox7 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox7);
-  gtk_paned_pack1 (GTK_PANED (hpaned1), vbox7, TRUE, TRUE);
+	hpaned1 = gtk_hpaned_new ();
+	gtk_widget_show (hpaned1);
+	gtk_container_add (GTK_CONTAINER (vbox4), hpaned1);
+	gtk_paned_set_position (GTK_PANED (hpaned1), 200);
 
-  scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow3);
-  gtk_box_pack_start (GTK_BOX (vbox7), scrolledwindow3, TRUE, TRUE, 0);
+	vbox7 = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (vbox7);
+	gtk_paned_pack1 (GTK_PANED (hpaned1), vbox7, TRUE, TRUE);
 
-  gui_list_server->lstListHosts = gtk_tree_view_new ();
-  gtk_widget_show (gui_list_server->lstListHosts);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow3), gui_list_server->lstListHosts);
+	scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow3);
+	gtk_box_pack_start (GTK_BOX (vbox7), scrolledwindow3, TRUE, TRUE, 0);
+
+	gui_list_server->lstListHosts = gtk_tree_view_new ();
+	gtk_widget_show (gui_list_server->lstListHosts);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_list_server->lstListHosts), TRUE);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow3), gui_list_server->lstListHosts);
 	g_signal_connect (G_OBJECT (gui_list_server->lstListHosts), "button-press-event", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_lstListHosts_btnpress), gui_list_server);
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_list_server->lstListHosts));
@@ -167,170 +168,170 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 	g_signal_connect (G_OBJECT (select), "changed", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_lstListHosts_selected), gui_list_server);
 
-  hbox14 = gtk_hbox_new (TRUE, 0);
-  gtk_widget_show (hbox14);
-  gtk_box_pack_start (GTK_BOX (vbox7), hbox14, FALSE, TRUE, 0);
+	hbox14 = gtk_hbox_new (TRUE, 0);
+	gtk_widget_show (hbox14);
+	gtk_box_pack_start (GTK_BOX (vbox7), hbox14, FALSE, TRUE, 0);
 
 	btnServerUp = createIconButton("gtk-go-up", _("_Up"));
-  gtk_box_pack_start (GTK_BOX (hbox14), btnServerUp, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox14), btnServerUp, FALSE, FALSE, 0);
 	g_signal_connect (G_OBJECT (btnServerUp), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnServerUp_clicked), gui_list_server);
 
 	btnServerDown = createIconButton("gtk-go-down", _("_Down"));
-  gtk_box_pack_start (GTK_BOX (hbox14), btnServerDown, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox14), btnServerDown, FALSE, FALSE, 0);
 	g_signal_connect (G_OBJECT (btnServerDown), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnServerDown_clicked), gui_list_server);
 
-  gui_list_server->vbxEditPart = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (gui_list_server->vbxEditPart);
-  gtk_paned_pack2 (GTK_PANED (hpaned1), gui_list_server->vbxEditPart, TRUE, TRUE);
+	gui_list_server->vbxEditPart = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (gui_list_server->vbxEditPart);
+	gtk_paned_pack2 (GTK_PANED (hpaned1), gui_list_server->vbxEditPart, TRUE, TRUE);
 
-  frame1 = gtk_frame_new (NULL);
-  gtk_widget_show (frame1);
-  gtk_box_pack_start (GTK_BOX (gui_list_server->vbxEditPart), frame1, FALSE, FALSE, 0);
+	frame1 = gtk_frame_new (NULL);
+	gtk_widget_show (frame1);
+	gtk_box_pack_start (GTK_BOX (gui_list_server->vbxEditPart), frame1, FALSE, FALSE, 0);
 
-  label9 = gtk_label_new (_("Server"));
-  gtk_widget_show (label9);
-  gtk_frame_set_label_widget (GTK_FRAME (frame1), label9);
-  gtk_label_set_justify (GTK_LABEL (label9), GTK_JUSTIFY_LEFT);
+	label9 = gtk_label_new (_("Server"));
+	gtk_widget_show (label9);
+	gtk_frame_set_label_widget (GTK_FRAME (frame1), label9);
+	gtk_label_set_justify (GTK_LABEL (label9), GTK_JUSTIFY_LEFT);
 
-  vbox5 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox5);
-  gtk_container_add (GTK_CONTAINER (frame1), vbox5);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox5), 4);
+	vbox5 = gtk_vbox_new (FALSE, 0);
+	gtk_widget_show (vbox5);
+	gtk_container_add (GTK_CONTAINER (frame1), vbox5);
+	gtk_container_set_border_width (GTK_CONTAINER (vbox5), 4);
 
-  hbox6 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox6);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox6, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox6), 2);
+	hbox6 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox6);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox6, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox6), 2);
 
-  label10 = gtk_label_new (_("Name :"));
-  gtk_widget_show (label10);
-  gtk_box_pack_start (GTK_BOX (hbox6), label10, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label10), GTK_JUSTIFY_LEFT);
+	label10 = gtk_label_new (_("Name :"));
+	gtk_widget_show (label10);
+	gtk_box_pack_start (GTK_BOX (hbox6), label10, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label10), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtName = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtName);
-  gtk_box_pack_start (GTK_BOX (hbox6), gui_list_server->txtName, TRUE, TRUE, 2);
+	gui_list_server->txtName = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtName);
+	gtk_box_pack_start (GTK_BOX (hbox6), gui_list_server->txtName, TRUE, TRUE, 2);
 
-  hbox7 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox7);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox7, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox7), 2);
+	hbox7 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox7);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox7, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox7), 2);
 
-  label11 = gtk_label_new (_("Host :"));
-  gtk_widget_show (label11);
-  gtk_box_pack_start (GTK_BOX (hbox7), label11, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label11), GTK_JUSTIFY_LEFT);
+	label11 = gtk_label_new (_("Host :"));
+	gtk_widget_show (label11);
+	gtk_box_pack_start (GTK_BOX (hbox7), label11, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label11), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtHost = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtHost);
-  gtk_box_pack_start (GTK_BOX (hbox7), gui_list_server->txtHost, TRUE, TRUE, 2);
+	gui_list_server->txtHost = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtHost);
+	gtk_box_pack_start (GTK_BOX (hbox7), gui_list_server->txtHost, TRUE, TRUE, 2);
 
-  hbox12 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox12);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox12, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox12), 2);
+	hbox12 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox12);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox12, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox12), 2);
 
-  label12 = gtk_label_new (_("Port :"));
-  gtk_widget_show (label12);
-  gtk_box_pack_start (GTK_BOX (hbox12), label12, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label12), GTK_JUSTIFY_LEFT);
+	label12 = gtk_label_new (_("Port :"));
+	gtk_widget_show (label12);
+	gtk_box_pack_start (GTK_BOX (hbox12), label12, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label12), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtPort = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtPort);
-  gtk_box_pack_start (GTK_BOX (hbox12), gui_list_server->txtPort, TRUE, TRUE, 2);
-  gtk_entry_set_max_length (GTK_ENTRY (gui_list_server->txtPort), 5);
+	gui_list_server->txtPort = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtPort);
+	gtk_box_pack_start (GTK_BOX (hbox12), gui_list_server->txtPort, TRUE, TRUE, 2);
+	gtk_entry_set_max_length (GTK_ENTRY (gui_list_server->txtPort), 5);
 
-  hbox8 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox8);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox8, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox8), 2);
+	hbox8 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox8);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox8, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox8), 2);
 
-  label13 = gtk_label_new (_("User name :"));
-  gtk_widget_show (label13);
-  gtk_box_pack_start (GTK_BOX (hbox8), label13, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label13), GTK_JUSTIFY_LEFT);
+	label13 = gtk_label_new (_("User name :"));
+	gtk_widget_show (label13);
+	gtk_box_pack_start (GTK_BOX (hbox8), label13, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label13), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtLogin = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtLogin);
-  gtk_box_pack_start (GTK_BOX (hbox8), gui_list_server->txtLogin, TRUE, TRUE, 2);
+	gui_list_server->txtLogin = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtLogin);
+	gtk_box_pack_start (GTK_BOX (hbox8), gui_list_server->txtLogin, TRUE, TRUE, 2);
 
-  hbox13 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox13);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox13, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox13), 2);
+	hbox13 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox13);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox13, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox13), 2);
 
-  label14 = gtk_label_new (_("Password :"));
-  gtk_widget_show (label14);
-  gtk_box_pack_start (GTK_BOX (hbox13), label14, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label14), GTK_JUSTIFY_LEFT);
+	label14 = gtk_label_new (_("Password :"));
+	gtk_widget_show (label14);
+	gtk_box_pack_start (GTK_BOX (hbox13), label14, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label14), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtPasswd = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtPasswd);
-  gtk_box_pack_start (GTK_BOX (hbox13), gui_list_server->txtPasswd, TRUE, TRUE, 2);
+	gui_list_server->txtPasswd = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtPasswd);
+	gtk_box_pack_start (GTK_BOX (hbox13), gui_list_server->txtPasswd, TRUE, TRUE, 2);
 
-  hbox15 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox15);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox15, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox15), 2);
+	hbox15 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox15);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox15, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox15), 2);
 
-  label17 = gtk_label_new (_("Local socket file :"));
-  gtk_widget_show (label17);
-  gtk_box_pack_start (GTK_BOX (hbox15), label17, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label17), GTK_JUSTIFY_LEFT);
+	label17 = gtk_label_new (_("Local socket file :"));
+	gtk_widget_show (label17);
+	gtk_box_pack_start (GTK_BOX (hbox15), label17, FALSE, FALSE, 0);
+	gtk_label_set_justify (GTK_LABEL (label17), GTK_JUSTIFY_LEFT);
 
-  gui_list_server->txtLocalSock = gtk_entry_new ();
-  gtk_widget_show (gui_list_server->txtLocalSock);
-  gtk_box_pack_start (GTK_BOX (hbox15), gui_list_server->txtLocalSock, TRUE, TRUE, 2);
+	gui_list_server->txtLocalSock = gtk_entry_new ();
+	gtk_widget_show (gui_list_server->txtLocalSock);
+	gtk_box_pack_start (GTK_BOX (hbox15), gui_list_server->txtLocalSock, TRUE, TRUE, 2);
 
 	hbox16 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox16);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox16, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox16), 2);
+	gtk_widget_show (hbox16);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox16, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox16), 2);
 
-  gui_list_server->chkReadOnly = gtk_check_button_new_with_label (_("Read only server"));
-  gtk_widget_show (gui_list_server->chkReadOnly);
-  gtk_box_pack_start (GTK_BOX (hbox16), gui_list_server->chkReadOnly, TRUE, TRUE, 2);
+	gui_list_server->chkReadOnly = gtk_check_button_new_with_label (_("Read only server"));
+	gtk_widget_show (gui_list_server->chkReadOnly);
+	gtk_box_pack_start (GTK_BOX (hbox16), gui_list_server->chkReadOnly, TRUE, TRUE, 2);
 
 	hbox17 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox17);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox17, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox17), 2);
+	gtk_widget_show (hbox17);
+	gtk_box_pack_start (GTK_BOX (vbox5), hbox17, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox17), 2);
 
-  gui_list_server->chkWriteWarning = gtk_check_button_new_with_label (_("Warning about write query on this server"));
-  gtk_widget_show (gui_list_server->chkWriteWarning);
-  gtk_box_pack_start (GTK_BOX (hbox17), gui_list_server->chkWriteWarning, TRUE, TRUE, 2);
+	gui_list_server->chkWriteWarning = gtk_check_button_new_with_label (_("Warning about write query on this server"));
+	gtk_widget_show (gui_list_server->chkWriteWarning);
+	gtk_box_pack_start (GTK_BOX (hbox17), gui_list_server->chkWriteWarning, TRUE, TRUE, 2);
 
-  hbox5 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox5);
-  gtk_box_pack_start (GTK_BOX (gui_list_server->vbxEditPart), hbox5, FALSE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox5), 1);
+	hbox5 = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox5);
+	gtk_box_pack_start (GTK_BOX (gui_list_server->vbxEditPart), hbox5, FALSE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox5), 1);
 
 	btnNew = createIconButton("gtk-new", _("_New"));
-  gtk_box_pack_start (GTK_BOX (hbox5), btnNew, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (btnNew), 3);
+	gtk_box_pack_start (GTK_BOX (hbox5), btnNew, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (btnNew), 3);
 	g_signal_connect (G_OBJECT (btnNew), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnNew_clicked), gui_list_server);
 
 	btnAdd = createIconButton("gtk-add", _("_Add"));
-  gtk_box_pack_start (GTK_BOX (hbox5), btnAdd, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (btnAdd), 2);
+	gtk_box_pack_start (GTK_BOX (hbox5), btnAdd, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (btnAdd), 2);
 	g_signal_connect (G_OBJECT (btnAdd), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnAdd_clicked), gui_list_server);
 
 	btnEdit = createIconButton("gtk-apply", _("_Modify"));
-  gtk_box_pack_start (GTK_BOX (hbox5), btnEdit, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (btnEdit), 2);
+	gtk_box_pack_start (GTK_BOX (hbox5), btnEdit, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (btnEdit), 2);
 	g_signal_connect (G_OBJECT (btnEdit), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnEdit_clicked), gui_list_server);
-	
+
 	btnDel = createIconButton("gtk-del", _("D_elete"));
-  gtk_box_pack_start (GTK_BOX (hbox5), btnDel, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (btnDel), 2);
+	gtk_box_pack_start (GTK_BOX (hbox5), btnDel, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (btnDel), 2);
 	g_signal_connect (G_OBJECT (btnDel), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_list_server_evt_btnDel_clicked), gui_list_server);
-	
+
 }
 
 void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_server) {
