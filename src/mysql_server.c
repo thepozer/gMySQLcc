@@ -1,6 +1,7 @@
 
 #include "mysql_db_all.h"
 
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -24,6 +25,7 @@ p_mysql_server mysql_server_new () {
 	mysql_srv->read_only = FALSE;
 	mysql_srv->write_warning = FALSE;
 	
+	mysql_srv->version = 0;
 	mysql_srv->hshDbs = g_hash_table_new(&g_str_hash, &g_str_equal);
 	mysql_srv->hshUsers = g_hash_table_new(&g_str_hash, &g_str_equal);
 	
@@ -154,6 +156,34 @@ gboolean mysql_server_flush_status (p_mysql_server mysql_srv) {
 	mysql_query_delete(mysql_qry);
 
 	return ret;
+}
+
+guint mysql_server_get_version(p_mysql_server mysql_srv, gboolean force_query) {
+	p_mysql_query mysql_qry;
+	const gchar * version;
+	gchar ** version_split;
+	
+	if (mysql_srv->version > 0 && !force_query) {
+		return mysql_srv->version;
+	}
+	
+	mysql_qry = mysql_server_query(mysql_srv, NULL);
+	mysql_srv->version = 0;
+	
+	version = mysql_get_server_info(mysql_qry->mysql_link);
+	
+	version_split = g_strsplit_set(version, "._-", 4);
+	
+	if (version_split == NULL || version_split[0] == NULL || version_split[1] == NULL || version_split[2] == NULL) {
+		return 0;
+	}
+	
+	mysql_srv->version = (((atoi(version_split[0]) * 100) + atoi(version_split[1])) * 100) + atoi(version_split[2]);
+	
+	g_strfreev(version_split);
+	mysql_query_delete(mysql_qry);
+	
+	return mysql_srv->version;
 }
 
 gboolean mysql_server_clean_user_list (p_mysql_server mysql_srv, gboolean only_not_found) {

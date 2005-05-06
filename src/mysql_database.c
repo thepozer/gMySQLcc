@@ -88,7 +88,10 @@ gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
 	GArray * arRow;
 	GString * ssql;
 	gchar * tbl_name;
+	guint db_version;
 	
+	db_version = mysql_server_get_version(mysql_db->mysql_srv, FALSE);
+
 	mysql_qry = mysql_database_query(mysql_db);
 	
 	ssql = g_string_new("");
@@ -103,9 +106,15 @@ gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
 			tbl_name = g_array_index(arRow, gchar *, 0);
 			if ((mysql_tbl = (p_mysql_table)g_hash_table_lookup(mysql_db->hshTables, tbl_name)) == (p_mysql_table)NULL) {
 				mysql_tbl = mysql_table_new(mysql_db, tbl_name);
-				mysql_tbl->size = g_strdup(g_array_index(arRow, gchar *, 5));
-				mysql_tbl->nbrRow = g_strdup(g_array_index(arRow, gchar *, 3));
-				mysql_tbl->type = g_strdup(g_array_index(arRow, gchar *, 1));
+				if (db_version <= 40100) {
+					mysql_tbl->size = g_strdup(g_array_index(arRow, gchar *, 5));
+					mysql_tbl->nbrRow = g_strdup(g_array_index(arRow, gchar *, 3));
+					mysql_tbl->type = g_strdup(g_array_index(arRow, gchar *, 1));
+				} else {
+					mysql_tbl->size = g_strdup(g_array_index(arRow, gchar *, 6));
+					mysql_tbl->nbrRow = g_strdup(g_array_index(arRow, gchar *, 4));
+					mysql_tbl->type = g_strdup(g_array_index(arRow, gchar *, 1));
+				}
 				g_hash_table_insert(mysql_db->hshTables, tbl_name, mysql_tbl);
 			}
 			
