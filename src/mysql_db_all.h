@@ -23,8 +23,9 @@ typedef struct _s_mysql_server {
 	gboolean			write_warning;
 
 /* Server datas */
-	GHashTable *		hshDbs;
-	GHashTable *		hshUsers;
+	guint					version;
+	GHashTable *	hshDbs;
+	GHashTable *	hshUsers;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
@@ -199,6 +200,7 @@ p_mysql_server mysql_server_new ();
 gboolean mysql_server_delete (p_mysql_server mysql_srv);
 
 p_mysql_query mysql_server_query (p_mysql_server mysql_srv, const gchar * db_name);
+guint mysql_server_get_version(p_mysql_server mysql_srv, gboolean force_query);
 
 gboolean mysql_server_clean_database_list (p_mysql_server mysql_srv, gboolean only_not_found);
 void mysql_server_mark_found_all_databases (p_mysql_server mysql_srv, gboolean found);

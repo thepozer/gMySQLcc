@@ -102,7 +102,7 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	g_string_printf(sTitle, _("Server : %s"), gui_server->mysql_srv->name);
 	gtk_window_set_title (GTK_WINDOW (gui_server->window), sTitle->str);
 	g_string_free(sTitle, TRUE);
-	gtk_window_set_default_size (GTK_WINDOW (gui_server->window), 400, 300);
+	gtk_window_set_default_size (GTK_WINDOW (gui_server->window), 560, 400);
 	g_signal_connect (G_OBJECT (gui_server->window), "destroy", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_destroy), (gpointer)gui_server);
 
@@ -195,8 +195,7 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_box_pack_start (GTK_BOX (hbox2), btnDbDel, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnDbDel), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_btnDbDel_clicked), (gpointer)gui_server);
-
-
+	
 	vbox3 = gtk_vbox_new (FALSE, 0);
 	gtk_widget_show (vbox3);
 	gtk_paned_pack2 (GTK_PANED (hpaned1), vbox3, TRUE, TRUE);
