@@ -4,13 +4,11 @@ Installation of gmysqlcc from source
 
 To download gmysqlcc from site, go to download section.
 
- * Download from CVS
+ * Download from Subversion
 
-To download gmysqlcc via CVS, type these commands in a terminal :
+To download gmysqlcc via Subversion, type these commands in a terminal :
 
-$ export CVSROOT=:pserver:anonymous@pozer.ath.cx/disk/data/cvs_depot
-$ cvs login
-$ cvs checkout -r GMYSQLCC_CURRENT gmysqlcc
+$ svn co http://gmysqlcc.thepozer.org/svn/trunk gmysqlcc
 
  * Compile and Install (version < 0.2.0)
 
