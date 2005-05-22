@@ -59,7 +59,6 @@ void xml_servers_conf_passthrough (GMarkupParseContext *context, const gchar * p
 
 p_gmysqlcc_config gmysqlcc_config_new () {
 	p_gmysqlcc_config gmysqlcc_conf;
-	GString * filePath;
 
 	gmysqlcc_conf = (p_gmysqlcc_config) g_try_malloc(sizeof(s_gmysqlcc_config));
 	
@@ -70,8 +69,6 @@ p_gmysqlcc_config gmysqlcc_config_new () {
 	gmysqlcc_conf->servers_filename = NULL;
 	gmysqlcc_conf->config_filename = NULL;
 	gmysqlcc_conf->lst_servers = NULL;
-	
-	g_string_free(filePath, TRUE);
 	
 	return gmysqlcc_conf;
 }
