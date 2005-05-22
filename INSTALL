@@ -3,6 +3,7 @@ Installation of gmysqlcc from source
  * Download from site
 
 To download gmysqlcc from site, go to download section.
+http://gmysqlcc.thepozer.org/cgi-bin/trac.cgi/wiki/EnDownloadArea
 
  * Download from Subversion
 
@@ -10,19 +11,7 @@ To download gmysqlcc via Subversion, type these commands in a terminal :
 
 $ svn co http://gmysqlcc.thepozer.org/svn/trunk gmysqlcc
 
- * Compile and Install (version < 0.2.0)
-
-To generate binary of gmysqlcc, type this command in gmysqlcc directory :
-
-$ make nodbg
-
-To install gmysqlcc, you need to be root. These 2 commands have the same effect :
-
-$ make install
-or
-$ cp gmysqlcc /usr/local/bin
-
- * Compile and Install (version >= 0.2.0)
+ * Compile and Install 
 
 If you have got source from CVS, you need to do some steps before in gmysqlcc directory :
 
