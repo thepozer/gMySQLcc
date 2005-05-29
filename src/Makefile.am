@@ -16,6 +16,8 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_main.c\
 	gmysqlcc_config.c\
 	gmysqlcc_config.h\
+	gmysqlcc_data_list.c\
+	gmysqlcc_data_list.h\
 	gmysqlcc_helpers.c\
 	gmysqlcc_helpers.h\
 	gmysqlcc_gui_all.h\
@@ -24,6 +26,9 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_gui_list_server.c\
 	gmysqlcc_gui_query.c\
 	gmysqlcc_gui_server.c\
+	gmysqlcc_gui_server_evt.h\
+	gmysqlcc_gui_server_evt_db.c\
+	gmysqlcc_gui_server_evt_user.c\
 	gmysqlcc_gui_text.c\
 	gmysqlcc_gui_misc.c\
 	mysql_db_all.h\
@@ -37,7 +42,8 @@ gmysqlcc_SOURCES = \
 	mysql_row.c\
 	mysql_server.c\
 	mysql_table.c\
-	mysql_user.c
+	mysql_user.c\
+	mysql_user_list.c
 
 gmysqlcc_LDFLAGS = 
 
@@ -45,4 +51,3 @@ gmysqlcc_LDADD =  \
 	$(GTK_LIBS) \
 	$(GTKSourceView_LIBS) \
 	$(MySQLc_LIBS)
-

@@ -66,6 +66,8 @@ gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_se
 
 typedef struct _s_gmysqlcc_gui_server {
 	GtkWidget * window;
+	
+/* Database part */
 	GtkWidget * lstBase;
 	GtkWidget * lstTable;
 	GtkWidget * mnuBdOps;
@@ -74,6 +76,17 @@ typedef struct _s_gmysqlcc_gui_server {
 	p_mysql_server mysql_srv;
 	p_mysql_database curr_mysql_db;
 	p_mysql_table curr_mysql_tbl;
+
+/* User part */
+	GtkWidget *lstUser;
+	GtkWidget *lstUserRights;
+	GtkWidget *lstUserDatabases;
+	GtkWidget *txtUserLogin;
+	GtkWidget *txtUserHost;
+	GtkWidget *txtUserPasswd;
+	GtkWidget *chkEncryptedPasswd;
+	
+	p_mysql_user curr_mysql_usr;
 } s_gmysqlcc_gui_server;
 
 typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;

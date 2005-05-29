@@ -1,32 +1,6 @@
 
 #include "gmysqlcc_gui_all.h"
-
-void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server);
-void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server);
-
-void gmysqlcc_gui_server_fill_database_list (p_gmysqlcc_gui_server gui_server);
-void gmysqlcc_gui_server_fill_table_list (p_gmysqlcc_gui_server gui_server);
-void gmysqlcc_gui_server_fill_user_list (p_gmysqlcc_gui_server gui_server);
-void gmysqlcc_gui_server_open_query_window (p_gmysqlcc_gui_server gui_server, gboolean use_table);
-
-void gmysqlcc_gui_server_evt_destroy (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data);
-gboolean gmysqlcc_gui_server_evt_lstBase_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-gboolean gmysqlcc_gui_server_evt_lstTable_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-void gmysqlcc_gui_server_evt_lstBase_selected (GtkTreeSelection *selection, gpointer user_data);
-void gmysqlcc_gui_server_evt_lstTable_selected (GtkTreeSelection *selection, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnDbAdd_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnDbDel_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTblAdd_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTblEdit_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTblDump_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user_data);
-
+#include "gmysqlcc_gui_server_evt.h"
 	
 p_gmysqlcc_gui_server gmysqlcc_gui_server_new (p_mysql_server mysql_srv) {
 	p_gmysqlcc_gui_server gui_server;
@@ -41,6 +15,7 @@ p_gmysqlcc_gui_server gmysqlcc_gui_server_new (p_mysql_server mysql_srv) {
 	gui_server->mysql_srv = mysql_srv;
 	gui_server->curr_mysql_db = NULL;
 	gui_server->curr_mysql_tbl = NULL;
+	gui_server->curr_mysql_usr = NULL;
 
 	gmysqlcc_gui_server_create_widget(gui_server);
 	gmysqlcc_gui_server_init_widget(gui_server);
@@ -77,12 +52,15 @@ gboolean gmysqlcc_gui_server_delete (p_gmysqlcc_gui_server gui_server) {
 
 void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkWidget *statusbar1;
-	GtkWidget *vbox1, *vbox2, *vbox3;
-	GtkWidget *hpaned1;
+	GtkWidget *vbox1, *vbox2, *vbox3, *vbox4, *vbox5;
+	GtkWidget *hpaned1, *hpaned3;
 	GtkWidget *hbox2, *hbox3;
-	GtkWidget *label1, *label2, *label3, *label6, *label7;
+	GtkWidget *table1;
+	GtkWidget *label1, *label2, *label3, *label7;
+	GtkWidget *label9, *label10, *label11, *label12, *label13, *label14;
 	GtkWidget *notebook1;
-	GtkWidget *scrolledwindow1, *scrolledwindow2;
+	GtkWidget *frame1, *frame2, *frame3;
+	GtkWidget *scrolledwindow1, *scrolledwindow2, *scrolledwindow3, *scrolledwindow4, *scrolledwindow5;
 	GtkWidget *toolbar1;
 	GtkWidget * imgToolbar;
 	GtkToolItem * btnTlbrClose, * btnTlbrSql, * btnTlbrSqlFile;
@@ -91,10 +69,17 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkWidget *mnuDBOpsRefresh;
 	GtkWidget *mnuDBOpsShowCreate;
 	GtkWidget *mnuTBLOpsShowCreate;
+	
+	GtkWidget *hbuttonbox4;
+	GtkWidget *btnUserNew, *btnUserAdd, *btnUserUpdate, *btnUserDelete;
+	
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
 	GString * sTitle;
-
+	
+	
+	
+	
 	tooltips = gtk_tooltips_new();
 
 	gui_server->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -251,11 +236,163 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 
 
 
-	label6 = gtk_label_new (_("In construction"));
-	gtk_widget_show (label6);
-	gtk_container_add (GTK_CONTAINER (notebook1), label6);
-	gtk_label_set_justify (GTK_LABEL (label6), GTK_JUSTIFY_LEFT);
+  vbox5 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox5);
+  gtk_container_add (GTK_CONTAINER (notebook1), vbox5);
 
+  hpaned3 = gtk_hpaned_new ();
+  gtk_widget_show (hpaned3);
+  gtk_box_pack_start (GTK_BOX (vbox5), hpaned3, TRUE, TRUE, 0);
+  gtk_paned_set_position (GTK_PANED (hpaned3), 180);
+
+  scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow3);
+  gtk_paned_pack1 (GTK_PANED (hpaned3), scrolledwindow3, FALSE, TRUE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+
+  gui_server->lstUser = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstUser);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstUser), TRUE);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow3), gui_server->lstUser);
+	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_server->lstUser));
+	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
+	g_signal_connect (G_OBJECT (select), "changed", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_lstUser_selected), (gpointer)gui_server);
+
+  vbox4 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox4);
+  gtk_paned_pack2 (GTK_PANED (hpaned3), vbox4, TRUE, TRUE);
+
+  frame1 = gtk_frame_new (NULL);
+  gtk_widget_show (frame1);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame1, FALSE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame1), 2);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame1), GTK_SHADOW_IN);
+
+  table1 = gtk_table_new (4, 2, FALSE);
+  gtk_widget_show (table1);
+  gtk_container_add (GTK_CONTAINER (frame1), table1);
+  gtk_container_set_border_width (GTK_CONTAINER (table1), 2);
+  gtk_table_set_row_spacings (GTK_TABLE (table1), 2);
+  gtk_table_set_col_spacings (GTK_TABLE (table1), 2);
+
+  label10 = gtk_label_new (_("Login :"));
+  gtk_widget_show (label10);
+  gtk_table_attach (GTK_TABLE (table1), label10, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label10), 0, 0.5);
+
+  label11 = gtk_label_new (_("Host :"));
+  gtk_widget_show (label11);
+  gtk_table_attach (GTK_TABLE (table1), label11, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label11), 0, 0.5);
+
+  label12 = gtk_label_new (_("Password :"));
+  gtk_widget_show (label12);
+  gtk_table_attach (GTK_TABLE (table1), label12, 0, 1, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label12), 0, 0.5);
+
+  gui_server->txtUserPasswd = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtUserPasswd);
+  gtk_table_attach (GTK_TABLE (table1), gui_server->txtUserPasswd, 1, 2, 2, 3,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  gui_server->txtUserHost = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtUserHost);
+  gtk_table_attach (GTK_TABLE (table1), gui_server->txtUserHost, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  gui_server->txtUserLogin = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtUserLogin);
+  gtk_table_attach (GTK_TABLE (table1), gui_server->txtUserLogin, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  gui_server->chkEncryptedPasswd = gtk_check_button_new_with_mnemonic (_("Already encrypted password"));
+  gtk_widget_show (gui_server->chkEncryptedPasswd);
+  gtk_table_attach (GTK_TABLE (table1), gui_server->chkEncryptedPasswd, 1, 2, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label9 = gtk_label_new (_("User informations :"));
+  gtk_widget_show (label9);
+  gtk_frame_set_label_widget (GTK_FRAME (frame1), label9);
+
+  frame2 = gtk_frame_new (NULL);
+  gtk_widget_show (frame2);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame2), 2);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame2), GTK_SHADOW_IN);
+
+  scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow4);
+  gtk_container_add (GTK_CONTAINER (frame2), scrolledwindow4);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow4), 2);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+
+  gui_server->lstUserRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstUserRights);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow4), gui_server->lstUserRights);
+
+  label13 = gtk_label_new (_("User rights :"));
+  gtk_widget_show (label13);
+  gtk_frame_set_label_widget (GTK_FRAME (frame2), label13);
+
+  frame3 = gtk_frame_new (NULL);
+  gtk_widget_show (frame3);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame3, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame3), 2);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame3), GTK_SHADOW_IN);
+
+  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow5);
+  gtk_container_add (GTK_CONTAINER (frame3), scrolledwindow5);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
+
+  gui_server->lstUserDatabases = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstUserDatabases);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow5), gui_server->lstUserDatabases);
+
+  label14 = gtk_label_new (_("User databases rights :"));
+  gtk_widget_show (label14);
+  gtk_frame_set_label_widget (GTK_FRAME (frame3), label14);
+
+  hbuttonbox4 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox4);
+  gtk_box_pack_start (GTK_BOX (vbox5), hbuttonbox4, TRUE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_SPREAD);
+
+  btnUserNew = gtk_button_new_from_stock ("gtk-new");
+  gtk_widget_show (btnUserNew);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserNew);
+	g_signal_connect (G_OBJECT (btnUserNew), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserNew_clicked), (gpointer)gui_server);
+
+  btnUserAdd = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (btnUserAdd);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserAdd);
+	g_signal_connect (G_OBJECT (btnUserAdd), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserAdd_clicked), (gpointer)gui_server);
+
+  btnUserUpdate = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnUserUpdate);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserUpdate);
+	g_signal_connect (G_OBJECT (btnUserUpdate), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserUpdate_clicked), (gpointer)gui_server);
+
+  btnUserDelete = gtk_button_new_from_stock ("gtk-delete");
+  gtk_widget_show (btnUserDelete);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserDelete);
+	g_signal_connect (G_OBJECT (btnUserDelete), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserDelete_clicked), (gpointer)gui_server);
+	
 	label2 = gtk_label_new (_("Users"));
 	gtk_widget_show (label2);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label2);
@@ -312,7 +449,7 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkTreeViewColumn * currCol;
 
-	/*gmysqlcc_gui_server_fill_user_list(gui_server);*/
+	gmysqlcc_gui_server_fill_user_list(gui_server);
 	gmysqlcc_gui_server_fill_database_list(gui_server);
 
 	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(gui_server->lstTable), 0);
@@ -401,20 +538,47 @@ void gmysqlcc_gui_server_fill_table_list (p_gmysqlcc_gui_server gui_server) {
 }
 
 void gmysqlcc_gui_server_fill_user_list (p_gmysqlcc_gui_server gui_server) {
+	p_data_list mysql_usr_lst;
+	GtkListStore * lstStrUsers;
+	GtkTreeViewColumn * currCol;
+	GtkCellRenderer * renderer;
 	
-	void sub_ht_throught_user_list(gpointer key, gpointer value, gpointer user_data) {
+	void sub_ht_fill_user_list(gpointer key, gpointer value, gpointer user_data) {
 		p_mysql_user mysql_usr = (p_mysql_user)value;
+		GtkListStore * lstStrUsers = (GtkListStore *)user_data;
+		GtkTreeIter iter;
 		
-		g_print("User : '%s@%s'\n", mysql_usr->login, mysql_usr->host);
+		gtk_list_store_append (lstStrUsers, &iter);
+		gtk_list_store_set (lstStrUsers, &iter, 0, (gchar *)key, 1, mysql_usr, -1);
 	}
-
-	if (mysql_server_refresh_user_list(gui_server->mysql_srv)) {
-		g_print("Fill user list ... Ok !\nDisplay now : \n");
-		g_hash_table_foreach(gui_server->mysql_srv->hshUsers, &sub_ht_throught_user_list, NULL);
-	} else {
+	
+	mysql_usr_lst = mysql_server_get_user_list(gui_server->mysql_srv);
+	
+	if (mysql_usr_lst == NULL) {
+		g_print("Fill user list ... Failed !!!\nDo nothing ...\n");
 		return;
 	}
 	
+	lstStrUsers = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrUsers), 0, GTK_SORT_ASCENDING);
+	
+	gmysqlcc_data_list_foreach(mysql_usr_lst, &sub_ht_fill_user_list, (gpointer)lstStrUsers, FALSE);
+	
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstUser), GTK_TREE_MODEL(lstStrUsers));
+	g_object_unref (G_OBJECT (lstStrUsers));
+		
+	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(gui_server->lstUser), 0);
+	if (currCol != NULL) {
+		gtk_tree_view_remove_column(GTK_TREE_VIEW(gui_server->lstUser), currCol);
+	}
+
+	renderer = gtk_cell_renderer_text_new ();
+	currCol = gtk_tree_view_column_new_with_attributes (_("Users"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUser), currCol);
+	
+	gui_server->curr_mysql_usr = NULL;
+	
+	gmysqlcc_gui_server_display_current_user(gui_server);
 }
 
 void gmysqlcc_gui_server_open_query_window (p_gmysqlcc_gui_server gui_server, gboolean use_table) {
@@ -447,291 +611,21 @@ void gmysqlcc_gui_server_evt_destroy (GtkWidget *widget, gpointer user_data) {
 	gmysqlcc_gui_server_delete(gui_server);
 }
 
-void gmysqlcc_gui_server_evt_mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	
-	gmysqlcc_gui_server_init_widget(gui_server);
-}
-
-void gmysqlcc_gui_server_evt_mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_gmysqlcc_gui_text gui_text;
-	GString * sqlFilename, * dbStructDump; /*, * structDump;*/
-	p_mysql_query mysql_qry;
-	
-	void ht_fill_create_script(gpointer key, gpointer value, gpointer user_data) {
-		p_mysql_table mysql_tbl = (p_mysql_table)value;
-		GString * dbStructDump = (GString *)user_data;
-		GString * structDump;
+void gmysqlcc_gui_server_display_current_user (p_gmysqlcc_gui_server gui_server) {
+	if (gui_server->curr_mysql_usr != NULL) {
+		/*gui_server->lstUserRights;*/
+		/*gui_server->lstUserDatabases;*/
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserLogin), gui_server->curr_mysql_usr->login);
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserHost), gui_server->curr_mysql_usr->host);
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserPasswd), gui_server->curr_mysql_usr->passwd);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_server->chkEncryptedPasswd), TRUE);
 		
-		mysql_qry = mysql_table_query(mysql_tbl);
-		
-		structDump = mysql_table_get_sql_structure(mysql_tbl);
-		g_string_append(dbStructDump, structDump->str);
-		g_string_free(structDump, TRUE);
-		
-		mysql_query_delete(mysql_qry);
-	}
-	
-	if (gui_server->curr_mysql_db != NULL) {
-		dbStructDump = g_string_new("");
-		
-		/*
-		structDump = mysql_dump_database_struct(gui_server->curr_mysql_db->name, FALSE, FALSE);
-		g_string_append(dbStructDump, structDump->str);
-		*/
-		
-		/* Fill SQL script */
-		g_hash_table_foreach(gui_server->curr_mysql_db->hshTables, &ht_fill_create_script, (gpointer)dbStructDump);
-		
-		sqlFilename = g_string_new("");
-		g_string_printf(sqlFilename, "%s-struct.sql", gui_server->curr_mysql_db->name);
-		
-		gui_text = gmysqlcc_gui_text_new();
-		gmysqlcc_gui_text_set_content(gui_text, dbStructDump->str, sqlFilename->str);
-		gmysqlcc_gui_text_display(gui_text, TRUE);
-		
-		/*g_string_free(structDump, TRUE);*/
-		g_string_free(dbStructDump, TRUE);
-		g_string_free(sqlFilename, TRUE);
-	}
-}
-
-void gmysqlcc_gui_server_evt_mnuTBLOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_gmysqlcc_gui_text gui_text;
-	GString * sqlFilename, * structDump;
-	p_mysql_query mysql_qry;
-	
-	if (gui_server->curr_mysql_tbl != NULL) {
-		mysql_qry = mysql_table_query(gui_server->curr_mysql_tbl);
-		
-		sqlFilename = g_string_new("");
-		g_string_printf(sqlFilename, "%s-%s-struct.sql", gui_server->curr_mysql_tbl->mysql_db->name, gui_server->curr_mysql_tbl->name);
-		structDump = mysql_table_get_sql_structure(gui_server->curr_mysql_tbl);
-		
-		g_print(structDump->str);
-		
-		gui_text = gmysqlcc_gui_text_new();
-		gmysqlcc_gui_text_set_content(gui_text, structDump->str, sqlFilename->str);
-		gmysqlcc_gui_text_display(gui_text, TRUE);
-		
-		g_string_free(structDump, TRUE);
-		g_string_free(sqlFilename, TRUE);
-	}
-
-}
-
-gboolean gmysqlcc_gui_server_evt_lstBase_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	
-	switch (event->button) {
-		case 1 : /* Left button */
-			if (event->type == GDK_2BUTTON_PRESS) {
-				gmysqlcc_gui_server_open_query_window (gui_server, FALSE);
-			}
-			break;
-		case 3 : /* Right button */
-			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(gui_server->mnuBdOps), NULL, NULL, NULL, user_data, event->button, event->time);
-			}
-			break;
-	}
-	return FALSE;
-	
-}
-
-gboolean gmysqlcc_gui_server_evt_lstTable_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	
-	switch (event->button) {
-		case 1 : /* Left button */
-			if (event->type == GDK_2BUTTON_PRESS) {
-				gmysqlcc_gui_server_open_query_window (gui_server, TRUE);
-			}
-			break;
-		case 3 : /* Right button */
-			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(gui_server->mnuTblOps), NULL, NULL, NULL, user_data, event->button, event->time);
-			}
-			break;
-	}
-	return FALSE;
-}
-
-void gmysqlcc_gui_server_evt_lstBase_selected (GtkTreeSelection *selection, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	
-	g_print("Changed !\n");
-	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		gtk_tree_model_get (model, &iter, 1, &gui_server->curr_mysql_db, -1);
-		g_print ("The database is %s\n", gui_server->curr_mysql_db->name);
-		
-		gmysqlcc_gui_server_fill_table_list(gui_server);
-	}
-}
-
-void gmysqlcc_gui_server_evt_lstTable_selected (GtkTreeSelection *selection, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	
-	g_print("Changed !\n");
-	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		gtk_tree_model_get (model, &iter, 4, &gui_server->curr_mysql_tbl, -1);
-		g_print ("The table is %s\n", gui_server->curr_mysql_tbl->name);
-	}
-}
-
-void gmysqlcc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	
-	gmysqlcc_gui_server_open_query_window (gui_server, TRUE);
-}
-
-void gmysqlcc_gui_server_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data) {
-	/*p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;*/
-	p_gmysqlcc_gui_text gui_text;
-	
-	gui_text = gmysqlcc_gui_text_new();
-	gmysqlcc_gui_text_display(gui_text, TRUE);
-	/* gmysqlcc_gui_server_open_query_window (gui_server, TRUE); */
-}
-
-void gmysqlcc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	
-	gtk_widget_destroy(GTK_WIDGET(gui_server->window));
-}
-
-void gmysqlcc_gui_server_evt_btnDbAdd_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GString * dbname;
-	GtkWidget * msgdlg;
-	p_mysql_database mysql_db;
-	
-	dbname = askInfo("New database", "Give the name of the new database :", "new");
-	
-	if (dbname != NULL) {
-		
-		g_print("New database name : '%s'\n", dbname->str);
-		
-		mysql_db = mysql_database_new_create(gui_server->mysql_srv, dbname->str);
-		
-		if (mysql_db != NULL) {
-			msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' created !"), dbname->str);
-			mysql_database_delete(mysql_db);
-		} else {
-			msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create database '%s' !"), dbname->str);
-		}
-		gtk_dialog_run (GTK_DIALOG (msgdlg));
-		gtk_widget_destroy (msgdlg);
-		
-		
-	}
-	g_string_free (dbname, TRUE);
-}
-
-void gmysqlcc_gui_server_evt_btnDbDel_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GString * query;
-	GtkWidget * msgdlg;
-	gboolean ok = FALSE;
-	p_mysql_query mysql_qry;
-	
-	if (gui_server->curr_mysql_db != NULL) {
-		ok = askConfirmation("Delete database", "Are you sure ?");
-		if (ok) {
-			query = g_string_new("");
-			g_string_printf(query, "DROP DATABASE `%s`", gui_server->curr_mysql_db->name);
-			
-			mysql_qry = mysql_server_query(gui_server->mysql_srv, NULL);
-			
-			if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
-				msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Database '%s' deleted !"), gui_server->curr_mysql_db->name);
-				gtk_dialog_run (GTK_DIALOG (msgdlg));
-				gtk_widget_destroy (msgdlg);
-				
-				gmysqlcc_gui_server_fill_database_list (gui_server);
-			}
-			
-			mysql_query_delete(mysql_qry);
-			g_string_free (query, TRUE);
-		}
-	}
-}
-
-void gmysqlcc_gui_server_evt_btnTblAdd_clicked (GtkWidget *widget, gpointer user_data) {
-	/*p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;*/
-	
-}
-
-void gmysqlcc_gui_server_evt_btnTblEdit_clicked (GtkWidget *widget, gpointer user_data) {
-	/*
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_tableWnd pTblWnd;
-	
-	if (gui_server->curr_mysql_db != NULL && gui_server->curr_mysql_tbl != NULL) {
-		g_print("DBname : '%s' - TblName '%s'\n", gui_server->curr_mysql_db->name, gui_server->curr_mysql_tbl->name);
-		g_print("Edit table : '%s.%s'\n", pSrvWnd->curr_mysql_db->name, pSrvWnd->currTblName->str);
-		pTblWnd = create_wndTable(TRUE, pSrvWnd->p_mci, pSrvWnd->currTblName->str);
-	}
-	*/
-}
-
-void gmysqlcc_gui_server_evt_btnTblDump_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	p_gmysqlcc_gui_dump gui_dump;
-	
-	gui_dump = NULL;
-	
-	if (gui_server->curr_mysql_tbl != NULL) {
-		g_print("Dump Table :'%s'.'%s' ...\n", gui_server->curr_mysql_db->name, gui_server->curr_mysql_tbl->name);
-		gui_dump = gmysqlcc_gui_dump_new(NULL, NULL, gui_server->curr_mysql_tbl, NULL);
-	} else if (gui_server->curr_mysql_db != NULL) {
-		g_print("Dump Database :'%s' ...\n", gui_server->curr_mysql_db->name);
-		gui_dump = gmysqlcc_gui_dump_new(NULL, gui_server->curr_mysql_db, NULL, NULL);
 	} else {
-		g_print("Dump server ...\n");
-		gui_dump = gmysqlcc_gui_dump_new(gui_server->mysql_srv, NULL, NULL, NULL);
-	}
-	
-	if (gui_dump != NULL) {
-		gmysqlcc_gui_dump_display(gui_dump, TRUE);
-	}
-}
-
-void gmysqlcc_gui_server_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user_data) {
-	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
-	GString * query;
-	GtkWidget * msgdlg;
-	gboolean ok = FALSE;
-	p_mysql_query mysql_qry;
-	
-	if (gui_server->curr_mysql_db != NULL && gui_server->curr_mysql_tbl != NULL) {
-		ok = askConfirmation(_("Delete Table"), _("Are you sure ?"));
-		if (ok) {
-			g_print("Delete table : '%s'\n", gui_server->curr_mysql_tbl->name);
-			
-			query = g_string_new("");
-			g_string_printf(query, "DROP TABLE `%s`.`%s`", gui_server->curr_mysql_db->name, gui_server->curr_mysql_tbl->name);
-			
-			mysql_qry = mysql_server_query(gui_server->mysql_srv, NULL);
-			
-			if (mysql_query_execute_query(mysql_qry, query->str, FALSE)) {
-				msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Table '%s'.'%s' deleted !"), gui_server->curr_mysql_db->name, gui_server->curr_mysql_tbl->name);
-				gtk_dialog_run (GTK_DIALOG (msgdlg));
-				gtk_widget_destroy (msgdlg);
-				
-				gmysqlcc_gui_server_fill_database_list (gui_server);
-			}
-			
-			mysql_query_delete(mysql_qry);
-			g_string_free (query, TRUE);
-		}
+		/*gui_server->lstUserRights;*/
+		/*gui_server->lstUserDatabases;*/
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserLogin), "");
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserHost), "");
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserPasswd), "");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_server->chkEncryptedPasswd), FALSE);
 	}
 }
-
-

@@ -6,13 +6,15 @@
 #include <mysql/mysql.h>
 #include <libintl.h>
 
+#include "gmysqlcc_data_list.h"
+
 #define _(String) gettext (String)
 
 typedef struct _s_mysql_server {
 /* Connection infos */
 	gchar *				name;
 	gchar *				host;
-	unsigned int		port;
+	unsigned int	port;
 	gchar *				user;
 	gchar *				passwd;
 	gchar *				allowedDbs;
@@ -26,6 +28,7 @@ typedef struct _s_mysql_server {
 	guint					version;
 	GHashTable *	hshDbs;
 	GHashTable *	hshUsers;
+	p_data_list		mysql_usr_lst;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
@@ -34,13 +37,15 @@ typedef struct _s_mysql_user {
 /* User Infos */
 	gchar *					login;
 	gchar *					host;
-	GHashTable *			hshRights;
+	gchar *					passwd;
+	GHashTable *		hshRights;
 	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
 	
 /* Update user list informations */
 	gboolean				found;
+	gboolean				updated;
 } s_mysql_user;
 
 typedef s_mysql_user * p_mysql_user;
@@ -210,9 +215,7 @@ p_mysql_database mysql_server_get_database (p_mysql_server mysql_srv, const gcha
 GArray * mysql_server_get_status (p_mysql_server mysql_srv);
 gboolean mysql_server_flush_status (p_mysql_server mysql_srv);
 
-gboolean mysql_server_clean_user_list (p_mysql_server mysql_srv, gboolean only_not_found);
-void mysql_server_mark_found_all_users (p_mysql_server mysql_srv, gboolean found);
-gboolean mysql_server_refresh_user_list (p_mysql_server mysql_srv);
+p_data_list mysql_server_get_user_list(p_mysql_server mysql_srv);
 
 /***** Database functions *****/
 
@@ -311,6 +314,16 @@ p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, cons
 gboolean mysql_user_delete (p_mysql_user mysql_usr);
 gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr);
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
+gboolean mysql_user_update_from_db (p_mysql_user mysql_usr);
 
+/***** User list functions *****/
+
+p_data_list mysql_user_list_new ();
+gboolean mysql_user_list_delete (p_data_list mysql_usr_lst);
+
+void mysql_user_list_clean (p_data_list mysql_usr_lst, void * p_only_not_found);
+
+void mysql_user_list_mark_found (p_data_list mysql_usr_lst, gboolean found);
+gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
 
 #endif /* __MYSQL_DB_ALL_H__ */

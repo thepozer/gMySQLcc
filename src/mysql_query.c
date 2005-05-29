@@ -523,6 +523,11 @@ gboolean mysql_query_is_read_query(p_mysql_query mysql_qry, const gchar * query)
 		return TRUE;
 	}
 	
+	if (g_ascii_strncasecmp(pc_query_up, "EXPLAIN", 7) == 0) {
+		g_free (pc_query_up);
+		return TRUE;
+	}
+	
 	if (g_ascii_strncasecmp(pc_query_up, "SELECT", 6) == 0) {
 		g_free (pc_query_up);
 		return TRUE;

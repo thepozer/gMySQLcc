@@ -4,30 +4,34 @@
 p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host) {
 	p_mysql_user mysql_usr;
 	
-	mysql_usr = (p_mysql_user) g_try_malloc(sizeof(p_mysql_user));
+	mysql_usr = (p_mysql_user) g_try_malloc(sizeof(s_mysql_user));
 	
-	if (mysql_usr == (p_mysql_user)NULL) {
-		return (p_mysql_user)NULL; /* return NULL pointer */
+	if (mysql_usr == NULL) {
+		return NULL;
 	}
 	
 	mysql_usr->mysql_srv = mysql_srv;
 	mysql_usr->login = g_strdup(login);
 	mysql_usr->host = g_strdup(host);
+	mysql_usr->passwd = NULL;
 	mysql_usr->hshRights = g_hash_table_new(&g_str_hash, &g_str_equal);
-	
+	mysql_usr->found = TRUE;
+	mysql_usr->updated = FALSE;
+
 	return mysql_usr;
 }
 
 gboolean mysql_user_delete (p_mysql_user mysql_usr) {
 	
-	if (mysql_usr == (p_mysql_user)NULL) {
+	if (mysql_usr == NULL) {
 		return TRUE;
 	}
 	
 	g_free(mysql_usr->login);
 	g_free(mysql_usr->host);
+	g_free(mysql_usr->passwd);
 	
-	/*mysql_user_clean_rights_list(mysql_usr);*/
+	mysql_user_clean_rights_list(mysql_usr);
 	g_hash_table_destroy(mysql_usr->hshRights);
 	
 	g_free(mysql_usr);
@@ -42,8 +46,8 @@ gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr) {
 		return TRUE;
 	}
 	
-	if (mysql_usr->hshRights != (GHashTable *) NULL) {
-		g_hash_table_foreach_steal(mysql_usr->hshRights, &htr_remove_user_right, (void *)NULL);
+	if (mysql_usr->hshRights != NULL) {
+		g_hash_table_foreach_steal(mysql_usr->hshRights, &htr_remove_user_right, NULL);
 	}
 	
 	return TRUE;
@@ -51,9 +55,10 @@ gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr) {
 
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
 	p_mysql_query mysql_qry;
-	GArray * arRow;
-	gchar * right, * value;
+	GArray * arRow, * arHeaders;
 	GString * strSql;
+	gchar * right, * value;
+	gint idx;
 	
 	mysql_user_clean_rights_list(mysql_usr);
 	
@@ -65,14 +70,28 @@ gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
 	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
 	
 		arRow = mysql_query_get_next_record(mysql_qry);
+		arHeaders = mysql_query_get_headers(mysql_qry);
 		
-		while (arRow != (GArray *)NULL) {
+		if (arRow != NULL && arHeaders != NULL) {
 			
-			right = g_array_index(arRow, gchar *, 0);
-			value = g_array_index(arRow, gchar *, 1);
+			for (idx = 0; idx < arRow->len; idx++) {
+				right = g_array_index(arHeaders, gchar *, idx);
+				value = g_array_index(arRow, gchar *, idx);
+				
+				if (g_ascii_strncasecmp(right, "Password", 8) == 0) {
+					mysql_usr->passwd = g_strdup(value);
+				} else if (g_ascii_strncasecmp(right, "Host", 4) != 0 && g_ascii_strncasecmp(right, "User", 4) != 0) {
+					g_hash_table_insert(mysql_usr->hshRights, g_strdup(right), g_strdup(value));
+				}
+			}
 			
+		}
+		
+		if (arHeaders != NULL) {
+			g_array_free(arHeaders, TRUE);
+		}
+		if (arRow != NULL) {
 			g_array_free(arRow, TRUE);
-			arRow = mysql_query_get_next_record(mysql_qry);
 		}
 	} else {
 		return FALSE;
@@ -80,6 +99,12 @@ gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
 	
 	g_string_free(strSql, TRUE);
 	mysql_query_delete(mysql_qry);
+	
+	return TRUE;
+}
+
+gboolean mysql_user_update_from_db (p_mysql_user mysql_usr) {
+	mysql_user_read_rights(mysql_usr);
 	
 	return TRUE;
 }
