@@ -1,5 +1,0 @@
-gmysqlcc
-*.bak
-.deps
-Makefile
-Makefile.in
