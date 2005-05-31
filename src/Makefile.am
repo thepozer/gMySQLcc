@@ -16,8 +16,6 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_main.c\
 	gmysqlcc_config.c\
 	gmysqlcc_config.h\
-	gmysqlcc_data_list.c\
-	gmysqlcc_data_list.h\
 	gmysqlcc_helpers.c\
 	gmysqlcc_helpers.h\
 	gmysqlcc_gui_all.h\
@@ -32,6 +30,8 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_gui_text.c\
 	gmysqlcc_gui_misc.c\
 	mysql_db_all.h\
+	mysql_data_list.c\
+	mysql_data_list.h\
 	mysql_database.c\
 	mysql_dump.c\
 	mysql_dump_csv.c\

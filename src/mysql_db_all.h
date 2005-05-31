@@ -6,7 +6,7 @@
 #include <mysql/mysql.h>
 #include <libintl.h>
 
-#include "gmysqlcc_data_list.h"
+#include "mysql_data_list.h"
 
 #define _(String) gettext (String)
 
