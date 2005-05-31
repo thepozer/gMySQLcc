@@ -366,7 +366,7 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 
   hbuttonbox4 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox4);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbuttonbox4, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox4, FALSE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_SPREAD);
 
   btnUserNew = gtk_button_new_from_stock ("gtk-new");
@@ -562,7 +562,7 @@ void gmysqlcc_gui_server_fill_user_list (p_gmysqlcc_gui_server gui_server) {
 	lstStrUsers = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrUsers), 0, GTK_SORT_ASCENDING);
 	
-	gmysqlcc_data_list_foreach(mysql_usr_lst, &sub_ht_fill_user_list, (gpointer)lstStrUsers, FALSE);
+	mysql_data_list_foreach(mysql_usr_lst, &sub_ht_fill_user_list, (gpointer)lstStrUsers);
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstUser), GTK_TREE_MODEL(lstStrUsers));
 	g_object_unref (G_OBJECT (lstStrUsers));

@@ -42,10 +42,6 @@ typedef struct _s_mysql_user {
 	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
-	
-/* Update user list informations */
-	gboolean				found;
-	gboolean				updated;
 } s_mysql_user;
 
 typedef s_mysql_user * p_mysql_user;
@@ -321,9 +317,6 @@ gboolean mysql_user_update_from_db (p_mysql_user mysql_usr);
 p_data_list mysql_user_list_new ();
 gboolean mysql_user_list_delete (p_data_list mysql_usr_lst);
 
-void mysql_user_list_clean (p_data_list mysql_usr_lst, void * p_only_not_found);
-
-void mysql_user_list_mark_found (p_data_list mysql_usr_lst, gboolean found);
 gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
 
 #endif /* __MYSQL_DB_ALL_H__ */

@@ -14,9 +14,7 @@ p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, cons
 	mysql_usr->login = g_strdup(login);
 	mysql_usr->host = g_strdup(host);
 	mysql_usr->passwd = NULL;
-	mysql_usr->hshRights = g_hash_table_new(&g_str_hash, &g_str_equal);
-	mysql_usr->found = TRUE;
-	mysql_usr->updated = FALSE;
+	mysql_usr->hshRights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_free);
 
 	return mysql_usr;
 }
@@ -32,7 +30,6 @@ gboolean mysql_user_delete (p_mysql_user mysql_usr) {
 	g_free(mysql_usr->passwd);
 	
 	mysql_user_clean_rights_list(mysql_usr);
-	g_hash_table_destroy(mysql_usr->hshRights);
 	
 	g_free(mysql_usr);
 	return TRUE;
@@ -40,15 +37,8 @@ gboolean mysql_user_delete (p_mysql_user mysql_usr) {
 
 gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr) {
 	
-	gboolean htr_remove_user_right(gpointer key, gpointer value, gpointer user_data) {
-		g_free(key);
-		g_free(value);
-		return TRUE;
-	}
-	
-	if (mysql_usr->hshRights != NULL) {
-		g_hash_table_foreach_steal(mysql_usr->hshRights, &htr_remove_user_right, NULL);
-	}
+	g_hash_table_destroy(mysql_usr->hshRights);
+	mysql_usr->hshRights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_free);
 	
 	return TRUE;
 }
