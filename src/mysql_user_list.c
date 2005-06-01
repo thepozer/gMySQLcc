@@ -66,3 +66,54 @@ gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst) {
 	
 	return TRUE;
 }
+
+p_mysql_user mysql_user_list_create_user (p_data_list mysql_usr_lst, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password) {
+	gboolean created = FALSE;
+	GString * str_sql;
+	p_mysql_query mysql_qry;
+	p_mysql_user mysql_usr;
+	
+	str_sql = g_string_new("");
+	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	
+	if (mysql_usr->mysql_srv->version >= 50002) { /* Verison >= 5.0.2 */
+		if (password != NULL) {
+			if (!crypted_password) {
+				g_string_printf(str_sql, "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", login, host, password);
+			} else {
+				g_string_printf(str_sql, "CREATE USER '%s'@'%s' IDENTIFIED BY PASSWORD '%s'", login, host, password);
+			}
+		} else {
+			g_string_printf(str_sql, "CREATE USER '%s'@'%s'", login, host);
+		}
+		
+		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			created = TRUE;
+		}
+		
+	} else {
+		if (password != NULL) {
+			if (!crypted_password) {
+				g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host, Password) VALUES ('%s', '%s', PASSWORD('%s'))", login, host, password);
+			} else {
+				g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host, Password) VALUES ('%s', '%s', '%s')", login, host, password);
+			}
+		} else {
+			g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host) VALUES ('%s', '%s')", login, host);
+		}
+		
+		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			created = TRUE;
+			g_string_printf(str_sql, "FLUSH PRIVILEGES");
+			mysql_query_execute_query(mysql_qry, str_sql->str, FALSE);
+		}
+	}
+	
+	if (created) {
+		mysql_usr = mysql_user_new(mysql_usr->mysql_srv, login, host);
+	} else {
+		mysql_usr = NULL;
+	}
+	
+	return mysql_usr;
+}

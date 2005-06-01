@@ -5,6 +5,7 @@ char * arFieldNames[] = {"Name", "Host", "Port", "Login", "Password"};
 
 void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list_server);
 void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_server);
+void gmysqlcc_gui_list_server_fill_server_list (p_gmysqlcc_gui_list_server gui_list_server);
 void gmysqlcc_gui_list_server_dislpay_current_server (p_gmysqlcc_gui_list_server gui_list_server);
 
 void gmysqlcc_gui_list_server_evt_destroy (GtkWidget *widget, gpointer user_data);
@@ -335,12 +336,21 @@ void gmysqlcc_gui_list_server_create_widget (p_gmysqlcc_gui_list_server gui_list
 }
 
 void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_server) {
+	GtkTreeViewColumn * currCol;
+	GtkCellRenderer * renderer;
+	
+	renderer = gtk_cell_renderer_text_new ();
+	currCol = gtk_tree_view_column_new_with_attributes (_("Server name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_list_server->lstListHosts), currCol);
+	
+	gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
+}
+
+void gmysqlcc_gui_list_server_fill_server_list (p_gmysqlcc_gui_list_server gui_list_server) {
 	p_mysql_server mysql_srv;
   GList * items = NULL;
 	GtkListStore * lstStrBase;
 	GtkTreeIter iter, * itSel;
-	GtkTreeViewColumn * currCol;
-	GtkCellRenderer * renderer;
 	GtkTreeSelection* selection;
 	GtkTreePath * pathToSelRow;
 	
@@ -366,16 +376,7 @@ void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_s
 	}
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_list_server->lstListHosts), GTK_TREE_MODEL(lstStrBase));
-		
-	currCol = gtk_tree_view_get_column(GTK_TREE_VIEW(gui_list_server->lstListHosts), 0);
-	if (currCol != NULL) {
-		gtk_tree_view_remove_column(GTK_TREE_VIEW(gui_list_server->lstListHosts), currCol);
-	}
-
-	renderer = gtk_cell_renderer_text_new ();
-	currCol = gtk_tree_view_column_new_with_attributes (_("Server name"), renderer, "text", 0, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_list_server->lstListHosts), currCol);
-
+	
 	if (itSel != NULL) {
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui_list_server->lstListHosts));
 		gtk_tree_selection_select_iter(GTK_TREE_SELECTION(selection), itSel);
@@ -432,7 +433,7 @@ void gmysqlcc_gui_list_server_evt_btnNew_clicked (GtkWidget *widget, gpointer us
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
 	
 	gui_list_server->curr_mysql_srv = NULL;
-	gmysqlcc_gui_list_server_init_widget(gui_list_server);
+	gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
 }
 
 void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer user_data) {
@@ -483,7 +484,7 @@ void gmysqlcc_gui_list_server_evt_btnAdd_clicked (GtkWidget *widget, gpointer us
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
 	if (gmysqlcc_config_add_server(gui_list_server->gmysqlcc_conf, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
 		gui_list_server->curr_mysql_srv = gmysqlcc_config_get_server(gui_list_server->gmysqlcc_conf, infos[0]->str);
-		gmysqlcc_gui_list_server_init_widget(gui_list_server);
+		gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
 	}
 	
 	for (i = 0; i < 6; i++) {
@@ -549,7 +550,7 @@ void gmysqlcc_gui_list_server_evt_btnEdit_clicked (GtkWidget *widget, gpointer u
 	/* Update data in configuration */
 	port = (int)g_ascii_strtoull(infos[2]->str, NULL, 10);
 	if (gmysqlcc_config_update_server(gui_list_server->gmysqlcc_conf, gui_list_server->curr_mysql_srv->name, infos[0]->str, infos[1]->str, port, infos[3]->str, infos[4]->str, NULL, infos[5]->str, read_only, write_warning)) {
-		gmysqlcc_gui_list_server_init_widget(gui_list_server);
+		gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
 	}
 	
 	for (i = 0; i < 6; i++) {
@@ -599,7 +600,7 @@ void gmysqlcc_gui_list_server_evt_btnServerUp_clicked (GtkWidget *widget, gpoint
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
 			
-			gmysqlcc_gui_list_server_init_widget(gui_list_server);
+			gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
 		} else {
 			error = TRUE;
 		}
@@ -635,7 +636,7 @@ void gmysqlcc_gui_list_server_evt_btnServerDown_clicked (GtkWidget *widget, gpoi
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_insert_before(gui_list_server->gmysqlcc_conf->lst_servers, lstTrgt, currSrvr);
 			gui_list_server->gmysqlcc_conf->lst_servers = g_list_delete_link(gui_list_server->gmysqlcc_conf->lst_servers, lstCurr);
 			
-			gmysqlcc_gui_list_server_init_widget(gui_list_server);
+			gmysqlcc_gui_list_server_fill_server_list(gui_list_server);
 		} else {
 			error = TRUE;
 		}

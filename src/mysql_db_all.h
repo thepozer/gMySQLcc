@@ -308,8 +308,9 @@ gchar * mysql_dump_csv_do_to_memory (p_mysql_dump mysql_dmp);
 
 p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host);
 gboolean mysql_user_delete (p_mysql_user mysql_usr);
-gboolean mysql_user_clean_rights_list (p_mysql_user mysql_usr);
+gboolean mysql_user_set_password (p_mysql_user mysql_usr, const gchar * new_password, gboolean crypted);
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
+gboolean mysql_user_read_accesses (p_mysql_user mysql_usr);
 gboolean mysql_user_update_from_db (p_mysql_user mysql_usr);
 
 /***** User list functions *****/
@@ -318,5 +319,6 @@ p_data_list mysql_user_list_new ();
 gboolean mysql_user_list_delete (p_data_list mysql_usr_lst);
 
 gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
+p_mysql_user mysql_user_list_create_user (p_data_list mysql_usr_lst, const gchar * login, const gchar * host, const gchar * new_password, gboolean crypted_password);
 
 #endif /* __MYSQL_DB_ALL_H__ */
