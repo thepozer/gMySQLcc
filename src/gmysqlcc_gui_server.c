@@ -325,6 +325,35 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_widget_show (label9);
   gtk_frame_set_label_widget (GTK_FRAME (frame1), label9);
 
+  hbuttonbox4 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox4);
+  gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox4, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_SPREAD);
+
+  btnUserNew = gtk_button_new_from_stock ("gtk-new");
+  gtk_widget_show (btnUserNew);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserNew);
+	g_signal_connect (G_OBJECT (btnUserNew), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserNew_clicked), (gpointer)gui_server);
+
+  btnUserAdd = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (btnUserAdd);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserAdd);
+	g_signal_connect (G_OBJECT (btnUserAdd), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserAdd_clicked), (gpointer)gui_server);
+
+  btnUserUpdate = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnUserUpdate);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserUpdate);
+	g_signal_connect (G_OBJECT (btnUserUpdate), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserUpdate_clicked), (gpointer)gui_server);
+
+  btnUserDelete = gtk_button_new_from_stock ("gtk-delete");
+  gtk_widget_show (btnUserDelete);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserDelete);
+	g_signal_connect (G_OBJECT (btnUserDelete), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserDelete_clicked), (gpointer)gui_server);
+	
   frame2 = gtk_frame_new (NULL);
   gtk_widget_show (frame2);
   gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
@@ -366,35 +395,6 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_widget_show (label14);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label14);
 
-  hbuttonbox4 = gtk_hbutton_box_new ();
-  gtk_widget_show (hbuttonbox4);
-  gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox4, FALSE, TRUE, 0);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_SPREAD);
-
-  btnUserNew = gtk_button_new_from_stock ("gtk-new");
-  gtk_widget_show (btnUserNew);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserNew);
-	g_signal_connect (G_OBJECT (btnUserNew), "clicked", 
-										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserNew_clicked), (gpointer)gui_server);
-
-  btnUserAdd = gtk_button_new_from_stock ("gtk-add");
-  gtk_widget_show (btnUserAdd);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserAdd);
-	g_signal_connect (G_OBJECT (btnUserAdd), "clicked", 
-										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserAdd_clicked), (gpointer)gui_server);
-
-  btnUserUpdate = gtk_button_new_from_stock ("gtk-apply");
-  gtk_widget_show (btnUserUpdate);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserUpdate);
-	g_signal_connect (G_OBJECT (btnUserUpdate), "clicked", 
-										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserUpdate_clicked), (gpointer)gui_server);
-
-  btnUserDelete = gtk_button_new_from_stock ("gtk-delete");
-  gtk_widget_show (btnUserDelete);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserDelete);
-	g_signal_connect (G_OBJECT (btnUserDelete), "clicked", 
-										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserDelete_clicked), (gpointer)gui_server);
-	
 	label2 = gtk_label_new (_("Users"));
 	gtk_widget_show (label2);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label2);

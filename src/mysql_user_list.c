@@ -70,13 +70,15 @@ gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst) {
 p_mysql_user mysql_user_list_create_user (p_data_list mysql_usr_lst, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password) {
 	gboolean created = FALSE;
 	GString * str_sql;
+	p_mysql_server mysql_srv;
 	p_mysql_query mysql_qry;
 	p_mysql_user mysql_usr;
 	
 	str_sql = g_string_new("");
-	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	mysql_srv = (p_mysql_server *)mysql_data_list_get_data(mysql_usr_lst);
+	mysql_qry = mysql_server_query(mysql_srv, "mysql");
 	
-	if (mysql_usr->mysql_srv->version >= 50002) { /* Verison >= 5.0.2 */
+	if (mysql_srv->version >= 50002) { /* Verison >= 5.0.2 */
 		if (password != NULL) {
 			if (!crypted_password) {
 				g_string_printf(str_sql, "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", login, host, password);
@@ -110,7 +112,8 @@ p_mysql_user mysql_user_list_create_user (p_data_list mysql_usr_lst, const gchar
 	}
 	
 	if (created) {
-		mysql_usr = mysql_user_new(mysql_usr->mysql_srv, login, host);
+		mysql_usr = mysql_user_new(mysql_srv, login, host);
+		mysql_user_update_from_db(mysql_usr);
 	} else {
 		mysql_usr = NULL;
 	}
