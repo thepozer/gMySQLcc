@@ -1,6 +1,61 @@
 
 #include "mysql_db_all.h"
 
+p_mysql_user mysql_user_create (p_mysql_server mysql_srv, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password) {
+	gboolean created = FALSE;
+	GString * str_sql;
+	p_mysql_query mysql_qry;
+	p_mysql_user mysql_usr;
+	
+	str_sql = g_string_new("");
+	mysql_qry = mysql_server_query(mysql_srv, "mysql");
+	
+	if (mysql_srv->version >= 50002) { /* Verison >= 5.0.2 */
+		if (password != NULL) {
+			if (!crypted_password) {
+				g_string_printf(str_sql, "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", login, host, password);
+			} else {
+				g_string_printf(str_sql, "CREATE USER '%s'@'%s' IDENTIFIED BY PASSWORD '%s'", login, host, password);
+			}
+		} else {
+			g_string_printf(str_sql, "CREATE USER '%s'@'%s'", login, host);
+		}
+		
+		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			created = TRUE;
+		}
+		
+	} else {
+		if (password != NULL) {
+			if (!crypted_password) {
+				g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host, Password) VALUES ('%s', '%s', PASSWORD('%s'))", login, host, password);
+			} else {
+				g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host, Password) VALUES ('%s', '%s', '%s')", login, host, password);
+			}
+		} else {
+			g_string_printf(str_sql, "INSERT INTO `mysql`.`user` (User, Host) VALUES ('%s', '%s')", login, host);
+		}
+		
+		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			created = TRUE;
+			g_string_printf(str_sql, "FLUSH PRIVILEGES");
+			mysql_query_execute_query(mysql_qry, str_sql->str, FALSE);
+		}
+	}
+	
+	if (created) {
+		mysql_usr = mysql_user_new(mysql_srv, login, host);
+		mysql_user_update_from_db(mysql_usr);
+	} else {
+		mysql_usr = NULL;
+	}
+	
+	g_string_free(str_sql, TRUE);
+	mysql_query_delete(mysql_qry);
+
+	return mysql_usr;
+}
+
 p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host) {
 	p_mysql_user mysql_usr;
 	
@@ -33,6 +88,18 @@ gboolean mysql_user_delete (p_mysql_user mysql_usr) {
 	
 	g_free(mysql_usr);
 	return TRUE;
+}
+
+gchar * mysql_user_get_key (p_mysql_user mysql_usr) {
+	GString * str_key;
+	gchar * retKey;
+	
+	str_key = g_string_new("");
+	g_string_printf(str_key, "'%s'@'%s'", mysql_usr->login, mysql_usr->host);
+	retKey = g_strdup(str_key->str);
+	g_string_free(str_key, TRUE);
+	
+	return retKey;
 }
 
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
@@ -106,9 +173,9 @@ gboolean mysql_user_set_password (p_mysql_user mysql_usr, const gchar * new_pass
 	
 	if (mysql_usr->mysql_srv->version >= 40000) { /* Verison >= 4.0.0 */
 		if (!crypted) {
-			g_string_printf(str_sql, "SET PASSWORD '%s'@'%s' = PASSWORD('%s')", mysql_usr->login, mysql_usr->host, new_password);
+			g_string_printf(str_sql, "SET PASSWORD FOR '%s'@'%s' = PASSWORD('%s')", mysql_usr->login, mysql_usr->host, new_password);
 		} else {
-			g_string_printf(str_sql, "SET PASSWORD '%s'@'%s' = '%s'", mysql_usr->login, mysql_usr->host, new_password);
+			g_string_printf(str_sql, "SET PASSWORD FOR '%s'@'%s' = '%s'", mysql_usr->login, mysql_usr->host, new_password);
 		}
 		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
 			updated = TRUE;
@@ -143,4 +210,83 @@ gboolean mysql_user_set_password (p_mysql_user mysql_usr, const gchar * new_pass
 	mysql_query_delete(mysql_qry);
 	
 	return updated;
+}
+
+gboolean mysql_user_update_key_values (p_mysql_user mysql_usr, const gchar * new_login, const gchar * new_host) {
+	gboolean updated = FALSE;
+	GString * str_sql;
+	p_mysql_query mysql_qry;
+	
+	str_sql = g_string_new("");
+	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	
+	g_string_printf(str_sql, "UPDATE mysql.user SET User = '%s', Host = '%s' WHERE User = '%s' AND Host = '%s'", new_login, new_host, mysql_usr->login, mysql_usr->host);
+	if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+		updated = TRUE;
+	}
+	
+	g_string_printf(str_sql, "FLUSH PRIVILEGES");
+	mysql_query_execute_query(mysql_qry, str_sql->str, FALSE);
+	
+	if (updated) {
+		g_free(mysql_usr->login);
+		mysql_usr->login = g_strdup(new_login);
+		g_free(mysql_usr->host);
+		mysql_usr->host = g_strdup(new_host);
+	}
+	
+	g_string_free(str_sql, TRUE);
+	mysql_query_delete(mysql_qry);
+	
+	return updated;
+}
+
+gboolean mysql_user_remove (p_mysql_user mysql_usr) {
+	gboolean deleted = FALSE;
+	GString * str_sql;
+	p_mysql_query mysql_qry;
+	
+	str_sql = g_string_new("");
+	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	
+	if (mysql_usr->mysql_srv->version >= 50002) { /* Verison >= 5.0.2 */
+		g_string_printf(str_sql, "DROP USER '%s'@'%s' ", mysql_usr->login, mysql_usr->host);
+		
+		if (mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			deleted = TRUE;
+		}
+		
+	} else {
+		deleted = TRUE;
+		
+		g_string_printf(str_sql, "DELETE FROM `mysql`.`user` WHERE User = '%s' AND Host = '%s'", mysql_usr->login, mysql_usr->host);
+		if (deleted && !mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			deleted = FALSE;
+		}
+		
+		g_string_printf(str_sql, "DELETE FROM `mysql`.`db` WHERE User = '%s' AND Host = '%s'", mysql_usr->login, mysql_usr->host);
+		if (deleted && !mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			deleted = FALSE;
+		}
+		
+		g_string_printf(str_sql, "DELETE FROM `mysql`.`tables_priv` WHERE User = '%s' AND Host = '%s'", mysql_usr->login, mysql_usr->host);
+		if (deleted && !mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			deleted = FALSE;
+		}
+		
+		g_string_printf(str_sql, "DELETE FROM `mysql`.`columns_priv` WHERE User = '%s' AND Host = '%s'", mysql_usr->login, mysql_usr->host);
+		if (deleted && !mysql_query_execute_query(mysql_qry, str_sql->str, FALSE)) {
+			deleted = FALSE;
+		}
+		
+		if (deleted) {
+			g_string_printf(str_sql, "FLUSH PRIVILEGES");
+			mysql_query_execute_query(mysql_qry, str_sql->str, FALSE);
+		}
+	}
+	
+	g_string_free(str_sql, TRUE);
+	mysql_query_delete(mysql_qry);
+	
+	return deleted;
 }

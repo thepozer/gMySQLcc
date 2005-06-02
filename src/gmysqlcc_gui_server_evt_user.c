@@ -61,7 +61,7 @@ void gmysqlcc_gui_server_evt_btnUserAdd_clicked (GtkWidget *widget, gpointer use
 		return;
 	}
 	
-	mysql_usr = mysql_user_list_create_user(mysql_usr_lst, login, host, passwd, crypted_password);
+	mysql_usr = mysql_user_create(gui_server->mysql_srv, login, host, passwd, crypted_password);
 	
 	if (mysql_usr == NULL) {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create User !!!"));
@@ -77,12 +77,61 @@ void gmysqlcc_gui_server_evt_btnUserAdd_clicked (GtkWidget *widget, gpointer use
 
 void gmysqlcc_gui_server_evt_btnUserUpdate_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	const gchar * host, * login, * passwd;
+	gboolean crypted_password;
+	gboolean ret_updt;
+	GtkWidget * msgdlg;
+	
+	host = gtk_entry_get_text(GTK_ENTRY(gui_server->txtUserHost));
+	login = gtk_entry_get_text(GTK_ENTRY(gui_server->txtUserLogin));
+	passwd = gtk_entry_get_text(GTK_ENTRY(gui_server->txtUserPasswd));
+	crypted_password = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui_server->chkEncryptedPasswd));
+	
+	if (gui_server->curr_mysql_usr == NULL) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please, select a user !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	ret_updt = mysql_user_update_key_values(gui_server->curr_mysql_usr, login, host);
+	if (!ret_updt) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't update user Login and Host !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+
+	ret_updt = mysql_user_set_password(gui_server->curr_mysql_usr, passwd, crypted_password);
+	if (!ret_updt) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't update user Password !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
 	
 	gmysqlcc_gui_server_fill_user_list(gui_server, NULL);
 }
 
 void gmysqlcc_gui_server_evt_btnUserDelete_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	gboolean ret_del;
+	GtkWidget * msgdlg;
+	
+	if (gui_server->curr_mysql_usr == NULL) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please, select a user !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	ret_del = mysql_user_remove(gui_server->curr_mysql_usr);
+	if (!ret_del) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't remove user !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
 	
 	gmysqlcc_gui_server_fill_user_list(gui_server, NULL);
 }
