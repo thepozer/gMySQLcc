@@ -40,5 +40,6 @@ void gmysqlcc_gui_server_evt_btnUserNew_clicked (GtkWidget *widget, gpointer use
 void gmysqlcc_gui_server_evt_btnUserAdd_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserUpdate_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserDelete_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_server_evt_lstUserRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
 
 #endif /* __GMYSQLCC_GUI_SERVER_EVT_H__ */

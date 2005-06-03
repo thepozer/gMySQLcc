@@ -153,6 +153,29 @@ gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
 	return TRUE;
 }
 
+gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, const gchar * new_value) {
+	p_mysql_query mysql_qry;
+	GString * strSql;
+	gboolean ret_update;
+
+	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	
+	strSql = g_string_new("");
+	g_string_printf(strSql, "UPDATE `mysql`.`user` SET `%s`  = '%s' WHERE Host = '%s' AND User = '%s'", right, new_value, mysql_usr->host, mysql_usr->login);
+	
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
+		mysql_user_read_rights(mysql_usr);
+		ret_update = TRUE;
+	} else {
+		ret_update = FALSE;
+	}
+	
+	g_string_free(strSql, TRUE);
+	mysql_query_delete(mysql_qry);
+	
+	return ret_update;
+}
+
 gboolean mysql_user_read_accesses (p_mysql_user mysql_usr) {
 	return TRUE;
 }

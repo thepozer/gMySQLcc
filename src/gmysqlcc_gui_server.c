@@ -450,12 +450,17 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 
 void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkTreeViewColumn * currCol;
-	GtkCellRenderer * renderer;
+	GtkCellRenderer * renderer, * renderer_edit;
 	GtkListStore * lstEmpty;
+	GValue gvalbool = {0, };
+	
+	g_value_init(&gvalbool, G_TYPE_BOOLEAN);
+	g_value_set_boolean(&gvalbool, TRUE);
 	
 	/* Generate columns for all tree views */
-	/* Databases columns */
 	renderer = gtk_cell_renderer_text_new ();
+	
+	/* Databases columns */
 	currCol = gtk_tree_view_column_new_with_attributes (_("Databases"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstBase), currCol);
 	
@@ -464,7 +469,6 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	g_object_unref (G_OBJECT (lstEmpty));
 	
 	/* Table columns */
-	renderer = gtk_cell_renderer_text_new ();
 	currCol = gtk_tree_view_column_new_with_attributes (_("Table name"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTable), currCol);
 	currCol = gtk_tree_view_column_new_with_attributes (_("Rows"), renderer, "text", 1, NULL);
@@ -479,7 +483,6 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	g_object_unref (G_OBJECT (lstEmpty));
 	
 	/* Users columns */
-	renderer = gtk_cell_renderer_text_new ();
 	currCol = gtk_tree_view_column_new_with_attributes (_("Users"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUser), currCol);
 	
@@ -488,10 +491,12 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	g_object_unref (G_OBJECT (lstEmpty));
 	
 	/* User Rights columns */
-	renderer = gtk_cell_renderer_text_new ();
 	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUserRights), currCol);
-	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer, "text", 1, NULL);
+	renderer_edit = gtk_cell_renderer_text_new ();
+	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
+	g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstUserRights_edited), gui_server);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUserRights), currCol);
 	
 	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);

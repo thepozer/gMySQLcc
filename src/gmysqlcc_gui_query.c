@@ -345,7 +345,7 @@ void gmysqlcc_gui_query_display_result (p_gmysqlcc_gui_query gui_query) {
 		if (mysql_query_is_editable(gui_query->mysql_qry)) {
 			g_value_init(&gvalbool, G_TYPE_BOOLEAN);
 			g_value_set_boolean(&gvalbool, TRUE);
-
+			
 			for (i = 0; i < gui_query->mysql_qry->nbrField; i++) {
 				ar_renderer[i] = gtk_cell_renderer_text_new ();
 				
@@ -361,7 +361,7 @@ void gmysqlcc_gui_query_display_result (p_gmysqlcc_gui_query gui_query) {
 			}
 			g_print("Can't Edit :( !!!\n");
 		}
-	
+		
 		for(i = 0; i < gui_query->mysql_qry->nbrField; i++) {
 			colTitle = gmysqlcc_helpers_protect_underscore(g_array_index(arRow, gchar *, i));
 			currCol = gtk_tree_view_column_new_with_attributes (colTitle->str, ar_renderer[i], "text", i, NULL);
@@ -542,4 +542,3 @@ void gmysqlcc_gui_query_evt_btnClose_clicked(GtkWidget *widget, gpointer user_da
 	
 	gtk_widget_destroy(GTK_WIDGET(gui_query->window));
 }
-

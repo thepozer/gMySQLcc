@@ -309,10 +309,12 @@ gchar * mysql_dump_csv_do_to_memory (p_mysql_dump mysql_dmp);
 p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host);
 gboolean mysql_user_delete (p_mysql_user mysql_usr);
 
-gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
 gboolean mysql_user_read_accesses (p_mysql_user mysql_usr);
 gboolean mysql_user_update_from_db (p_mysql_user mysql_usr);
 gchar * mysql_user_get_key (p_mysql_user mysql_usr);
+
+gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
+gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, const gchar * new_value);
 
 p_mysql_user mysql_user_create (p_mysql_server mysql_srv, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password);
 gboolean mysql_user_update_key_values (p_mysql_user mysql_usr, const gchar * new_login, const gchar * new_host);

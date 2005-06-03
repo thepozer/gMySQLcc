@@ -135,3 +135,22 @@ void gmysqlcc_gui_server_evt_btnUserDelete_clicked (GtkWidget *widget, gpointer 
 	
 	gmysqlcc_gui_server_fill_user_list(gui_server, NULL);
 }
+
+void gmysqlcc_gui_server_evt_lstUserRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkWidget * msgdlg;
+	GtkTreeModel * tree_model;
+	GtkTreeIter iter;
+	gchar * right;
+	
+	tree_model = gtk_tree_view_get_model(GTK_TREE_VIEW (gui_server->lstUserRights));
+	if (gtk_tree_model_get_iter_from_string(tree_model, &iter, path_string)) {
+		gtk_tree_model_get (tree_model, &iter, 0, &right, -1);
+		mysql_user_set_right(gui_server->curr_mysql_usr, right, new_value);
+		gmysqlcc_gui_server_fill_user_right_list(gui_server);
+	} else {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't found edited right !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+	}
+}
