@@ -12,23 +12,23 @@
 
 typedef struct _s_mysql_server {
 /* Connection infos */
-	gchar *				name;
-	gchar *				host;
-	unsigned int	port;
-	gchar *				user;
-	gchar *				passwd;
-	gchar *				allowedDbs;
-	gchar *				localSock;
+	gchar *					name;
+	gchar *					host;
+	unsigned int		port;
+	gchar *					user;
+	gchar *					passwd;
+	gchar *					allowedDbs;
+	gchar *					localSock;
 	
 /* Server protections */
-	gboolean			read_only;
-	gboolean			write_warning;
+	gboolean				read_only;
+	gboolean				write_warning;
 
 /* Server datas */
-	guint					version;
-	GHashTable *	hshDbs;
-	GHashTable *	hshUsers;
-	p_data_list		mysql_usr_lst;
+	guint						version;
+	GHashTable *		hshDbs;
+	GHashTable *		hshUsers;
+	p_data_list			mysql_usr_lst;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
@@ -46,14 +46,51 @@ typedef struct _s_mysql_user {
 
 typedef s_mysql_user * p_mysql_user;
 
+#define PRIV_SELECT						       1
+#define PRIV_INSERT						       2
+#define PRIV_UPDATE						       4
+#define PRIV_DELETE						       8
+#define PRIV_CREATE						      16
+#define PRIV_DROP							      32
+#define PRIV_GRANT						      64
+#define PRIV_REFERENCES				     128
+#define PRIV_INDEX						     256
+#define PRIV_ALTER						     512
+#define PRIV_EXECUTE					    1024
+#define PRIV_CREATE_ROUTINE		    2048
+#define PRIV_ALTER_ROUTINE		    4096
+#define PRIV_CREATE_VIEW			    8192
+#define PRIV_SHOW_VIEW				   16384
+#define PRIV_RELOAD						   32768
+#define PRIV_SHUTDOWN					   65536
+#define PRIV_PROCESS					  131072
+#define PRIV_FILE							  262144
+#define PRIV_SHOW_DB					  524288
+#define PRIV_SUPER						 1048576
+#define PRIV_CREATE_TMP_TABLE	 2097152
+#define PRIV_LOCK_TABLES			 4194304
+#define PRIV_REPL_SLAVE				 8388608
+#define PRIV_REPL_CLIENT			16777216
+
+typedef struct _s_mysql_user_access {
+	gchar *					login;
+	gchar *					host;
+	gchar *					db;
+	gchar *					table;
+	gchar *					column;
+	guint						privileges;
+} s_mysql_user_access;
+
+typedef s_mysql_user_access * p_mysql_user_access;
+
 typedef struct _s_mysql_database {
 /* Connection Infos */
 	gchar *					name;
-	p_mysql_server			mysql_srv;
+	p_mysql_server	mysql_srv;
 	
 /* Tables Informations */
 	GList *					lstTables;
-	GHashTable *			hshTables;
+	GHashTable *		hshTables;
 	
 /* Update database list informations */
 	gboolean				found;
@@ -64,7 +101,7 @@ typedef s_mysql_database * p_mysql_database;
 typedef struct _s_mysql_table {
 /* Connection Infos */
 	gchar *						name;
-	p_mysql_database			mysql_db;
+	p_mysql_database	mysql_db;
 	
 /* Status infos */
 	gchar *						nbrRow;
@@ -79,22 +116,22 @@ typedef struct _s_mysql_query {
 	gchar *						query;
 	
 /* Result Infos */
-	int							nbrField;
-	int							editResult;
-	int							errCode;
+	int								nbrField;
+	int								editResult;
+	int								errCode;
 	gchar *						errMsg;
 	GArray *					rawHeaders;
 	gboolean					can_edit;
 	
 /* Connection Infos */
-	p_mysql_server				mysql_srv;
+	p_mysql_server		mysql_srv;
 	gchar *						db_name;
 	gchar *						abs_tbl_name;
 	gchar *						tbl_name;
 	
 /* Mysql Infos */
 	MYSQL *						mysql_link;
-	MYSQL_RES *					mysql_result;
+	MYSQL_RES *				mysql_result;
 	
 /* Charset Infos */
 	gchar *						charset;
@@ -106,23 +143,23 @@ typedef s_mysql_query * p_mysql_query;
 
 typedef struct _s_mysql_multi_query {
 	/* Connection Infos */
-	p_mysql_database mysql_db;
+	p_mysql_database	mysql_db;
 	
 	/* Execution Infos */
-	p_mysql_query		mysql_qry;
+	p_mysql_query			mysql_qry;
 	void (* status_callback) (struct _s_mysql_multi_query * mysql_mlt_qry, gboolean error, gpointer user_data);
 	gpointer status_user_data;
 	
 	/* Thread params */
-	const gchar * content;
-	gboolean stop_error;
-	gboolean finished;
-	gboolean finish_ok;
+	const gchar *			content;
+	gboolean					stop_error;
+	gboolean					finished;
+	gboolean					finish_ok;
 	
 	/* Report Infos */
-	GString *				report;
-	gint 						nbr_query;
-	gint						nbr_error;
+	GString *					report;
+	gint 							nbr_query;
+	gint							nbr_error;
 } s_mysql_multi_query;
 
 typedef s_mysql_multi_query * p_mysql_multi_query;
@@ -132,7 +169,7 @@ typedef struct _s_mysql_row {
 	GArray *					results;
 	
 /* Connection infos */
-	p_mysql_query				mysql_qry;
+	p_mysql_query			mysql_qry;
 	
 /* Request for update infos */
 	gchar *						abs_tbl_name;

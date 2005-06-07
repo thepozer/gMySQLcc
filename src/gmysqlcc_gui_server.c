@@ -51,27 +51,29 @@ gboolean gmysqlcc_gui_server_delete (p_gmysqlcc_gui_server gui_server) {
 }
 
 void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
-	GtkWidget *statusbar1;
-	GtkWidget *vbox1, *vbox2, *vbox3, *vbox4, *vbox5;
-	GtkWidget *hpaned1, *hpaned3;
-	GtkWidget *hbox2, *hbox3;
+	GtkWidget *statusbar;
+	GtkWidget *frame;
+  GtkWidget *scrolledwindow;
+  GtkWidget *label;
+	GtkWidget *vbox1, *vbox2, *vbox3, *vbox4, *vbox20, *vbox22;
+	GtkWidget *hpaned1, *hpaned3, *hpaned4, *hpaned5, *hpaned6;
+	GtkWidget *hbox2, *hbox3, *hbox21, *hbox22, *hbox23, *hbox24, *hbox25, *hbox26, *hbox27;
+  GtkWidget *hbuttonbox4, *hbuttonbox8, *hbuttonbox9, *hbuttonbox10;
 	GtkWidget *table1;
-	GtkWidget *label1, *label2, *label3, *label7;
-	GtkWidget *label9, *label10, *label11, *label12, *label13, *label14;
-	GtkWidget *notebook1;
-	GtkWidget *frame1, *frame2, *frame3;
-	GtkWidget *scrolledwindow1, *scrolledwindow2, *scrolledwindow3, *scrolledwindow4, *scrolledwindow5;
+	GtkWidget *notebook1, *notebook3;
+	GtkWidget *frame5, *frame6, *frame7, *frame8, *frame9;
 	GtkWidget *toolbar1;
 	GtkWidget * imgToolbar;
 	GtkToolItem * btnTlbrClose, * btnTlbrSql, * btnTlbrSqlFile;
 	GtkWidget *btnDbAdd, *btnDbDel;
 	GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
+  GtkWidget *btnUserNew, *btnUserAdd, *btnUserUpdate, *btnUserDelete;
+  GtkWidget *btnDRNew, *btnDRAdd, *btnDRDelete;
+  GtkWidget *btnTRNew, *btnTRAdd, *btnTRDelete;
+  GtkWidget *btnCRNew, *btnCRAdd, *btnCRDelete;
 	GtkWidget *mnuDBOpsRefresh;
 	GtkWidget *mnuDBOpsShowCreate;
 	GtkWidget *mnuTBLOpsShowCreate;
-	
-	GtkWidget *hbuttonbox4;
-	GtkWidget *btnUserNew, *btnUserAdd, *btnUserUpdate, *btnUserDelete;
 	
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
@@ -149,15 +151,15 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_widget_show (vbox2);
 	gtk_paned_pack1 (GTK_PANED (hpaned1), vbox2, FALSE, TRUE);
 
-	scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow1);
-	gtk_box_pack_start (GTK_BOX (vbox2), scrolledwindow1, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow);
+	gtk_box_pack_start (GTK_BOX (vbox2), scrolledwindow, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
 	gui_server->lstBase = gtk_tree_view_new ();
 	gtk_widget_show (gui_server->lstBase);
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstBase), TRUE);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow1), gui_server->lstBase);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstBase);
 	g_signal_connect (G_OBJECT (gui_server->lstBase), "button-press-event", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_lstBase_btnpress), (gpointer)gui_server);
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_server->lstBase));
@@ -185,14 +187,14 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_widget_show (vbox3);
 	gtk_paned_pack2 (GTK_PANED (hpaned1), vbox3, TRUE, TRUE);
 
-	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow2);
-	gtk_box_pack_start (GTK_BOX (vbox3), scrolledwindow2, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow);
+	gtk_box_pack_start (GTK_BOX (vbox3), scrolledwindow, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
 	gui_server->lstTable = gtk_tree_view_new ();
 	gtk_widget_show (gui_server->lstTable);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2), gui_server->lstTable);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstTable);
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstTable), TRUE);
 	g_signal_connect (G_OBJECT (gui_server->lstTable), "button-press-event", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_lstTable_btnpress), (gpointer)gui_server);
@@ -229,73 +231,71 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	g_signal_connect (G_OBJECT (btnTblDel), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_btnTblDel_clicked), (gpointer)gui_server);
 
-	label1 = gtk_label_new (_("Databases"));
-	gtk_widget_show (label1);
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label1);
-	gtk_label_set_justify (GTK_LABEL (label1), GTK_JUSTIFY_LEFT);
+	label = gtk_label_new (_("Databases"));
+	gtk_widget_show (label);
+	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label);
 
 
 
-  vbox5 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox5);
-  gtk_container_add (GTK_CONTAINER (notebook1), vbox5);
+
 
   hpaned3 = gtk_hpaned_new ();
   gtk_widget_show (hpaned3);
-  gtk_box_pack_start (GTK_BOX (vbox5), hpaned3, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (notebook1), hpaned3);
   gtk_paned_set_position (GTK_PANED (hpaned3), 180);
 
-  scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow3);
-  gtk_paned_pack1 (GTK_PANED (hpaned3), scrolledwindow3, FALSE, TRUE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_paned_pack1 (GTK_PANED (hpaned3), scrolledwindow, FALSE, TRUE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 
   gui_server->lstUser = gtk_tree_view_new ();
   gtk_widget_show (gui_server->lstUser);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstUser);
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstUser), TRUE);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow3), gui_server->lstUser);
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_server->lstUser));
 	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 	g_signal_connect (G_OBJECT (select), "changed", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_lstUser_selected), (gpointer)gui_server);
-	
+
   vbox4 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox4);
   gtk_paned_pack2 (GTK_PANED (hpaned3), vbox4, TRUE, TRUE);
 
-  frame1 = gtk_frame_new (NULL);
-  gtk_widget_show (frame1);
-  gtk_box_pack_start (GTK_BOX (vbox4), frame1, FALSE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame1), 2);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame1), GTK_SHADOW_IN);
+  frame = gtk_frame_new (NULL);
+  gtk_widget_show (frame);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame, FALSE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame), 2);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
+
+  label = gtk_label_new (_("User informations :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
 
   table1 = gtk_table_new (4, 2, FALSE);
   gtk_widget_show (table1);
-  gtk_container_add (GTK_CONTAINER (frame1), table1);
+  gtk_container_add (GTK_CONTAINER (frame), table1);
   gtk_container_set_border_width (GTK_CONTAINER (table1), 2);
   gtk_table_set_row_spacings (GTK_TABLE (table1), 2);
   gtk_table_set_col_spacings (GTK_TABLE (table1), 2);
 
-  label10 = gtk_label_new (_("Login :"));
-  gtk_widget_show (label10);
-  gtk_table_attach (GTK_TABLE (table1), label10, 0, 1, 0, 1,
+  label = gtk_label_new (_("Login :"));
+  gtk_widget_show (label);
+  gtk_table_attach (GTK_TABLE (table1), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label10), 0, 0.5);
 
-  label11 = gtk_label_new (_("Host :"));
-  gtk_widget_show (label11);
-  gtk_table_attach (GTK_TABLE (table1), label11, 0, 1, 1, 2,
+  label = gtk_label_new (_("Host :"));
+  gtk_widget_show (label);
+  gtk_table_attach (GTK_TABLE (table1), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label11), 0, 0.5);
 
-  label12 = gtk_label_new (_("Password :"));
-  gtk_widget_show (label12);
-  gtk_table_attach (GTK_TABLE (table1), label12, 0, 1, 2, 3,
+  label = gtk_label_new (_("Password :"));
+  gtk_widget_show (label);
+  gtk_table_attach (GTK_TABLE (table1), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label12), 0, 0.5);
 
   gui_server->txtUserPasswd = gtk_entry_new ();
   gtk_widget_show (gui_server->txtUserPasswd);
@@ -321,14 +321,11 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label9 = gtk_label_new (_("User informations :"));
-  gtk_widget_show (label9);
-  gtk_frame_set_label_widget (GTK_FRAME (frame1), label9);
-
   hbuttonbox4 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox4);
   gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox4, FALSE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_SPREAD);
+  gtk_box_set_spacing (GTK_BOX (hbuttonbox4), 2);
 
   btnUserNew = gtk_button_new_from_stock ("gtk-new");
   gtk_widget_show (btnUserNew);
@@ -353,70 +350,327 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_container_add (GTK_CONTAINER (hbuttonbox4), btnUserDelete);
 	g_signal_connect (G_OBJECT (btnUserDelete), "clicked", 
 										G_CALLBACK (gmysqlcc_gui_server_evt_btnUserDelete_clicked), (gpointer)gui_server);
+
+	frame5 = gtk_frame_new (NULL);
+  gtk_widget_show (frame5);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame5, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame5), GTK_SHADOW_IN);
+
+  notebook3 = gtk_notebook_new ();
+  gtk_widget_show (notebook3);
+  gtk_container_add (GTK_CONTAINER (frame5), notebook3);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (notebook3), scrolledwindow);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow), 3);
 	
-  frame2 = gtk_frame_new (NULL);
-  gtk_widget_show (frame2);
-  gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame2), 2);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame2), GTK_SHADOW_IN);
+  gui_server->lstURUserRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstURUserRights);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstURUserRights), TRUE);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstURUserRights);
 
-  scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow4);
-  gtk_container_add (GTK_CONTAINER (frame2), scrolledwindow4);
-  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow4), 2);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+  label = gtk_label_new (_("User"));
+  gtk_widget_show (label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label);
 
-  gui_server->lstUserRights = gtk_tree_view_new ();
- 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstUserRights), TRUE);
-	gtk_widget_show (gui_server->lstUserRights);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow4), gui_server->lstUserRights);
+  hpaned4 = gtk_hpaned_new ();
+  gtk_widget_show (hpaned4);
+  gtk_container_add (GTK_CONTAINER (notebook3), hpaned4);
+  gtk_paned_set_position (GTK_PANED (hpaned4), 200);
 
-  label13 = gtk_label_new (_("User rights :"));
-  gtk_widget_show (label13);
-  gtk_frame_set_label_widget (GTK_FRAME (frame2), label13);
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_paned_pack1 (GTK_PANED (hpaned4), scrolledwindow, FALSE, TRUE);
 
-  frame3 = gtk_frame_new (NULL);
-  gtk_widget_show (frame3);
-  gtk_box_pack_start (GTK_BOX (vbox4), frame3, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame3), 2);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame3), GTK_SHADOW_IN);
+  gui_server->lstDRDatabases = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstDRDatabases);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstDRDatabases);
 
-  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow5);
-  gtk_container_add (GTK_CONTAINER (frame3), scrolledwindow5);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
+  vbox20 = gtk_vbox_new (FALSE, 3);
+  gtk_widget_show (vbox20);
+  gtk_paned_pack2 (GTK_PANED (hpaned4), vbox20, TRUE, TRUE);
 
-  gui_server->lstUserDatabases = gtk_tree_view_new ();
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (gui_server->lstUserDatabases), TRUE);
-  gtk_widget_show (gui_server->lstUserDatabases);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow5), gui_server->lstUserDatabases);
+  hbox21 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox21);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbox21, FALSE, TRUE, 3);
 
-  label14 = gtk_label_new (_("User databases rights :"));
-  gtk_widget_show (label14);
-  gtk_frame_set_label_widget (GTK_FRAME (frame3), label14);
+  label = gtk_label_new (_("Database name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox21), label, FALSE, FALSE, 0);
 
-	label2 = gtk_label_new (_("Users"));
-	gtk_widget_show (label2);
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label2);
-	gtk_label_set_justify (GTK_LABEL (label2), GTK_JUSTIFY_LEFT);
+  gui_server->txtDRDbName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtDRDbName);
+  gtk_box_pack_start (GTK_BOX (hbox21), gui_server->txtDRDbName, TRUE, TRUE, 0);
+
+  hbuttonbox8 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox8);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbuttonbox8, FALSE, TRUE, 3);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox8), GTK_BUTTONBOX_SPREAD);
+
+  btnDRNew = gtk_button_new_from_stock ("gtk-new");
+  gtk_widget_show (btnDRNew);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRNew);
+  GTK_WIDGET_SET_FLAGS (btnDRNew, GTK_CAN_DEFAULT);
+
+  btnDRAdd = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (btnDRAdd);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRAdd);
+  GTK_WIDGET_SET_FLAGS (btnDRAdd, GTK_CAN_DEFAULT);
+
+  btnDRDelete = gtk_button_new_from_stock ("gtk-delete");
+  gtk_widget_show (btnDRDelete);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRDelete);
+  GTK_WIDGET_SET_FLAGS (btnDRDelete, GTK_CAN_DEFAULT);
+
+  frame6 = gtk_frame_new (NULL);
+  gtk_widget_show (frame6);
+  gtk_box_pack_start (GTK_BOX (vbox20), frame6, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame6), GTK_SHADOW_IN);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (frame6), scrolledwindow);
+
+  gui_server->lstDRDatabaseRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstDRDatabaseRights);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstDRDatabaseRights);
+
+  label = gtk_label_new (_("Database rights :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame6), label);
+
+  label = gtk_label_new (_("Database"));
+  gtk_widget_show (label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label);
+
+  hpaned5 = gtk_hpaned_new ();
+  gtk_widget_show (hpaned5);
+  gtk_container_add (GTK_CONTAINER (notebook3), hpaned5);
+  gtk_paned_set_position (GTK_PANED (hpaned5), 200);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_paned_pack1 (GTK_PANED (hpaned5), scrolledwindow, FALSE, TRUE);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
+
+  gui_server->lstTRTables = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstTRTables);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstTRTables);
+
+  vbox20 = gtk_vbox_new (FALSE, 3);
+  gtk_widget_show (vbox20);
+  gtk_paned_pack2 (GTK_PANED (hpaned5), vbox20, TRUE, TRUE);
+
+  hbox24 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox24);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbox24, FALSE, TRUE, 0);
+
+  label = gtk_label_new (_("Database name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox24), label, FALSE, FALSE, 0);
+
+  gui_server->txtTRDbName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtTRDbName);
+  gtk_box_pack_start (GTK_BOX (hbox24), gui_server->txtTRDbName, TRUE, TRUE, 0);
+
+  hbox22 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox22);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbox22, FALSE, TRUE, 0);
+
+  label = gtk_label_new (_("Table name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox22), label, FALSE, FALSE, 0);
+
+  gui_server->txtTRTblName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtTRTblName);
+  gtk_box_pack_start (GTK_BOX (hbox22), gui_server->txtTRTblName, TRUE, TRUE, 0);
+
+  hbuttonbox9 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox9);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbuttonbox9, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox9), GTK_BUTTONBOX_SPREAD);
+
+  btnTRNew = gtk_button_new_from_stock ("gtk-new");
+  gtk_widget_show (btnTRNew);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRNew);
+  GTK_WIDGET_SET_FLAGS (btnTRNew, GTK_CAN_DEFAULT);
+
+  btnTRAdd = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (btnTRAdd);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRAdd);
+  GTK_WIDGET_SET_FLAGS (btnTRAdd, GTK_CAN_DEFAULT);
+
+  btnTRDelete = gtk_button_new_from_stock ("gtk-delete");
+  gtk_widget_show (btnTRDelete);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRDelete);
+  GTK_WIDGET_SET_FLAGS (btnTRDelete, GTK_CAN_DEFAULT);
+
+  hbox23 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox23);
+  gtk_box_pack_start (GTK_BOX (vbox20), hbox23, TRUE, TRUE, 0);
+
+  frame8 = gtk_frame_new (NULL);
+  gtk_widget_show (frame8);
+  gtk_box_pack_start (GTK_BOX (hbox23), frame8, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame8), GTK_SHADOW_IN);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (frame8), scrolledwindow);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
+
+  gui_server->lstTRTableRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstTRTableRights);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstTRTableRights);
+
+  label = gtk_label_new (_("Table Rights :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame8), label);
+
+  frame9 = gtk_frame_new (NULL);
+  gtk_widget_show (frame9);
+  gtk_box_pack_start (GTK_BOX (hbox23), frame9, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame9), GTK_SHADOW_IN);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (frame9), scrolledwindow);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
+
+  gui_server->lstTRColumnRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstTRColumnRights);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstTRColumnRights);
+
+  label = gtk_label_new (_("Columns Rights :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame9), label);
+
+  label = gtk_label_new (_("Table"));
+  gtk_widget_show (label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 2), label);
+
+  hpaned6 = gtk_hpaned_new ();
+  gtk_widget_show (hpaned6);
+  gtk_container_add (GTK_CONTAINER (notebook3), hpaned6);
+  gtk_paned_set_position (GTK_PANED (hpaned6), 200);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_paned_pack1 (GTK_PANED (hpaned6), scrolledwindow, FALSE, TRUE);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
+
+  gui_server->lstCRColumns = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstCRColumns);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstCRColumns);
+
+  vbox22 = gtk_vbox_new (FALSE, 3);
+  gtk_widget_show (vbox22);
+  gtk_paned_pack2 (GTK_PANED (hpaned6), vbox22, TRUE, TRUE);
+
+  hbox25 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox25);
+  gtk_box_pack_start (GTK_BOX (vbox22), hbox25, FALSE, TRUE, 0);
+
+  label = gtk_label_new (_("Database name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox25), label, FALSE, FALSE, 0);
+
+  gui_server->txtCRDbName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtCRDbName);
+  gtk_box_pack_start (GTK_BOX (hbox25), gui_server->txtCRDbName, TRUE, TRUE, 0);
+
+  hbox26 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox26);
+  gtk_box_pack_start (GTK_BOX (vbox22), hbox26, FALSE, TRUE, 0);
+
+  label = gtk_label_new (_("Table name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox26), label, FALSE, FALSE, 0);
+
+  gui_server->txtCRTblName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtCRTblName);
+  gtk_box_pack_start (GTK_BOX (hbox26), gui_server->txtCRTblName, TRUE, TRUE, 0);
+
+  hbox27 = gtk_hbox_new (FALSE, 3);
+  gtk_widget_show (hbox27);
+  gtk_box_pack_start (GTK_BOX (vbox22), hbox27, FALSE, TRUE, 0);
+
+  label = gtk_label_new (_("Column name :"));
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox27), label, FALSE, FALSE, 0);
+
+  gui_server->txtCRColName = gtk_entry_new ();
+  gtk_widget_show (gui_server->txtCRColName);
+  gtk_box_pack_start (GTK_BOX (hbox27), gui_server->txtCRColName, TRUE, TRUE, 0);
+
+  hbuttonbox10 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox10);
+  gtk_box_pack_start (GTK_BOX (vbox22), hbuttonbox10, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox10), GTK_BUTTONBOX_SPREAD);
+
+  btnCRNew = gtk_button_new_from_stock ("gtk-new");
+  gtk_widget_show (btnCRNew);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRNew);
+  GTK_WIDGET_SET_FLAGS (btnCRNew, GTK_CAN_DEFAULT);
+
+  btnCRAdd = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (btnCRAdd);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRAdd);
+  GTK_WIDGET_SET_FLAGS (btnCRAdd, GTK_CAN_DEFAULT);
+
+  btnCRDelete = gtk_button_new_from_stock ("gtk-delete");
+  gtk_widget_show (btnCRDelete);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRDelete);
+  GTK_WIDGET_SET_FLAGS (btnCRDelete, GTK_CAN_DEFAULT);
+
+  frame7 = gtk_frame_new (NULL);
+  gtk_widget_show (frame7);
+  gtk_box_pack_start (GTK_BOX (vbox22), frame7, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame7), GTK_SHADOW_IN);
+
+  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (frame7), scrolledwindow);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
+
+  gui_server->lstCRColumnRights = gtk_tree_view_new ();
+  gtk_widget_show (gui_server->lstCRColumnRights);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstCRColumnRights);
+
+  label = gtk_label_new (_("Column rights :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame7), label);
+
+  label = gtk_label_new (_("Column"));
+  gtk_widget_show (label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 3), label);
+
+  label = gtk_label_new (_("Rights :"));
+  gtk_widget_show (label);
+  gtk_frame_set_label_widget (GTK_FRAME (frame5), label);
+
+  label = gtk_label_new (_("Users"));
+  gtk_widget_show (label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label);
 
 
 
-	label7 = gtk_label_new (_("In construction"));
-	gtk_widget_show (label7);
-	gtk_container_add (GTK_CONTAINER (notebook1), label7);
-	gtk_label_set_justify (GTK_LABEL (label7), GTK_JUSTIFY_LEFT);
+	label = gtk_label_new (_("In construction"));
+	gtk_widget_show (label);
+	gtk_container_add (GTK_CONTAINER (notebook1), label);
+	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
-	label3 = gtk_label_new (_("Server"));
-	gtk_widget_show (label3);
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label3);
-	gtk_label_set_justify (GTK_LABEL (label3), GTK_JUSTIFY_LEFT);
+	label = gtk_label_new (_("Server"));
+	gtk_widget_show (label);
+	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label);
+	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
 
 
-	statusbar1 = gtk_statusbar_new ();
-	gtk_widget_show (statusbar1);
-	gtk_box_pack_start (GTK_BOX (vbox1), statusbar1, FALSE, FALSE, 0);
+	statusbar = gtk_statusbar_new ();
+	gtk_widget_show (statusbar);
+	gtk_box_pack_start (GTK_BOX (vbox1), statusbar, FALSE, FALSE, 0);
 
 
 
@@ -492,15 +746,15 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	
 	/* User Rights columns */
 	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUserRights), currCol);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstURUserRights), currCol);
 	renderer_edit = gtk_cell_renderer_text_new ();
 	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
-	g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstUserRights_edited), gui_server);
+	g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);
 	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstUserRights), currCol);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstURUserRights), currCol);
 	
 	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstUserRights), GTK_TREE_MODEL(lstEmpty));
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstURUserRights), GTK_TREE_MODEL(lstEmpty));
 	g_object_unref (G_OBJECT (lstEmpty));
 	
 	
@@ -658,7 +912,7 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 		g_hash_table_foreach(gui_server->curr_mysql_usr->hshRights, &sub_ht_fill_user_right_list, (gpointer)lstStrUserRights);
 	}
 	
-	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstUserRights), GTK_TREE_MODEL(lstStrUserRights));
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstURUserRights), GTK_TREE_MODEL(lstStrUserRights));
 	g_object_unref (G_OBJECT (lstStrUserRights));
 	
 }

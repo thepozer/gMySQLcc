@@ -79,12 +79,25 @@ typedef struct _s_gmysqlcc_gui_server {
 
 /* User part */
 	GtkWidget *lstUser;
-	GtkWidget *lstUserRights;
-	GtkWidget *lstUserDatabases;
 	GtkWidget *txtUserLogin;
 	GtkWidget *txtUserHost;
 	GtkWidget *txtUserPasswd;
 	GtkWidget *chkEncryptedPasswd;
+/* Rights Part */
+	GtkWidget *lstURUserRights; /* User rights*/
+	GtkWidget *txtDRDbName; /* Database rights */
+	GtkWidget *lstDRDatabases;
+	GtkWidget *lstDRDatabaseRights;
+	GtkWidget *lstTRTables; /* Table rights */
+	GtkWidget *txtTRDbName;
+	GtkWidget *txtTRTblName;
+	GtkWidget *lstTRTableRights;
+	GtkWidget *lstTRColumnRights;
+	GtkWidget *lstCRColumns; /* Column rights */
+	GtkWidget *txtCRDbName;
+	GtkWidget *txtCRTblName;
+	GtkWidget *txtCRColName;
+	GtkWidget *lstCRColumnRights;
 	
 	p_mysql_user curr_mysql_usr;
 } s_gmysqlcc_gui_server;

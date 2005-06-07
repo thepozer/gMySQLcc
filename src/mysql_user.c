@@ -177,6 +177,7 @@ gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, cons
 }
 
 gboolean mysql_user_read_accesses (p_mysql_user mysql_usr) {
+	
 	return TRUE;
 }
 
