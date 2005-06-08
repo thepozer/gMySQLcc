@@ -27,61 +27,54 @@ typedef struct _s_mysql_server {
 /* Server datas */
 	guint						version;
 	GHashTable *		hshDbs;
-	GHashTable *		hshUsers;
 	p_data_list			mysql_usr_lst;
 } s_mysql_server;
 
 typedef s_mysql_server * p_mysql_server;
+
+typedef enum _e_mysqlRightType {
+	UserSubRightType_Undefined = 0,
+	UserSubRightType_Host,
+	UserSubRightType_User,
+	UserSubRightType_Database,
+	UserSubRightType_Table,
+	UserSubRightType_TableColumn,
+	UserSubRightType_Column,
+	UserSubRightType_Proc
+} e_mysqlRightType;
+
+typedef struct _s_mysql_right {
+	e_mysqlRightType	type;
+	p_mysql_server		mysql_srv;
+	
+	gchar *						host;
+	gchar *						login;
+	gchar *						db;
+	gchar *						table;
+	gchar *						column;
+	gchar *						routine_name;
+	gchar *						routine_type;
+	
+	GHashTable *			hsh_rights;
+} s_mysql_right;
+
+typedef s_mysql_right * p_mysql_right;
 
 typedef struct _s_mysql_user {
 /* User Infos */
 	gchar *					login;
 	gchar *					host;
 	gchar *					passwd;
-	GHashTable *		hshRights;
+	
+	p_mysql_right		user_rights;
+	
+	GHashTable *		hsh_db_list_rights;
 	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
 } s_mysql_user;
 
 typedef s_mysql_user * p_mysql_user;
-
-#define PRIV_SELECT						       1
-#define PRIV_INSERT						       2
-#define PRIV_UPDATE						       4
-#define PRIV_DELETE						       8
-#define PRIV_CREATE						      16
-#define PRIV_DROP							      32
-#define PRIV_GRANT						      64
-#define PRIV_REFERENCES				     128
-#define PRIV_INDEX						     256
-#define PRIV_ALTER						     512
-#define PRIV_EXECUTE					    1024
-#define PRIV_CREATE_ROUTINE		    2048
-#define PRIV_ALTER_ROUTINE		    4096
-#define PRIV_CREATE_VIEW			    8192
-#define PRIV_SHOW_VIEW				   16384
-#define PRIV_RELOAD						   32768
-#define PRIV_SHUTDOWN					   65536
-#define PRIV_PROCESS					  131072
-#define PRIV_FILE							  262144
-#define PRIV_SHOW_DB					  524288
-#define PRIV_SUPER						 1048576
-#define PRIV_CREATE_TMP_TABLE	 2097152
-#define PRIV_LOCK_TABLES			 4194304
-#define PRIV_REPL_SLAVE				 8388608
-#define PRIV_REPL_CLIENT			16777216
-
-typedef struct _s_mysql_user_access {
-	gchar *					login;
-	gchar *					host;
-	gchar *					db;
-	gchar *					table;
-	gchar *					column;
-	guint						privileges;
-} s_mysql_user_access;
-
-typedef s_mysql_user_access * p_mysql_user_access;
 
 typedef struct _s_mysql_database {
 /* Connection Infos */
@@ -346,12 +339,15 @@ gchar * mysql_dump_csv_do_to_memory (p_mysql_dump mysql_dmp);
 p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, const gchar * host);
 gboolean mysql_user_delete (p_mysql_user mysql_usr);
 
-gboolean mysql_user_read_accesses (p_mysql_user mysql_usr);
 gboolean mysql_user_update_from_db (p_mysql_user mysql_usr);
 gchar * mysql_user_get_key (p_mysql_user mysql_usr);
 
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr);
 gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, const gchar * new_value);
+
+gboolean mysql_user_read_database_rights (p_mysql_user mysql_usr);
+gboolean mysql_user_get_database_rights (p_mysql_user mysql_usr, const gchar * db_name);
+
 
 p_mysql_user mysql_user_create (p_mysql_server mysql_srv, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password);
 gboolean mysql_user_update_key_values (p_mysql_user mysql_usr, const gchar * new_login, const gchar * new_host);
@@ -364,5 +360,15 @@ p_data_list mysql_user_list_new ();
 gboolean mysql_user_list_delete (p_data_list mysql_usr_lst);
 
 gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
+
+/***** Rights functions *****/
+
+/*p_mysql_right mysql_right_new (); Internal only */
+p_mysql_right mysql_right_new_user (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login);
+p_mysql_right mysql_right_new_database (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db);
+gboolean mysql_right_delete (p_mysql_right mysql_rght);
+
+gboolean mysql_right_read (p_mysql_right mysql_rght);
+gboolean mysql_right_update (p_mysql_right mysql_rght, const gchar * right, const gchar * new_value);
 
 #endif /* __MYSQL_DB_ALL_H__ */

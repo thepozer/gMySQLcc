@@ -39,11 +39,11 @@ gmysqlcc_SOURCES = \
 	mysql_dump_xml.c\
 	mysql_multi_query.c\
 	mysql_query.c\
+	mysql_right.c\
 	mysql_row.c\
 	mysql_server.c\
 	mysql_table.c\
-	mysql_user.c\
-	mysql_user_list.c
+	mysql_user.c
 
 gmysqlcc_LDFLAGS = 
 

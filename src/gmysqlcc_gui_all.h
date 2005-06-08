@@ -85,8 +85,8 @@ typedef struct _s_gmysqlcc_gui_server {
 	GtkWidget *chkEncryptedPasswd;
 /* Rights Part */
 	GtkWidget *lstURUserRights; /* User rights*/
-	GtkWidget *txtDRDbName; /* Database rights */
-	GtkWidget *lstDRDatabases;
+	GtkWidget *lstDRDatabases;/* Database rights */
+	GtkWidget *txtDRDbName;
 	GtkWidget *lstDRDatabaseRights;
 	GtkWidget *lstTRTables; /* Table rights */
 	GtkWidget *txtTRDbName;
@@ -99,7 +99,8 @@ typedef struct _s_gmysqlcc_gui_server {
 	GtkWidget *txtCRColName;
 	GtkWidget *lstCRColumnRights;
 	
-	p_mysql_user curr_mysql_usr;
+	p_mysql_user	curr_mysql_usr;
+	p_mysql_right	curr_database_rights;
 } s_gmysqlcc_gui_server;
 
 typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;

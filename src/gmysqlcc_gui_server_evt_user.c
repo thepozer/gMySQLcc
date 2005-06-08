@@ -16,6 +16,20 @@ void gmysqlcc_gui_server_evt_lstUser_selected (GtkTreeSelection *selection, gpoi
 	}
 }
 
+void gmysqlcc_gui_server_evt_lstDRDatabases_selected (GtkTreeSelection *selection, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	
+	/*g_print("Changed !\n");*/
+	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		gtk_tree_model_get (model, &iter, 1, &gui_server->curr_database_rights, -1);
+		/*g_print ("The User is '%s'@'%s'\n", gui_server->curr_database_rights->login, gui_server->curr_database_rights->host);*/
+		
+		gmysqlcc_gui_server_display_current_database_right(gui_server);
+	}
+}
+
 void gmysqlcc_gui_server_evt_btnUserNew_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
 	GtkTreeSelection *selection;

@@ -1,6 +1,85 @@
 
 #include "mysql_db_all.h"
 
+void internal_mysql_user_list_clean_value (gpointer data);
+
+/* mysql user list functions */
+
+p_data_list mysql_user_list_new (p_mysql_server	mysql_srv) {
+	return mysql_data_list_new(mysql_srv, &g_free, &internal_mysql_user_list_clean_value);
+}
+
+gboolean mysql_user_list_delete (p_data_list mysql_usr_lst) {
+	return mysql_data_list_delete(mysql_usr_lst);
+}
+
+gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst) {
+	p_mysql_query mysql_qry;
+	p_mysql_user mysql_usr;
+	p_mysql_server mysql_srv;
+	GArray * arRow;
+	gchar * login;
+	gchar * host;
+	GString * userName;
+	
+	void htr_remove_user(gpointer key, gpointer value, gpointer user_data) {
+		p_mysql_user mysql_usr = (p_mysql_user)value;
+		
+		mysql_user_delete(mysql_usr);
+	}
+	
+	userName = g_string_new("");
+	mysql_srv = (p_mysql_server) mysql_usr_lst->data;
+	
+	mysql_data_list_mark_all(mysql_usr_lst, FALSE);
+	
+	mysql_qry = mysql_server_query(mysql_srv, (gchar *)NULL);
+	
+	if (mysql_query_execute_query(mysql_qry, "SELECT Host, User AS UserName FROM `mysql`.`user` ORDER BY Host, User", FALSE)) {
+		
+		arRow = mysql_query_get_next_record(mysql_qry);
+		
+		while (arRow != NULL) {
+			mysql_usr = NULL;
+			login = g_array_index(arRow, gchar *, 1);
+			host = g_array_index(arRow, gchar *, 0);
+			
+			g_string_printf(userName, "'%s'@'%s'", login, host);
+			
+			if ((mysql_usr = (p_mysql_user)mysql_data_list_get(mysql_usr_lst, userName->str)) == NULL) {
+				mysql_usr = mysql_user_new(mysql_srv, login, host);
+				mysql_data_list_add(mysql_usr_lst, g_strdup(userName->str), mysql_usr, TRUE);
+			} else {
+				mysql_data_list_mark(mysql_usr_lst, userName->str, TRUE);
+			}
+			
+			mysql_user_update_from_db(mysql_usr);
+			
+			g_array_free(arRow, TRUE);
+			arRow = mysql_query_get_next_record(mysql_qry);
+			
+		}
+	} else {
+		return FALSE;
+	}
+	
+	mysql_data_list_clean_mark(mysql_usr_lst, FALSE);
+	
+	mysql_query_delete(mysql_qry);
+	g_string_free(userName, TRUE);
+	
+	return TRUE;
+}
+
+void internal_mysql_user_list_clean_value (gpointer data) {
+	p_data_list_item data_item = (p_data_list_item)data;
+	
+	mysql_user_delete((p_mysql_user)data_item->data);
+	g_free(data_item);
+}
+
+/* mysql user functions */
+
 p_mysql_user mysql_user_create (p_mysql_server mysql_srv, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password) {
 	gboolean created = FALSE;
 	GString * str_sql;
@@ -69,8 +148,9 @@ p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, cons
 	mysql_usr->login = g_strdup(login);
 	mysql_usr->host = g_strdup(host);
 	mysql_usr->passwd = NULL;
-	mysql_usr->hshRights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_free);
-
+	mysql_usr->user_rights = NULL;
+	mysql_usr->hsh_db_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
+	
 	return mysql_usr;
 }
 
@@ -84,7 +164,8 @@ gboolean mysql_user_delete (p_mysql_user mysql_usr) {
 	g_free(mysql_usr->host);
 	g_free(mysql_usr->passwd);
 	
-	g_hash_table_destroy(mysql_usr->hshRights);
+	mysql_right_delete(mysql_usr->user_rights);
+	g_hash_table_destroy(mysql_usr->hsh_db_list_rights);
 	
 	g_free(mysql_usr);
 	return TRUE;
@@ -103,87 +184,20 @@ gchar * mysql_user_get_key (p_mysql_user mysql_usr) {
 }
 
 gboolean mysql_user_read_rights (p_mysql_user mysql_usr) {
-	p_mysql_query mysql_qry;
-	GArray * arRow, * arHeaders;
-	GString * strSql;
-	gchar * right, * value;
-	gint idx;
 	
-	g_hash_table_destroy(mysql_usr->hshRights);
-	mysql_usr->hshRights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_free);
+	mysql_right_delete(mysql_usr->user_rights);
+	mysql_usr->user_rights = mysql_right_new_user(mysql_usr->mysql_srv, mysql_usr->host, mysql_usr->login);
 	
-	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
-	
-	strSql = g_string_new("");
-	g_string_printf(strSql, "SELECT * FROM `mysql`.`user` WHERE Host = '%s' AND User = '%s'", mysql_usr->host, mysql_usr->login);
-	
-	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
-	
-		arRow = mysql_query_get_next_record(mysql_qry);
-		arHeaders = mysql_query_get_headers(mysql_qry);
-		
-		if (arRow != NULL && arHeaders != NULL) {
-			
-			for (idx = 0; idx < arRow->len; idx++) {
-				right = g_array_index(arHeaders, gchar *, idx);
-				value = g_array_index(arRow, gchar *, idx);
-				
-				if (g_ascii_strncasecmp(right, "Password", 8) == 0) {
-					mysql_usr->passwd = g_strdup(value);
-				} else if (g_ascii_strncasecmp(right, "Host", 4) != 0 && g_ascii_strncasecmp(right, "User", 4) != 0) {
-					g_hash_table_insert(mysql_usr->hshRights, g_strdup(right), g_strdup(value));
-				}
-			}
-			
-		}
-		
-		if (arHeaders != NULL) {
-			g_array_free(arHeaders, TRUE);
-		}
-		if (arRow != NULL) {
-			g_array_free(arRow, TRUE);
-		}
-	} else {
-		return FALSE;
-	}
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return TRUE;
+	return (mysql_usr->user_rights != NULL);
 }
 
 gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, const gchar * new_value) {
-	p_mysql_query mysql_qry;
-	GString * strSql;
-	gboolean ret_update;
-
-	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
-	
-	strSql = g_string_new("");
-	g_string_printf(strSql, "UPDATE `mysql`.`user` SET `%s`  = '%s' WHERE Host = '%s' AND User = '%s'", right, new_value, mysql_usr->host, mysql_usr->login);
-	
-	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
-		mysql_user_read_rights(mysql_usr);
-		ret_update = TRUE;
-	} else {
-		ret_update = FALSE;
-	}
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return ret_update;
-}
-
-gboolean mysql_user_read_accesses (p_mysql_user mysql_usr) {
-	
-	return TRUE;
+	return mysql_right_update(mysql_usr->user_rights, right, new_value);
 }
 
 gboolean mysql_user_update_from_db (p_mysql_user mysql_usr) {
 	mysql_user_read_rights(mysql_usr);
-	mysql_user_read_accesses(mysql_usr);
+	mysql_user_read_database_rights(mysql_usr);
 	return TRUE;
 }
 
@@ -313,4 +327,38 @@ gboolean mysql_user_remove (p_mysql_user mysql_usr) {
 	mysql_query_delete(mysql_qry);
 	
 	return deleted;
+}
+
+gboolean mysql_user_read_database_rights (p_mysql_user mysql_usr) {
+	p_mysql_query mysql_qry;
+	p_mysql_right mysql_rght;
+	GArray * arRow;
+	GString * strSql;
+	gchar * name;
+	
+	g_hash_table_destroy(mysql_usr->hsh_db_list_rights);
+	mysql_usr->hsh_db_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
+
+	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
+	
+	strSql = g_string_new("");
+	g_string_printf(strSql, "SELECT Db FROM `mysql`.`db` WHERE Host = '%s' AND User = '%s' ORDER BY Db", mysql_usr->host, mysql_usr->login);
+	
+	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
+		while ((arRow = mysql_query_get_next_record(mysql_qry)) != NULL) {
+			name = (gchar *) g_array_index(arRow, gchar *, 0);
+			mysql_rght = mysql_right_new_database(mysql_usr->mysql_srv, mysql_usr->host, mysql_usr->login, name);
+			
+			if (mysql_rght != NULL) {
+				g_hash_table_insert(mysql_usr->hsh_db_list_rights, g_strdup(name), mysql_rght);
+			}
+			
+			g_array_free(arRow, TRUE);
+		}
+	}
+	
+	g_string_free(strSql, TRUE);
+	mysql_query_delete(mysql_qry);
+	
+	return TRUE;
 }

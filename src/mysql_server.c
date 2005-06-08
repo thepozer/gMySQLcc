@@ -27,7 +27,6 @@ p_mysql_server mysql_server_new () {
 	
 	mysql_srv->version = 0;
 	mysql_srv->hshDbs = g_hash_table_new(&g_str_hash, &g_str_equal);
-	mysql_srv->hshUsers = g_hash_table_new(&g_str_hash, &g_str_equal);
 	mysql_srv->mysql_usr_lst = NULL;
 	
 	return mysql_srv;

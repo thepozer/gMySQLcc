@@ -16,7 +16,8 @@ p_gmysqlcc_gui_server gmysqlcc_gui_server_new (p_mysql_server mysql_srv) {
 	gui_server->curr_mysql_db = NULL;
 	gui_server->curr_mysql_tbl = NULL;
 	gui_server->curr_mysql_usr = NULL;
-
+	gui_server->curr_database_rights = NULL;
+	
 	gmysqlcc_gui_server_create_widget(gui_server);
 	gmysqlcc_gui_server_init_widget(gui_server);
 	
@@ -386,6 +387,10 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gui_server->lstDRDatabases = gtk_tree_view_new ();
   gtk_widget_show (gui_server->lstDRDatabases);
   gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->lstDRDatabases);
+	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (gui_server->lstDRDatabases));
+	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
+	g_signal_connect (G_OBJECT (select), "changed", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_lstDRDatabases_selected), (gpointer)gui_server);
 
   vbox20 = gtk_vbox_new (FALSE, 3);
   gtk_widget_show (vbox20);
@@ -757,6 +762,89 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstURUserRights), GTK_TREE_MODEL(lstEmpty));
 	g_object_unref (G_OBJECT (lstEmpty));
 	
+	/* Database List Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Database"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstDRDatabases), currCol);
+	
+	lstEmpty = gtk_list_store_new(1, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabases), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	/* Database Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstDRDatabaseRights), currCol);
+	renderer_edit = gtk_cell_renderer_text_new ();
+	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
+	/*g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);*/
+	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstDRDatabaseRights), currCol);
+	
+	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabaseRights), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	
+	/* Table List Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Database"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRTables), currCol);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Table"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRTables), currCol);
+	
+	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstTRTables), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	/* Table Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRTableRights), currCol);
+	renderer_edit = gtk_cell_renderer_text_new ();
+	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
+	/*g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);*/
+	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRTableRights), currCol);
+	
+	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstTRTableRights), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	/* Table Column Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRColumnRights), currCol);
+	renderer_edit = gtk_cell_renderer_text_new ();
+	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
+	/*g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);*/
+	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstTRColumnRights), currCol);
+	
+	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstTRColumnRights), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	/* Columns List Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Database"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstCRColumns), currCol);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Table"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstCRColumns), currCol);
+	currCol = gtk_tree_view_column_new_with_attributes (_("Column"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstCRColumns), currCol);
+	
+	lstEmpty = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstCRColumns), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
+	/* Column Rights columns */
+	currCol = gtk_tree_view_column_new_with_attributes (_("Name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstCRColumnRights), currCol);
+	renderer_edit = gtk_cell_renderer_text_new ();
+	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
+	/*g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);*/
+	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstCRColumnRights), currCol);
+	
+	lstEmpty = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstCRColumnRights), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
 	
 	gmysqlcc_gui_server_fill_user_list(gui_server, NULL);
 	gmysqlcc_gui_server_fill_database_list(gui_server);
@@ -842,6 +930,7 @@ void gmysqlcc_gui_server_fill_user_list (p_gmysqlcc_gui_server gui_server, p_mys
 	g_object_unref (G_OBJECT (lstStrUsers));
 	
 	gui_server->curr_mysql_usr = mysql_usr;
+	gui_server->curr_database_rights = NULL;
 	
 	gmysqlcc_gui_server_display_current_user(gui_server);
 }
@@ -878,20 +967,22 @@ void gmysqlcc_gui_server_evt_destroy (GtkWidget *widget, gpointer user_data) {
 
 void gmysqlcc_gui_server_display_current_user (p_gmysqlcc_gui_server gui_server) {
 	if (gui_server->curr_mysql_usr != NULL) {
-		/*gui_server->lstUserDatabases;*/
 		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserLogin), gui_server->curr_mysql_usr->login);
 		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserHost), gui_server->curr_mysql_usr->host);
-		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserPasswd), gui_server->curr_mysql_usr->passwd);
+		if (gui_server->curr_mysql_usr->passwd != NULL) {
+			gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserPasswd), gui_server->curr_mysql_usr->passwd);
+		}
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_server->chkEncryptedPasswd), TRUE);
 	} else {
-		/*gui_server->lstUserDatabases;*/
 		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserLogin), "");
 		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserHost), "");
 		gtk_entry_set_text(GTK_ENTRY(gui_server->txtUserPasswd), "");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui_server->chkEncryptedPasswd), FALSE);
 		
 	}
-	gmysqlcc_gui_server_fill_user_right_list(gui_server); /*gui_server->lstUserRights;*/
+	
+	gmysqlcc_gui_server_fill_user_right_list(gui_server);
+	gmysqlcc_gui_server_fill_user_right_database_list(gui_server);
 }
 
 void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server) {
@@ -909,10 +1000,68 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrUserRights), 0, GTK_SORT_ASCENDING);
 	
 	if (gui_server->curr_mysql_usr != NULL) {
-		g_hash_table_foreach(gui_server->curr_mysql_usr->hshRights, &sub_ht_fill_user_right_list, (gpointer)lstStrUserRights);
+		g_hash_table_foreach(gui_server->curr_mysql_usr->user_rights->hsh_rights, &sub_ht_fill_user_right_list, (gpointer)lstStrUserRights);
 	}
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstURUserRights), GTK_TREE_MODEL(lstStrUserRights));
 	g_object_unref (G_OBJECT (lstStrUserRights));
+	
+}
+
+void gmysqlcc_gui_server_fill_user_right_database_list (p_gmysqlcc_gui_server gui_server) {
+	GtkListStore * lstStrDatabaseRights;
+	
+	void sub_ht_fill_user_right_list(gpointer key, gpointer value, gpointer user_data) {
+		GtkListStore * lstStrDatabaseRights = (GtkListStore *)user_data;
+		GtkTreeIter iter;
+		
+		/*g_print("Database : '%s'\n", (gchar *)key);*/
+		
+		gtk_list_store_append (lstStrDatabaseRights, &iter);
+		gtk_list_store_set (lstStrDatabaseRights, &iter, 0, (gchar *)key, 1, value, -1);
+	}
+	
+	lstStrDatabaseRights = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrDatabaseRights), 0, GTK_SORT_ASCENDING);
+	
+	if (gui_server->curr_mysql_usr != NULL) {
+		g_hash_table_foreach(gui_server->curr_mysql_usr->hsh_db_list_rights, &sub_ht_fill_user_right_list, (gpointer)lstStrDatabaseRights);
+	}
+	
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabases), GTK_TREE_MODEL(lstStrDatabaseRights));
+	g_object_unref (G_OBJECT (lstStrDatabaseRights));
+	
+}
+
+void gmysqlcc_gui_server_display_current_database_right (p_gmysqlcc_gui_server gui_server) {
+	if (gui_server->curr_database_rights != NULL) {
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtDRDbName), gui_server->curr_database_rights->db);
+	} else {
+		gtk_entry_set_text(GTK_ENTRY(gui_server->txtDRDbName), "");
+	}
+	
+	gmysqlcc_gui_server_fill_user_right_database_right_list(gui_server);
+}
+
+void gmysqlcc_gui_server_fill_user_right_database_right_list (p_gmysqlcc_gui_server gui_server) {
+	GtkListStore * lstStrRights;
+	
+	void sub_ht_fill_user_right_list(gpointer key, gpointer value, gpointer user_data) {
+		GtkListStore * lstStrRights = (GtkListStore *)user_data;
+		GtkTreeIter iter;
+		
+		gtk_list_store_append (lstStrRights, &iter);
+		gtk_list_store_set (lstStrRights, &iter, 0, (gchar *)key, 1, (gchar *)value, -1);
+	}
+	
+	lstStrRights = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrRights), 0, GTK_SORT_ASCENDING);
+	
+	if (gui_server->curr_mysql_usr != NULL) {
+		g_hash_table_foreach(gui_server->curr_database_rights->hsh_rights, &sub_ht_fill_user_right_list, (gpointer)lstStrRights);
+	}
+	
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabaseRights), GTK_TREE_MODEL(lstStrRights));
+	g_object_unref (G_OBJECT (lstStrRights));
 	
 }

@@ -10,8 +10,13 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server);
 void gmysqlcc_gui_server_fill_database_list (p_gmysqlcc_gui_server gui_server);
 void gmysqlcc_gui_server_fill_table_list (p_gmysqlcc_gui_server gui_server);
 void gmysqlcc_gui_server_fill_user_list (p_gmysqlcc_gui_server gui_server, p_mysql_user mysql_usr);
-void gmysqlcc_gui_server_display_current_user (p_gmysqlcc_gui_server gui_server);
 void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server);
+void gmysqlcc_gui_server_fill_user_right_database_list (p_gmysqlcc_gui_server gui_server);
+void gmysqlcc_gui_server_fill_user_right_database_right_list (p_gmysqlcc_gui_server gui_server);
+
+void gmysqlcc_gui_server_display_current_user (p_gmysqlcc_gui_server gui_server);
+void gmysqlcc_gui_server_display_current_database_right (p_gmysqlcc_gui_server gui_server);
+
 void gmysqlcc_gui_server_open_query_window (p_gmysqlcc_gui_server gui_server, gboolean use_table);
 
 void gmysqlcc_gui_server_evt_destroy (GtkWidget *widget, gpointer user_data);
@@ -36,6 +41,7 @@ void gmysqlcc_gui_server_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user
 
 /* User events */
 void gmysqlcc_gui_server_evt_lstUser_selected (GtkTreeSelection *selection, gpointer user_data);
+void gmysqlcc_gui_server_evt_lstDRDatabases_selected (GtkTreeSelection *selection, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserNew_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserAdd_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserUpdate_clicked (GtkWidget *widget, gpointer user_data);
