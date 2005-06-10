@@ -363,12 +363,14 @@ gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
 
 /***** Rights functions *****/
 
-/*p_mysql_right mysql_right_new (); Internal only */
 p_mysql_right mysql_right_new_user (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login);
 p_mysql_right mysql_right_new_database (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db);
-gboolean mysql_right_delete (p_mysql_right mysql_rght);
+p_mysql_right mysql_right_new_database_create (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db);
 
+/*p_mysql_right mysql_right_new (); Internal only */
+gboolean mysql_right_delete (p_mysql_right mysql_rght);
 gboolean mysql_right_read (p_mysql_right mysql_rght);
 gboolean mysql_right_update (p_mysql_right mysql_rght, const gchar * right, const gchar * new_value);
+gboolean mysql_right_remove (p_mysql_right mysql_rght);
 
 #endif /* __MYSQL_DB_ALL_H__ */

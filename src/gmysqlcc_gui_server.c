@@ -69,9 +69,9 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkWidget *btnDbAdd, *btnDbDel;
 	GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
   GtkWidget *btnUserNew, *btnUserAdd, *btnUserUpdate, *btnUserDelete;
-  GtkWidget *btnDRNew, *btnDRAdd, *btnDRDelete;
-  GtkWidget *btnTRNew, *btnTRAdd, *btnTRDelete;
-  GtkWidget *btnCRNew, *btnCRAdd, *btnCRDelete;
+  GtkWidget *btnDRNew, *btnDRAdd, *btnDRApply, *btnDRDelete;
+  GtkWidget *btnTRNew, *btnTRAdd, *btnTRApply, *btnTRDelete;
+  GtkWidget *btnCRNew, *btnCRAdd, *btnCRApply, *btnCRDelete;
 	GtkWidget *mnuDBOpsRefresh;
 	GtkWidget *mnuDBOpsShowCreate;
 	GtkWidget *mnuTBLOpsShowCreate;
@@ -416,17 +416,26 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   btnDRNew = gtk_button_new_from_stock ("gtk-new");
   gtk_widget_show (btnDRNew);
   gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRNew);
-  GTK_WIDGET_SET_FLAGS (btnDRNew, GTK_CAN_DEFAULT);
+	g_signal_connect (G_OBJECT (btnDRNew), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnDRNew_clicked), (gpointer)gui_server);
 
   btnDRAdd = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (btnDRAdd);
   gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRAdd);
-  GTK_WIDGET_SET_FLAGS (btnDRAdd, GTK_CAN_DEFAULT);
+	g_signal_connect (G_OBJECT (btnDRAdd), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnDRAdd_clicked), (gpointer)gui_server);
+
+  btnDRApply = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnDRApply);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRApply);
+	g_signal_connect (G_OBJECT (btnDRApply), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnDRApply_clicked), (gpointer)gui_server);
 
   btnDRDelete = gtk_button_new_from_stock ("gtk-delete");
   gtk_widget_show (btnDRDelete);
   gtk_container_add (GTK_CONTAINER (hbuttonbox8), btnDRDelete);
-  GTK_WIDGET_SET_FLAGS (btnDRDelete, GTK_CAN_DEFAULT);
+	g_signal_connect (G_OBJECT (btnDRDelete), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnDRDelete_clicked), (gpointer)gui_server);
 
   frame6 = gtk_frame_new (NULL);
   gtk_widget_show (frame6);
@@ -499,17 +508,18 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   btnTRNew = gtk_button_new_from_stock ("gtk-new");
   gtk_widget_show (btnTRNew);
   gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRNew);
-  GTK_WIDGET_SET_FLAGS (btnTRNew, GTK_CAN_DEFAULT);
 
   btnTRAdd = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (btnTRAdd);
   gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRAdd);
-  GTK_WIDGET_SET_FLAGS (btnTRAdd, GTK_CAN_DEFAULT);
+
+  btnTRApply = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnTRApply);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRApply);
 
   btnTRDelete = gtk_button_new_from_stock ("gtk-delete");
   gtk_widget_show (btnTRDelete);
   gtk_container_add (GTK_CONTAINER (hbuttonbox9), btnTRDelete);
-  GTK_WIDGET_SET_FLAGS (btnTRDelete, GTK_CAN_DEFAULT);
 
   hbox23 = gtk_hbox_new (FALSE, 3);
   gtk_widget_show (hbox23);
@@ -617,17 +627,18 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   btnCRNew = gtk_button_new_from_stock ("gtk-new");
   gtk_widget_show (btnCRNew);
   gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRNew);
-  GTK_WIDGET_SET_FLAGS (btnCRNew, GTK_CAN_DEFAULT);
 
   btnCRAdd = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (btnCRAdd);
   gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRAdd);
-  GTK_WIDGET_SET_FLAGS (btnCRAdd, GTK_CAN_DEFAULT);
+
+  btnCRApply = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnCRApply);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRApply);
 
   btnCRDelete = gtk_button_new_from_stock ("gtk-delete");
   gtk_widget_show (btnCRDelete);
   gtk_container_add (GTK_CONTAINER (hbuttonbox10), btnCRDelete);
-  GTK_WIDGET_SET_FLAGS (btnCRDelete, GTK_CAN_DEFAULT);
 
   frame7 = gtk_frame_new (NULL);
   gtk_widget_show (frame7);
@@ -775,7 +786,7 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstDRDatabaseRights), currCol);
 	renderer_edit = gtk_cell_renderer_text_new ();
 	g_object_set_property(G_OBJECT(renderer_edit), "editable", &gvalbool);
-	/*g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstURUserRights_edited), gui_server);*/
+	g_signal_connect (G_OBJECT (renderer_edit), "edited", G_CALLBACK (gmysqlcc_gui_server_evt_lstDRDatabaseRights_edited), gui_server);
 	currCol = gtk_tree_view_column_new_with_attributes (_("Value"), renderer_edit, "text", 1, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (gui_server->lstDRDatabaseRights), currCol);
 	
@@ -982,7 +993,7 @@ void gmysqlcc_gui_server_display_current_user (p_gmysqlcc_gui_server gui_server)
 	}
 	
 	gmysqlcc_gui_server_fill_user_right_list(gui_server);
-	gmysqlcc_gui_server_fill_user_right_database_list(gui_server);
+	gmysqlcc_gui_server_fill_user_right_database_list(gui_server, NULL);
 }
 
 void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server) {
@@ -1008,29 +1019,34 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 	
 }
 
-void gmysqlcc_gui_server_fill_user_right_database_list (p_gmysqlcc_gui_server gui_server) {
-	GtkListStore * lstStrDatabaseRights;
+void gmysqlcc_gui_server_fill_user_right_database_list (p_gmysqlcc_gui_server gui_server, p_mysql_right mysql_rght) {
+	struct _dataURDL {
+		GtkListStore * lstStrDatabaseRights;
+		p_mysql_right mysql_rght;
+	} dataURDL;
 	
-	void sub_ht_fill_user_right_list(gpointer key, gpointer value, gpointer user_data) {
-		GtkListStore * lstStrDatabaseRights = (GtkListStore *)user_data;
+	void sub_ht_fill_user_right_database_list(gpointer key, gpointer value, gpointer user_data) {
+		struct _dataURDL * dataURDL = (struct _dataURDL *)user_data;
 		GtkTreeIter iter;
 		
-		/*g_print("Database : '%s'\n", (gchar *)key);*/
-		
-		gtk_list_store_append (lstStrDatabaseRights, &iter);
-		gtk_list_store_set (lstStrDatabaseRights, &iter, 0, (gchar *)key, 1, value, -1);
+		gtk_list_store_append (dataURDL->lstStrDatabaseRights, &iter);
+		gtk_list_store_set (dataURDL->lstStrDatabaseRights, &iter, 0, (gchar *)key, 1, value, -1);
 	}
 	
-	lstStrDatabaseRights = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrDatabaseRights), 0, GTK_SORT_ASCENDING);
+	dataURDL.mysql_rght = mysql_rght;
+	dataURDL.lstStrDatabaseRights = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(dataURDL.lstStrDatabaseRights), 0, GTK_SORT_ASCENDING);
 	
 	if (gui_server->curr_mysql_usr != NULL) {
-		g_hash_table_foreach(gui_server->curr_mysql_usr->hsh_db_list_rights, &sub_ht_fill_user_right_list, (gpointer)lstStrDatabaseRights);
+		mysql_user_read_database_rights(gui_server->curr_mysql_usr);
+		g_hash_table_foreach(gui_server->curr_mysql_usr->hsh_db_list_rights, &sub_ht_fill_user_right_database_list, (gpointer)&dataURDL);
 	}
 	
-	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabases), GTK_TREE_MODEL(lstStrDatabaseRights));
-	g_object_unref (G_OBJECT (lstStrDatabaseRights));
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabases), GTK_TREE_MODEL(dataURDL.lstStrDatabaseRights));
+	g_object_unref (G_OBJECT (dataURDL.lstStrDatabaseRights));
 	
+	gui_server->curr_database_rights = mysql_rght;
+	gmysqlcc_gui_server_display_current_database_right(gui_server);
 }
 
 void gmysqlcc_gui_server_display_current_database_right (p_gmysqlcc_gui_server gui_server) {
@@ -1046,7 +1062,7 @@ void gmysqlcc_gui_server_display_current_database_right (p_gmysqlcc_gui_server g
 void gmysqlcc_gui_server_fill_user_right_database_right_list (p_gmysqlcc_gui_server gui_server) {
 	GtkListStore * lstStrRights;
 	
-	void sub_ht_fill_user_right_list(gpointer key, gpointer value, gpointer user_data) {
+	void sub_ht_fill_user_right_database_right_list(gpointer key, gpointer value, gpointer user_data) {
 		GtkListStore * lstStrRights = (GtkListStore *)user_data;
 		GtkTreeIter iter;
 		
@@ -1057,8 +1073,8 @@ void gmysqlcc_gui_server_fill_user_right_database_right_list (p_gmysqlcc_gui_ser
 	lstStrRights = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(lstStrRights), 0, GTK_SORT_ASCENDING);
 	
-	if (gui_server->curr_mysql_usr != NULL) {
-		g_hash_table_foreach(gui_server->curr_database_rights->hsh_rights, &sub_ht_fill_user_right_list, (gpointer)lstStrRights);
+	if (gui_server->curr_database_rights != NULL) {
+		g_hash_table_foreach(gui_server->curr_database_rights->hsh_rights, &sub_ht_fill_user_right_database_right_list, (gpointer)lstStrRights);
 	}
 	
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstDRDatabaseRights), GTK_TREE_MODEL(lstStrRights));
