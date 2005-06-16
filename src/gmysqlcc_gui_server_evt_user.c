@@ -30,6 +30,18 @@ void gmysqlcc_gui_server_evt_lstDRDatabases_selected (GtkTreeSelection *selectio
 	}
 }
 
+void gmysqlcc_gui_server_evt_lstTRTables_selected (GtkTreeSelection *selection, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	
+	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		gtk_tree_model_get (model, &iter, 2, &gui_server->curr_table_rights, -1);
+		
+		gmysqlcc_gui_server_display_current_table_right(gui_server);
+	}
+}
+
 void gmysqlcc_gui_server_evt_btnUserNew_clicked (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
 	GtkTreeSelection *selection;
@@ -180,6 +192,7 @@ void gmysqlcc_gui_server_evt_btnDRAdd_clicked (GtkWidget *widget, gpointer user_
 	mysql_rght = mysql_right_new_database(gui_server->mysql_srv, gui_server->curr_mysql_usr->host, gui_server->curr_mysql_usr->login, db);
 	
 	if (mysql_rght != NULL) {
+		mysql_right_delete(mysql_rght);
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Database right already exist !!!"));
 		gtk_dialog_run (GTK_DIALOG (msgdlg));
 		gtk_widget_destroy (msgdlg);
@@ -189,7 +202,7 @@ void gmysqlcc_gui_server_evt_btnDRAdd_clicked (GtkWidget *widget, gpointer user_
 	mysql_rght = mysql_right_new_database_create(gui_server->mysql_srv, gui_server->curr_mysql_usr->host, gui_server->curr_mysql_usr->login, db);
 	
 	if (mysql_rght == NULL) {
-		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create User !!!"));
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create DAtabase right !!!"));
 		gtk_dialog_run (GTK_DIALOG (msgdlg));
 		gtk_widget_destroy (msgdlg);
 		return;
@@ -217,6 +230,84 @@ void gmysqlcc_gui_server_evt_btnDRDelete_clicked (GtkWidget *widget, gpointer us
 	gui_server->curr_database_rights = NULL;
 	
 	gmysqlcc_gui_server_fill_user_right_database_list(gui_server, NULL);
+}
+
+void gmysqlcc_gui_server_evt_btnTRNew_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkTreeSelection *selection;
+	
+	gui_server->curr_table_rights = NULL;
+	
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui_server->lstTRTables));
+	gtk_tree_selection_unselect_all(selection);
+	
+	gmysqlcc_gui_server_display_current_table_right(gui_server);
+}
+
+void gmysqlcc_gui_server_evt_btnTRAdd_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	p_mysql_right mysql_rght;
+	const gchar * db, * table;
+	GtkWidget * msgdlg;
+	
+	db = gtk_entry_get_text(GTK_ENTRY(gui_server->txtTRDbName));
+	table = gtk_entry_get_text(GTK_ENTRY(gui_server->txtTRTblName));
+	
+	if (db != NULL && strlen(db) < 1) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field Database cannot be empty !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	if (table != NULL && strlen(table) < 1) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field Table cannot be empty !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	mysql_rght = mysql_right_new_table(gui_server->mysql_srv, gui_server->curr_mysql_usr->host, gui_server->curr_mysql_usr->login, db, table);
+	
+	if (mysql_rght != NULL) {
+		mysql_right_delete(mysql_rght);
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Table right already exist !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	mysql_rght = mysql_right_new_table_create(gui_server->mysql_srv, gui_server->curr_mysql_usr->host, gui_server->curr_mysql_usr->login, db, table);
+	
+	if (mysql_rght == NULL) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't create Table right !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	gmysqlcc_gui_server_fill_user_right_table_list(gui_server, mysql_rght);
+}
+
+void gmysqlcc_gui_server_evt_btnTRApply_clicked (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+void gmysqlcc_gui_server_evt_btnTRDelete_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkWidget * msgdlg;
+	
+	if (gui_server->curr_table_rights == NULL) {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can not remove table right !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		return;
+	}
+	
+	mysql_right_remove(gui_server->curr_table_rights);
+	gui_server->curr_table_rights = NULL;
+	
+	gmysqlcc_gui_server_fill_user_right_table_list(gui_server, NULL);
 }
 
 void gmysqlcc_gui_server_evt_lstURUserRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data) {
@@ -250,6 +341,25 @@ void gmysqlcc_gui_server_evt_lstDRDatabaseRights_edited (GtkCellRendererText *ce
 		gtk_tree_model_get (tree_model, &iter, 0, &right, -1);
 		mysql_right_update(gui_server->curr_database_rights, right, new_value);
 		gmysqlcc_gui_server_fill_user_right_database_right_list(gui_server);
+	} else {
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't found edited right !!!"));
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+	}
+}
+
+void gmysqlcc_gui_server_evt_lstTRTableRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkWidget * msgdlg;
+	GtkTreeModel * tree_model;
+	GtkTreeIter iter;
+	gchar * right;
+	
+	tree_model = gtk_tree_view_get_model(GTK_TREE_VIEW (gui_server->lstTRTableRights));
+	if (gtk_tree_model_get_iter_from_string(tree_model, &iter, path_string)) {
+		gtk_tree_model_get (tree_model, &iter, 0, &right, -1);
+		mysql_right_update(gui_server->curr_table_rights, right, new_value);
+		gmysqlcc_gui_server_fill_user_right_table_right_list(gui_server);
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't found edited right !!!"));
 		gtk_dialog_run (GTK_DIALOG (msgdlg));

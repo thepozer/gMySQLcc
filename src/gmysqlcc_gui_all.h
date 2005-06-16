@@ -101,6 +101,7 @@ typedef struct _s_gmysqlcc_gui_server {
 	
 	p_mysql_user	curr_mysql_usr;
 	p_mysql_right	curr_database_rights;
+	p_mysql_right	curr_table_rights;
 } s_gmysqlcc_gui_server;
 
 typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;
