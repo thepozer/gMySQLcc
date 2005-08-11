@@ -37,9 +37,6 @@ typedef enum _e_mysqlRightType {
 	UserSubRightType_Host,
 	UserSubRightType_User,
 	UserSubRightType_Database,
-	UserSubRightType_Table,
-	UserSubRightType_TableColumn,
-	UserSubRightType_Column,
 	UserSubRightType_Proc
 } e_mysqlRightType;
 
@@ -47,16 +44,14 @@ typedef struct _s_mysql_right {
 	e_mysqlRightType	type;
 	p_mysql_server		mysql_srv;
 	
-	gchar *						host;
-	gchar *						login;
-	gchar *						db;
-	gchar *						table;
-	gchar *						column;
-	gchar *						routine_name;
-	gchar *						routine_type;
+	gchar *				host;
+	gchar *				login;
+	gchar *				db;
+	gchar *				routine_name;
+	gchar *				routine_type;
 	
-	GHashTable *			hsh_rights;
-	guint64						b_rights;
+	GHashTable *		hsh_rights;
+	guint64				b_rights;
 } s_mysql_right;
 
 typedef s_mysql_right * p_mysql_right;
@@ -71,81 +66,67 @@ typedef struct _s_bool_right_item{
 #ifdef __GMYSQLCC_MAIN_PART__
 
 s_bool_right_item ar_bri_user[] = {
-	{-1,	"Select_priv",						"Select_priv",						0},
-	{-1,	"Insert_priv",			 			"Insert_priv",						0},
-	{-1,	"Update_priv",						"Update_priv",						0},
-	{-1,	"Delete_priv",						"Delete_priv",						0},
-	{-1,	"Create_priv",						"Create_priv",						0},
-	{-1,	"Drop_priv",							"Drop_priv",							0},
-	{-1,	"Grant_priv",							"Grant_priv",							0},
-	{-1,	"Refereances_priv",				"Refereances_priv",				0},
-	{-1,	"Index_priv",							"Index_priv",							0},
-	{-1,	"Alter_priv",							"Alter_priv",							0},
+	{-1,	"Select_priv",				"Select_priv",				0},
+	{-1,	"Insert_priv",				"Insert_priv",				0},
+	{-1,	"Update_priv",				"Update_priv",				0},
+	{-1,	"Delete_priv",				"Delete_priv",				0},
+	{-1,	"Create_priv",				"Create_priv",				0},
+	{-1,	"Drop_priv",				"Drop_priv",				0},
+	{-1,	"Reload_priv",				"Reload_priv",				0},
+	{-1,	"Shutdown_priv",			"Shutdown_priv",			0},
+	{-1,	"Process_priv",				"Process_priv",				0},
+	{-1,	"File_priv",				"File_priv",				0},
+	{-1,	"Grant_priv",				"Grant_priv",				0},
+	{-1,	"Refereances_priv",			"Refereances_priv",			0},
+	{-1,	"Index_priv",				"Index_priv",				0},
+	{-1,	"Alter_priv",				"Alter_priv",				0},
+	{-1,	"Show_db_priv",				"Show_db_priv",				40000},
+	{-1,	"Super_priv",				"Super_priv",				40000},
 	{-1,	"Create_tmp_table_priv",	"Create_tmp_table_priv",	40000},
-	{-1,	"Lock_tables_priv",				"Lock_tables_priv",				40000},
-	{-1,	"Create_view_priv",				"Create_view_priv",				50000},
-	{-1,	"Show_view_priv",					"Show_view_priv",					50000},
-	{0, NULL, NULL}
+	{-1,	"Lock_tables_priv",			"Lock_tables_priv",			40000},
+	{-1,	"Execute_priv",				"Execute_priv",				40000},
+	{-1,	"Repl_slave_priv",			"Repl_slave_priv",			40000},
+	{-1,	"Repl_client_priv",			"Repl_client_priv",			40000},
+	{0, NULL, NULL, 0}
 };
-guint sz_ar_bri_user = 10;
+guint sz_ar_bri_user = 21;
 
 s_bool_right_item ar_bri_database[] = {
-	{-1,	"Select_priv",						"Select_priv",						0},
-	{-1,	"Insert_priv",			 			"Insert_priv",						0},
-	{-1,	"Update_priv",						"Update_priv",						0},
-	{-1,	"Delete_priv",						"Delete_priv",						0},
-	{-1,	"Create_priv",						"Create_priv",						0},
-	{-1,	"Drop_priv",							"Drop_priv",							0},
-	{-1,	"Grant_priv",							"Grant_priv",							0},
-	{-1,	"Refereances_priv",				"Refereances_priv",				0},
-	{-1,	"Index_priv",							"Index_priv",							0},
-	{-1,	"Alter_priv",							"Alter_priv",							0},
+	{-1,	"Select_priv",				"Select_priv",				0},
+	{-1,	"Insert_priv",			 	"Insert_priv",				0},
+	{-1,	"Update_priv",				"Update_priv",				0},
+	{-1,	"Delete_priv",				"Delete_priv",				0},
+	{-1,	"Create_priv",				"Create_priv",				0},
+	{-1,	"Drop_priv",				"Drop_priv",				0},
+	{-1,	"Grant_priv",				"Grant_priv",				0},
+	{-1,	"Refereances_priv",			"Refereances_priv",			0},
+	{-1,	"Index_priv",				"Index_priv",				0},
+	{-1,	"Alter_priv",				"Alter_priv",				0},
 	{-1,	"Create_tmp_table_priv",	"Create_tmp_table_priv",	40000},
-	{-1,	"Lock_tables_priv",				"Lock_tables_priv",				40000},
-	{-1,	"Create_view_priv",				"Create_view_priv",				50000},
-	{-1,	"Show_view_priv",					"Show_view_priv",					50000},
-	{0, NULL, NULL}
+	{-1,	"Lock_tables_priv",			"Lock_tables_priv",			40000},
+	{-1,	"Create_view_priv",			"Create_view_priv",			50000},
+	{-1,	"Show_view_priv",			"Show_view_priv",			50000},
+	{0, NULL, NULL, 0}
 };
 guint sz_ar_bri_database = 10;
 
-s_bool_right_item ar_bri_table[] = {
-	{1,		"Select",				"Select_Priv",			0},
-	{2,		"Insert", 			"Insert_Priv",			0},
-	{4,		"Update",				"Update_Priv",			0},
-	{8,		"Delete",				"Delete_Priv",			0},
-	{16,	"Create",				"Create_Priv",			0},
-	{32,	"Drop",					"Drop_Priv",				0},
-	{64,	"Grant",				"Grant_Priv",				0},
-	{128, "Refereances",	"Refereances_Priv",	0},
-	{256, "Index",				"Index_Priv",				0},
-	{512, "Alter",				"Alter_Priv",				0},
-	{0, NULL, NULL}
-};
-guint sz_ar_bri_table = 10;
-
-s_bool_right_item ar_bri_column[] = {
-	{1, "Select",					"Select_Priv",			0},
-	{2, "Insert",					"Insert_Priv",			0},
-	{4, "Update",					"Update_Priv",			0},
-	{8, "Refereances",		"Refereances_Priv",	0},
-	{0, NULL, NULL}
-};
-guint sz_ar_bri_column = 4;
-
 s_bool_right_item ar_bri_proc[] = {
-	{1, "Execute",				"Execute_Priv",				0},
+	{1, "Execute",			"Execute_Priv",			0},
 	{2, "Alter Routine",	"Alter_Routine_Priv",	0},
-	{4, "Grant",					"Grant_Priv",					0},
-	{0, NULL, NULL}
+	{4, "Grant",			"Grant_Priv",			0},
+	{0, NULL, NULL, 0}
 };
 guint sz_ar_bri_proc = 3;
+
 #else
-extern s_bool_right_item ar_bri_table[];
-extern guint sz_ar_bri_table;
-extern s_bool_right_item ar_bri_column[];
-extern guint sz_ar_bri_column;
+
+extern s_bool_right_item ar_bri_user[];
+extern guint sz_ar_bri_user;
+extern s_bool_right_item ar_bri_database[];
+extern guint sz_ar_bri_database;
 extern s_bool_right_item ar_bri_proc[];
 extern guint sz_ar_bri_proc;
+
 #endif
 
 typedef struct _s_mysql_user {
@@ -157,8 +138,6 @@ typedef struct _s_mysql_user {
 	p_mysql_right		user_rights;
 	
 	GHashTable *		hsh_db_list_rights;
-	GHashTable *		hsh_tbl_list_rights;
-	GHashTable *		hsh_tbl_col_list_rights;
 	
 /* Connection Infos */
 	p_mysql_server	mysql_srv;
@@ -437,7 +416,6 @@ gboolean mysql_user_set_right (p_mysql_user mysql_usr, const gchar * right, cons
 
 gboolean mysql_user_read_database_rights (p_mysql_user mysql_usr);
 gboolean mysql_user_get_database_rights (p_mysql_user mysql_usr, const gchar * db_name);
-gboolean mysql_user_read_table_rights (p_mysql_user mysql_usr);
 
 p_mysql_user mysql_user_create (p_mysql_server mysql_srv, const gchar * login, const gchar * host, const gchar * password, gboolean crypted_password);
 gboolean mysql_user_update_key_values (p_mysql_user mysql_usr, const gchar * new_login, const gchar * new_host);
@@ -456,8 +434,6 @@ gboolean mysql_user_list_refresh (p_data_list mysql_usr_lst);
 p_mysql_right mysql_right_new_user (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login);
 p_mysql_right mysql_right_new_database (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db);
 p_mysql_right mysql_right_new_database_create (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db);
-p_mysql_right mysql_right_new_table (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db, const gchar * Table);
-p_mysql_right mysql_right_new_table_create (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db, const gchar * Table);
 
 /*p_mysql_right mysql_right_new (); Internal only */
 gboolean mysql_right_delete (p_mysql_right mysql_rght);

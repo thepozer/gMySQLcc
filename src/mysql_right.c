@@ -10,10 +10,6 @@ gboolean mysql_right_read_database (p_mysql_right mysql_rght);
 gboolean mysql_right_update_database (p_mysql_right mysql_rght, const gchar * right, const gchar * new_value);
 gboolean mysql_right_remove_database (p_mysql_right mysql_rght);
 
-gboolean mysql_right_read_table (p_mysql_right mysql_rght);
-gboolean mysql_right_update_table (p_mysql_right mysql_rght, const gchar * right, const gchar * new_value);
-gboolean mysql_right_remove_table (p_mysql_right mysql_rght);
-
 p_mysql_right mysql_right_new (p_mysql_server mysql_srv) {
 	p_mysql_right mysql_rght;
 	
@@ -28,8 +24,6 @@ p_mysql_right mysql_right_new (p_mysql_server mysql_srv) {
 	mysql_rght->host = NULL;
 	mysql_rght->login = NULL;
 	mysql_rght->db = NULL;
-	mysql_rght->table = NULL;
-	mysql_rght->column = NULL;
 	mysql_rght->routine_name = NULL;
 	mysql_rght->routine_type = NULL;
 	
@@ -49,8 +43,6 @@ gboolean mysql_right_delete (p_mysql_right mysql_rght) {
 		g_free(mysql_rght->host);
 		g_free(mysql_rght->login);
 		g_free(mysql_rght->db);
-		g_free(mysql_rght->table);
-		g_free(mysql_rght->column);
 		g_free(mysql_rght->routine_name);
 		g_free(mysql_rght->routine_type);
 		
@@ -81,15 +73,6 @@ gboolean mysql_right_read (p_mysql_right mysql_rght) {
 		case UserSubRightType_Database :
 			ret = mysql_right_read_database(mysql_rght);
 			break;
-		case UserSubRightType_Table :
-			ret = mysql_right_read_table(mysql_rght);
-			break;
-		case UserSubRightType_TableColumn :
-			
-			break;
-		case UserSubRightType_Column :
-			
-			break;
 		case UserSubRightType_Proc :
 			
 			break;
@@ -117,15 +100,6 @@ gboolean mysql_right_update (p_mysql_right mysql_rght, const gchar * right, cons
 			break;
 		case UserSubRightType_Database :
 			ret = mysql_right_update_database(mysql_rght, right, new_value);
-			break;
-		case UserSubRightType_Table :
-			ret = mysql_right_update_table(mysql_rght, right, new_value);
-			break;
-		case UserSubRightType_TableColumn :
-			
-			break;
-		case UserSubRightType_Column :
-			
 			break;
 		case UserSubRightType_Proc :
 			
@@ -158,15 +132,6 @@ gboolean mysql_right_remove (p_mysql_right mysql_rght) {
 			break;
 		case UserSubRightType_Database :
 			ret = mysql_right_remove_database(mysql_rght);
-			break;
-		case UserSubRightType_Table :
-			ret = mysql_right_remove_table(mysql_rght);
-			break;
-		case UserSubRightType_TableColumn :
-			ret = FALSE;
-			break;
-		case UserSubRightType_Column :
-			
 			break;
 		case UserSubRightType_Proc :
 			
@@ -416,159 +381,3 @@ gboolean mysql_right_remove_database (p_mysql_right mysql_rght) {
 	return ret_delete;
 }
 
-/* 
-	Table Rights 
-*/
-p_mysql_right mysql_right_new_table (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db, const gchar * Table) {
-	p_mysql_right mysql_rght;
-	
-	mysql_rght = mysql_right_new(mysql_srv);
-	
-	if (mysql_rght == NULL) {
-		return NULL; /* return NULL pointer */
-	}
-	
-	mysql_rght->type = UserSubRightType_Table;
-	mysql_rght->host = g_strdup(Host);
-	mysql_rght->login = g_strdup(Login);
-	mysql_rght->db = g_strdup(Db);
-	mysql_rght->table = g_strdup(Table);
-	
-	if (!mysql_right_read_table(mysql_rght)) {
-		g_print("mysql_right_read_table doesn't work !!! \n");
-		mysql_right_delete(mysql_rght);
-		mysql_rght = NULL;
-	}
-	
-	return mysql_rght;
-}
-
-p_mysql_right mysql_right_new_table_create (p_mysql_server mysql_srv, const gchar * Host, const gchar * Login, const gchar * Db, const gchar * Table) {
-	p_mysql_right mysql_rght;
-	p_mysql_query mysql_qry;
-	GString * strSql;
-	gboolean ret_insert;
-	
-	mysql_qry = mysql_server_query(mysql_srv, "mysql");
-	
-	strSql = g_string_new("");
-	g_string_printf(strSql, "INSERT INTO `mysql`.`tables_priv` (Host, User, Db, Table_name) VALUES ('%s', '%s', '%s', '%s')", Host, Login, Db, Table);
-	
-	ret_insert = (mysql_query_execute_query(mysql_qry, strSql->str, FALSE));
-	
-	if (ret_insert) {
-		mysql_rght = mysql_right_new_table(mysql_srv, Host, Login, Db, Table);
-	} else {
-		mysql_rght = NULL;
-	}
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return mysql_rght;
-}
-
-gboolean mysql_right_read_table (p_mysql_right mysql_rght) {
-	p_mysql_query mysql_qry;
-	GArray * arRow;
-	GString * strSql;
-	gchar * value;
-	gint idx;
-	gboolean ret_read = FALSE;
-	
-	if (mysql_rght == NULL) {
-		return FALSE;
-	}
-	
-	g_hash_table_destroy(mysql_rght->hsh_rights);
-	mysql_rght->hsh_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_free);
-	
-	mysql_qry = mysql_server_query(mysql_rght->mysql_srv, "mysql");
-	
-	strSql = g_string_new("");
-	g_string_printf(strSql, "SELECT (Table_priv + 0) FROM `mysql`.`tables_priv` WHERE Host = '%s' AND User = '%s' AND Db = '%s' AND Table_name = '%s'", 
-			mysql_rght->host, mysql_rght->login, mysql_rght->db, mysql_rght->table);
-	
-	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
-		
-		arRow = mysql_query_get_next_record(mysql_qry);
-		
-		if (arRow != NULL) {
-			
-			value = g_array_index(arRow, gchar *, 0);
-			mysql_rght->b_rights = g_ascii_strtoull(value, NULL, 10);
-			
-			for (idx = 0; idx < sz_ar_bri_table; idx++) {
-				if (mysql_rght->b_rights & ar_bri_table[idx].value) {
-					g_hash_table_insert(mysql_rght->hsh_rights, g_strdup(ar_bri_table[idx].name), g_strdup("Y"));
-				} else {
-					g_hash_table_insert(mysql_rght->hsh_rights, g_strdup(ar_bri_table[idx].name), g_strdup("N"));
-				}
-			}
-			
-			ret_read = TRUE;
-			g_array_free(arRow, TRUE);
-		}
-		
-	}
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return ret_read;
-}
-
-gboolean mysql_right_update_table (p_mysql_right mysql_rght, const gchar * right, const gchar * new_value) {
-	p_mysql_query mysql_qry;
-	GString * strSql;
-	gboolean ret_update;
-	gint idx;
-	
-	mysql_qry = mysql_server_query(mysql_rght->mysql_srv, "mysql");
-	
-	for (idx = 0; idx < sz_ar_bri_table; idx++) {
-		if (g_ascii_strcasecmp(right, ar_bri_table[idx].name) == 0 ) {
-			if (g_ascii_strcasecmp(new_value, "Y") == 0 ) {
-				mysql_rght->b_rights = mysql_rght->b_rights | ar_bri_table[idx].value;
-			} else {
-				mysql_rght->b_rights = mysql_rght->b_rights & !ar_bri_table[idx].value;
-			}
-		}
-	}
-	
-	strSql = g_string_new("");
-	g_string_append_printf(strSql, "UPDATE `mysql`.`tables_priv` SET `Table_priv` = '%ld' WHERE Host = '%s' AND User = '%s' AND Db = '%s' AND Table_name = '%s'", 
-			(long int)mysql_rght->b_rights, mysql_rght->host, mysql_rght->login, mysql_rght->db, mysql_rght->table);
-	
-	g_print("mysql_right_update_table - sql : '%s'\n", strSql->str);
-	
-	ret_update = (mysql_query_execute_query(mysql_qry, strSql->str, FALSE));
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return ret_update;
-}
-
-gboolean mysql_right_remove_table (p_mysql_right mysql_rght) {
-	p_mysql_query mysql_qry;
-	GString * strSql;
-	gboolean ret_delete;
-	
-	if (mysql_rght == NULL) {
-		return FALSE;
-	}
-	
-	mysql_qry = mysql_server_query(mysql_rght->mysql_srv, "mysql");
-	
-	strSql = g_string_new("");
-	g_string_printf(strSql, "DELETE FROM `mysql`.`tables_priv` WHERE Host = '%s' AND User = '%s' AND Db = '%s' AND Table_name = '%s'", 
-			mysql_rght->host, mysql_rght->login, mysql_rght->db, mysql_rght->table);
-	
-	ret_delete = mysql_query_execute_query(mysql_qry, strSql->str, FALSE);
-	
-	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return ret_delete;
-}

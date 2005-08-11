@@ -45,7 +45,6 @@ void gmysqlcc_gui_server_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user
 /* User events */
 void gmysqlcc_gui_server_evt_lstUser_selected (GtkTreeSelection *selection, gpointer user_data);
 void gmysqlcc_gui_server_evt_lstDRDatabases_selected (GtkTreeSelection *selection, gpointer user_data);
-void gmysqlcc_gui_server_evt_lstTRTables_selected (GtkTreeSelection *selection, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserNew_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserAdd_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnUserUpdate_clicked (GtkWidget *widget, gpointer user_data);
@@ -54,12 +53,7 @@ void gmysqlcc_gui_server_evt_btnDRNew_clicked (GtkWidget *widget, gpointer user_
 void gmysqlcc_gui_server_evt_btnDRAdd_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnDRApply_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_btnDRDelete_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTRNew_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTRAdd_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTRApply_clicked (GtkWidget *widget, gpointer user_data);
-void gmysqlcc_gui_server_evt_btnTRDelete_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_lstURUserRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
 void gmysqlcc_gui_server_evt_lstDRDatabaseRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
-void gmysqlcc_gui_server_evt_lstTRTableRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
 
 #endif /* __GMYSQLCC_GUI_SERVER_EVT_H__ */

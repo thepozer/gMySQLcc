@@ -150,8 +150,6 @@ p_mysql_user mysql_user_new (p_mysql_server mysql_srv, const gchar * login, cons
 	mysql_usr->passwd = NULL;
 	mysql_usr->user_rights = NULL;
 	mysql_usr->hsh_db_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
-	mysql_usr->hsh_tbl_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
-	mysql_usr->hsh_tbl_col_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
 	
 	return mysql_usr;
 }
@@ -360,54 +358,6 @@ gboolean mysql_user_read_database_rights (p_mysql_user mysql_usr) {
 	}
 	
 	g_string_free(strSql, TRUE);
-	mysql_query_delete(mysql_qry);
-	
-	return TRUE;
-}
-
-gboolean mysql_user_read_table_rights (p_mysql_user mysql_usr) {
-	p_mysql_query mysql_qry;
-	p_mysql_right mysql_rght;
-	GArray * arRow;
-	GString * strSql, * str_key;
-	gchar * db_name, * tbl_name;
-	
-	g_hash_table_destroy(mysql_usr->hsh_tbl_list_rights);
-	mysql_usr->hsh_tbl_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
-
-	g_hash_table_destroy(mysql_usr->hsh_tbl_col_list_rights);
-	mysql_usr->hsh_tbl_col_list_rights = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, (GDestroyNotify)&mysql_right_delete);
-	
-	mysql_qry = mysql_server_query(mysql_usr->mysql_srv, "mysql");
-	
-	str_key = g_string_new("");
-	strSql = g_string_new("");
-	g_string_printf(strSql, "SELECT Db, Table_name FROM `mysql`.`tables_priv` WHERE Host = '%s' AND User = '%s' ORDER BY Db, Table_name", mysql_usr->host, mysql_usr->login);
-	
-	if (mysql_query_execute_query(mysql_qry, strSql->str, FALSE)) {
-		while ((arRow = mysql_query_get_next_record(mysql_qry)) != NULL) {
-			db_name = (gchar *) g_array_index(arRow, gchar *, 0);
-			tbl_name = (gchar *) g_array_index(arRow, gchar *, 1);
-			g_string_printf(str_key, "`%s`.`%s`", db_name, tbl_name);
-			
-			mysql_rght = mysql_right_new_table(mysql_usr->mysql_srv, mysql_usr->host, mysql_usr->login, db_name, tbl_name);
-			
-			if (mysql_rght != NULL) {
-				g_hash_table_insert(mysql_usr->hsh_tbl_list_rights, g_strdup(str_key->str), mysql_rght);
-			}
-			/*
-			mysql_rght = mysql_right_new_table_column(mysql_usr->mysql_srv, mysql_usr->host, mysql_usr->login, db_name, tbl_name);
-			
-			if (mysql_rght != NULL) {
-				g_hash_table_insert(mysql_usr->hsh_tbl_col_list_rights, g_strdup(str_key->str), mysql_rght);
-			}
-			*/
-			g_array_free(arRow, TRUE);
-		}
-	}
-	
-	g_string_free(strSql, TRUE);
-	g_string_free(str_key, TRUE);
 	mysql_query_delete(mysql_qry);
 	
 	return TRUE;
