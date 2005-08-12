@@ -855,6 +855,8 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 	}
 	
 	void set_field_value(GtkWidget * entry, const gchar * field) {
+		gchar * value;
+		
 		value = g_hash_table_find(gui_server->curr_mysql_usr->user_rights->hsh_rights, &sub_ht_key_equal, field);
 		if(GTK_IS_ENTRY(entry)) {
 			value = (value == NULL) ? "0" : value ;
@@ -865,6 +867,22 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 			value = (value == NULL) ? "" : value ;
 			txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(entry));
 			gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), value, -1);
+		} else if (GTK_IS_COMBO_BOX(entry)) {
+			gint selIdx = -1;
+			
+			if (value != NULL) {
+				if (strcmp(value, "ANY") == 0) {
+					selIdx = 1;
+				} else if (strcmp(value, "X509") == 0) {
+					selIdx = 2;
+				} else if (strcmp(value, "SPECIFIED") == 0) {
+					selIdx = 3;
+				} else {
+					selIdx = 0;
+				}
+			}
+			
+			gtk_combo_box_set_active(GTK_COMBO_BOX(entry), selIdx);
 		}
 	}
 	
@@ -895,10 +913,11 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 	set_field_value(gui_server->txtMaxUpdates, "max_updates");
 	set_field_value(gui_server->txtMaxConnections, "max_connections");
 	
-	set_field_value(gui_server->txt_ssl_cypher, "ssl_cypher");
+	set_field_value(gui_server->cbx_ssl_type, "ssl_type");
+	
+	set_field_value(gui_server->txt_ssl_cypher, "ssl_cipher");
 	set_field_value(gui_server->txt_x509_issuer, "x509_issuer");
 	set_field_value(gui_server->txt_x509_subject, "x509_subject");
-	
 }
 
 void gmysqlcc_gui_server_fill_user_right_database_list (p_gmysqlcc_gui_server gui_server, p_mysql_right mysql_rght) {
