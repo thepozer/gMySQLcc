@@ -55,5 +55,7 @@ void gmysqlcc_gui_server_evt_btnDRApply_clicked (GtkWidget *widget, gpointer use
 void gmysqlcc_gui_server_evt_btnDRDelete_clicked (GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_server_evt_lstURUserRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
 void gmysqlcc_gui_server_evt_lstDRDatabaseRights_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
+void gmysqlcc_gui_server_evt_btnMaxUpdate_clicked (GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_server_evt_btnSslUpdate_clicked (GtkWidget *widget, gpointer user_data);
 
 #endif /* __GMYSQLCC_GUI_SERVER_EVT_H__ */

@@ -71,12 +71,13 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;
 	GtkWidget *btnUserNew, *btnUserAdd, *btnUserUpdate, *btnUserDelete;
 	GtkWidget *btnDRNew, *btnDRAdd, *btnDRApply, *btnDRDelete;
+	GtkWidget *btnMaxUpdate, *btnSslUpdate;
 	GtkWidget *mnuDBOpsRefresh, *mnuDBOpsShowCreate, *mnuTBLOpsShowCreate;
 	
 	GtkTreeSelection *select;
 	GtkTooltips * tooltips;
 	GString * sTitle;
-	
+	gint i_loopidx;
 	
 	
 	
@@ -370,7 +371,11 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox5), hbox, FALSE, TRUE, 3);
 	
-  label = gtk_label_new (_("Max Queries :"));
+  label = gtk_label_new (_("Max"));
+  gtk_widget_show (label);
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 3);
+	
+  label = gtk_label_new (_("Queries :"));
   gtk_widget_show (label);
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 3);
 	
@@ -378,9 +383,9 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_widget_show (gui_server->txtMaxQuestions);
 	gtk_box_pack_start (GTK_BOX (hbox), gui_server->txtMaxQuestions, FALSE, TRUE, 3);
 	gtk_entry_set_max_length(GTK_ENTRY(gui_server->txtMaxQuestions), 11);
-	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxQuestions), 12);
+	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxQuestions), 4);
 	
-  label = gtk_label_new (_("Max Updates :"));
+  label = gtk_label_new (_("Updates :"));
   gtk_widget_show (label);
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 3);
 	
@@ -388,9 +393,9 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_widget_show (gui_server->txtMaxUpdates);
 	gtk_box_pack_start (GTK_BOX (hbox), gui_server->txtMaxUpdates, FALSE, TRUE, 3);
 	gtk_entry_set_max_length(GTK_ENTRY(gui_server->txtMaxUpdates), 11);
-	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxUpdates), 12);
+	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxUpdates), 4);
 
-  label = gtk_label_new (_("Max Connections :"));
+  label = gtk_label_new (_("Connections :"));
   gtk_widget_show (label);
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 3);
 	
@@ -398,8 +403,14 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
   gtk_widget_show (gui_server->txtMaxConnections);
 	gtk_box_pack_start (GTK_BOX (hbox), gui_server->txtMaxConnections, FALSE, TRUE, 3);
 	gtk_entry_set_max_length(GTK_ENTRY(gui_server->txtMaxConnections), 11);
-	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxConnections), 12);
+	gtk_entry_set_width_chars(GTK_ENTRY(gui_server->txtMaxConnections), 4);
 	
+  btnMaxUpdate = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnMaxUpdate);
+	gtk_box_pack_start (GTK_BOX (hbox), btnMaxUpdate, FALSE, TRUE, 3);
+	g_signal_connect (G_OBJECT (btnMaxUpdate), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnMaxUpdate_clicked), (gpointer)gui_server);
+
   scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow);
  	gtk_box_pack_start (GTK_BOX (vbox5), scrolledwindow, TRUE, TRUE, 3);
@@ -431,11 +442,16 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gui_server->cbx_ssl_type = gtk_combo_box_new_text();
   gtk_widget_show (gui_server->cbx_ssl_type);
 	gtk_box_pack_start (GTK_BOX (hbox), gui_server->cbx_ssl_type, FALSE, TRUE, 3);
+	/* loop throught array ar_sslType to fill the list */
+	for (i_loopidx = 0; i_loopidx < sz_ar_sslType; i_loopidx++) {
+		gtk_combo_box_append_text (GTK_COMBO_BOX(gui_server->cbx_ssl_type), ar_sslType[i_loopidx]);
+	}
+	/*
 	gtk_combo_box_append_text (GTK_COMBO_BOX(gui_server->cbx_ssl_type), "");
 	gtk_combo_box_append_text (GTK_COMBO_BOX(gui_server->cbx_ssl_type), "ANY");
 	gtk_combo_box_append_text (GTK_COMBO_BOX(gui_server->cbx_ssl_type), "X509");
 	gtk_combo_box_append_text (GTK_COMBO_BOX(gui_server->cbx_ssl_type), "SPECIFIED");
-	
+	*/
 	hbox = gtk_hbox_new (FALSE, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox6), hbox, TRUE, TRUE, 3);
@@ -483,6 +499,12 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	gui_server->txt_x509_subject = gtk_text_view_new ();
 	gtk_widget_show (gui_server->txt_x509_subject);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->txt_x509_subject);
+	
+  btnSslUpdate = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (btnSslUpdate);
+	gtk_box_pack_start (GTK_BOX (vbox6), btnSslUpdate, FALSE, TRUE, 3);
+	g_signal_connect (G_OBJECT (btnSslUpdate), "clicked", 
+										G_CALLBACK (gmysqlcc_gui_server_evt_btnSslUpdate_clicked), (gpointer)gui_server);
 	
 	
   label = gtk_label_new (_("Ssl"));

@@ -257,3 +257,60 @@ void gmysqlcc_gui_server_evt_lstDRDatabaseRights_edited (GtkCellRendererText *ce
 		gtk_widget_destroy (msgdlg);
 	}
 }
+
+void gmysqlcc_gui_server_evt_btnMaxUpdate_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	gchar * pc_newValue = NULL;
+	
+	if (gui_server->curr_mysql_usr != NULL) {
+		pc_newValue = gtk_editable_get_chars(GTK_EDITABLE(gui_server->txtMaxQuestions), 0, -1);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "max_questions", pc_newValue);
+		g_free(pc_newValue);
+		
+		pc_newValue = gtk_editable_get_chars(GTK_EDITABLE(gui_server->txtMaxUpdates), 0, -1);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "max_updates", pc_newValue);
+		g_free(pc_newValue);
+		
+		pc_newValue = gtk_editable_get_chars(GTK_EDITABLE(gui_server->txtMaxConnections), 0, -1);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "max_connections", pc_newValue);
+		g_free(pc_newValue);
+	}
+}
+
+void gmysqlcc_gui_server_evt_btnSslUpdate_clicked (GtkWidget *widget, gpointer user_data) {
+	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
+	GtkTextBuffer* p_buffer = NULL;
+	GtkTextIter begin, end;
+	gchar * pc_newValue = NULL;
+	gint i_idxSelectedItem = 0;
+	
+	if (gui_server->curr_mysql_usr != NULL) {
+		i_idxSelectedItem = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_server->cbx_ssl_type));
+		if (i_idxSelectedItem > -1) {
+			mysql_right_update(gui_server->curr_mysql_usr->user_rights, "ssl_type", ar_sslType[i_idxSelectedItem]);
+		}
+		
+		p_buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(gui_server->txt_ssl_cypher));
+		gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(p_buffer), &begin);
+		gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(p_buffer), &end);
+		pc_newValue = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(p_buffer), &begin, &end, FALSE);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "ssl_cipher", pc_newValue);
+		g_free(pc_newValue);
+		
+		p_buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(gui_server->txt_x509_issuer));
+		gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(p_buffer), &begin);
+		gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(p_buffer), &end);
+		pc_newValue = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(p_buffer), &begin, &end, FALSE);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "x509_issuer", pc_newValue);
+		g_free(pc_newValue);
+		
+		p_buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(gui_server->txt_x509_subject));
+		gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(p_buffer), &begin);
+		gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(p_buffer), &end);
+		pc_newValue = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(p_buffer), &begin, &end, FALSE);
+		mysql_right_update(gui_server->curr_mysql_usr->user_rights, "x509_subject", pc_newValue);
+		g_free(pc_newValue);
+		
+		
+	}
+}

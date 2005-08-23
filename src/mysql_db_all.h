@@ -91,6 +91,15 @@ s_bool_right_item ar_bri_user[] = {
 };
 guint sz_ar_bri_user = 21;
 
+char * ar_sslType [] = {
+	"",
+	"ANY",
+	"X509",
+	"SPECIFIED",
+	NULL
+};
+guint sz_ar_sslType = 4;
+
 s_bool_right_item ar_bri_database[] = {
 	{-1,	"Select_priv",				"Select_priv",				0},
 	{-1,	"Insert_priv",			 	"Insert_priv",				0},
@@ -122,6 +131,8 @@ guint sz_ar_bri_proc = 3;
 
 extern s_bool_right_item ar_bri_user[];
 extern guint sz_ar_bri_user;
+extern char * ar_sslType [];
+extern guint sz_ar_sslType;
 extern s_bool_right_item ar_bri_database[];
 extern guint sz_ar_bri_database;
 extern s_bool_right_item ar_bri_proc[];
