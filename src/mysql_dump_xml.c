@@ -18,7 +18,7 @@ gboolean mysql_dump_xml_data_query_to_disk (p_mysql_dump mysql_dmp);
 gboolean mysql_dump_xml_do_to_disk (p_mysql_dump mysql_dmp) {
 	GError * err = (GError *)NULL;
 	gboolean ret;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	if (mysql_dmp->filename == NULL) {
 		return FALSE;
@@ -67,7 +67,7 @@ gboolean mysql_dump_xml_server_to_disk (p_mysql_dump mysql_dmp) {
 		p_mysql_dump mysql_dmp = (p_mysql_dump)user_data;
 		p_mysql_database mysql_db = (p_mysql_database)value;
 		GError * err = (GError *)NULL;
-		gssize nbBytes;
+		gsize nbBytes;
 		
 		mysql_database_refresh_table_list(mysql_db);
 		
@@ -119,7 +119,7 @@ gboolean mysql_dump_xml_server_to_disk (p_mysql_dump mysql_dmp) {
 gboolean mysql_dump_xml_database_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strXml;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	void htr_dump_table(gpointer key, gpointer value, gpointer user_data) {
 		p_mysql_dump mysql_dmp = (p_mysql_dump)user_data;
@@ -151,7 +151,7 @@ gboolean mysql_dump_xml_table_to_disk (p_mysql_dump mysql_dmp) {
 	gboolean bRet;
 	GString * strSql, * strXml;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	strXml = g_string_new("");
 	
@@ -194,7 +194,7 @@ gboolean mysql_dump_xml_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * fieldName, * fieldValue, * strXml;
 	GArray * arRow, * arHeaders;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	gchar * s_absTableName = NULL;
 	int i;
 
@@ -263,7 +263,7 @@ gboolean mysql_dump_xml_data_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * fieldName, * fieldValue;
 	GArray * arRow, * arHeaders;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	int i;
 	
 	mysql_qry = mysql_table_query(mysql_dmp->mysql_tbl);

@@ -166,7 +166,7 @@ gboolean mysql_dump_sql_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * strInsert, * tmpField;
 	GArray * arRow;
 	GError * err = NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	gchar * s_absTableName = NULL;
 	int i;
 	
@@ -229,7 +229,7 @@ gboolean mysql_dump_sql_query_to_disk (p_mysql_dump mysql_dmp) {
 gboolean mysql_dump_sql_struct_database_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	strRet = g_string_new("");
 	
@@ -256,7 +256,7 @@ gboolean mysql_dump_sql_struct_database_to_disk (p_mysql_dump mysql_dmp) {
 gboolean mysql_dump_sql_struct_table_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	strRet = g_string_new("");
 	
@@ -281,7 +281,7 @@ gboolean mysql_dump_sql_data_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * strInsert, * tmpField;
 	GArray * arRow;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	int i;
 	
 	mysql_qry = mysql_table_query(mysql_dmp->mysql_tbl);

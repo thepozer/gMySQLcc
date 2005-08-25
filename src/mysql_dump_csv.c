@@ -117,7 +117,7 @@ gboolean mysql_dump_csv_server_to_disk (p_mysql_dump mysql_dmp) {
 gboolean mysql_dump_csv_database_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strTmp;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	void htr_dump_table(gpointer key, gpointer value, gpointer user_data) {
 		p_mysql_dump mysql_dmp = (p_mysql_dump)user_data;
@@ -143,7 +143,7 @@ gboolean mysql_dump_csv_table_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strSql;
 	GString * strTmp;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	strTmp = g_string_new("");
 	g_string_printf(strTmp, "\"\";\n\"** Database : '%s' - Table : '%s'\";\n\"\";\n", mysql_dmp->mysql_db->name, mysql_dmp->mysql_tbl->name);
@@ -172,7 +172,7 @@ gboolean mysql_dump_csv_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * tmpField, * strTmp;
 	GArray * arRow;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	gchar * s_absTableName = NULL;
 	int i;
 	
@@ -233,7 +233,7 @@ gboolean mysql_dump_csv_data_query_to_disk (p_mysql_dump mysql_dmp) {
 	GString * strRet, * tmpField;
 	GArray * arRow;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	int i;
 	
 	mysql_qry = mysql_table_query(mysql_dmp->mysql_tbl);
@@ -296,7 +296,7 @@ gchar * mysql_dump_csv_data_query_to_memory (p_mysql_dump mysql_dmp) {
 	GString * strRet, * tmpField;
 	GArray * arRow;
 	GError * err = (GError *)NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	gchar * retStr;
 	int i;
 	

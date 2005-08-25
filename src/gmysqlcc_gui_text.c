@@ -174,7 +174,7 @@ void gmysqlcc_gui_text_load_from_file (p_gmysqlcc_gui_text gui_text, const gchar
 	GtkTextBuffer * txtBuffer;
 	GIOChannel * loadFile;
 	GError * err = NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	g_return_if_fail (filename != NULL);
 	
@@ -198,7 +198,7 @@ void gmysqlcc_gui_text_save_to_file (p_gmysqlcc_gui_text gui_text, const gchar *
 	GtkTextIter begin, end;
 	GIOChannel * saveFile;
 	GError * err = NULL;
-	gssize nbBytes;
+	gsize nbBytes;
 	
 	g_return_if_fail (filename != NULL);
 	
