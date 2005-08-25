@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-05-06 23:18+0200\n"
+"POT-Creation-Date: 2005-08-25 16:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Server name :"
 msgstr ""
 
-#: src/gmysqlcc_gui_dump.c:139
+#: src/gmysqlcc_gui_dump.c:139 src/gmysqlcc_gui_server.c:541
 msgid "Database name :"
 msgstr ""
 
@@ -110,7 +110,7 @@ msgstr ""
 msgid "Output :"
 msgstr ""
 
-#: src/gmysqlcc_gui_dump.c:368 src/gmysqlcc_gui_server.c:122
+#: src/gmysqlcc_gui_dump.c:368 src/gmysqlcc_gui_server.c:108
 msgid "SQL"
 msgstr ""
 
@@ -126,139 +126,139 @@ msgstr ""
 msgid "Dump file name"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:93
+#: src/gmysqlcc_gui_list_server.c:94
 msgid "Servers list"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:109
+#: src/gmysqlcc_gui_list_server.c:110
 msgid "Connection"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:115
+#: src/gmysqlcc_gui_list_server.c:116
 msgid "Connect to a server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:119
+#: src/gmysqlcc_gui_list_server.c:120
 msgid "Edit Server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:125
+#: src/gmysqlcc_gui_list_server.c:126
 msgid "Display edit server part"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:129
+#: src/gmysqlcc_gui_list_server.c:130
 msgid "Execute SQL file"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:135
+#: src/gmysqlcc_gui_list_server.c:136
 msgid "Execute an SQL file on a MySQL server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:139 src/gmysqlcc_gui_query.c:192
-#: src/gmysqlcc_gui_server.c:142 src/gmysqlcc_gui_text.c:140
+#: src/gmysqlcc_gui_list_server.c:140 src/gmysqlcc_gui_query.c:192
+#: src/gmysqlcc_gui_server.c:128 src/gmysqlcc_gui_text.c:140
 msgid "Close"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:145 src/gmysqlcc_gui_query.c:197
-#: src/gmysqlcc_gui_server.c:148 src/gmysqlcc_gui_text.c:145
+#: src/gmysqlcc_gui_list_server.c:146 src/gmysqlcc_gui_query.c:197
+#: src/gmysqlcc_gui_server.c:134 src/gmysqlcc_gui_text.c:145
 msgid "Close window"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:175
+#: src/gmysqlcc_gui_list_server.c:176
 msgid "_Up"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:180
+#: src/gmysqlcc_gui_list_server.c:181
 msgid "_Down"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:193 src/gmysqlcc_gui_server.c:271
+#: src/gmysqlcc_gui_list_server.c:194 src/gmysqlcc_gui_server.c:614
 msgid "Server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:208
+#: src/gmysqlcc_gui_list_server.c:209
 msgid "Name :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:222
+#: src/gmysqlcc_gui_list_server.c:223 src/gmysqlcc_gui_server.c:287
 msgid "Host :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:236
+#: src/gmysqlcc_gui_list_server.c:237
 msgid "Port :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:251
+#: src/gmysqlcc_gui_list_server.c:252
 msgid "User name :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:265
+#: src/gmysqlcc_gui_list_server.c:266 src/gmysqlcc_gui_server.c:293
 msgid "Password :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:279
+#: src/gmysqlcc_gui_list_server.c:280
 msgid "Local socket file :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:293
+#: src/gmysqlcc_gui_list_server.c:294
 msgid "Read only server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:302
+#: src/gmysqlcc_gui_list_server.c:303
 msgid "Warning about write query on this server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:311
+#: src/gmysqlcc_gui_list_server.c:312
 msgid "_New"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:317
+#: src/gmysqlcc_gui_list_server.c:318
 msgid "_Add"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:323
+#: src/gmysqlcc_gui_list_server.c:324
 msgid "_Modify"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:329
+#: src/gmysqlcc_gui_list_server.c:330
 msgid "D_elete"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:376
+#: src/gmysqlcc_gui_list_server.c:343
 msgid "Server name"
 msgstr ""
 
 #. check if not empty
-#: src/gmysqlcc_gui_list_server.c:458 src/gmysqlcc_gui_list_server.c:524
+#: src/gmysqlcc_gui_list_server.c:459 src/gmysqlcc_gui_list_server.c:525
 #, c-format
 msgid "Field %s cannot be empty !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:465 src/gmysqlcc_gui_list_server.c:531
+#: src/gmysqlcc_gui_list_server.c:466 src/gmysqlcc_gui_list_server.c:532
 #, c-format
 msgid "Field %s can only contain digits !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:476 src/gmysqlcc_gui_list_server.c:543
+#: src/gmysqlcc_gui_list_server.c:477 src/gmysqlcc_gui_list_server.c:544
 msgid ""
 "Name already taken !\n"
 "Please set another one."
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:505 src/gmysqlcc_gui_list_server.c:575
-#: src/gmysqlcc_gui_list_server.c:684
+#: src/gmysqlcc_gui_list_server.c:506 src/gmysqlcc_gui_list_server.c:576
+#: src/gmysqlcc_gui_list_server.c:685
 msgid "Please select a database"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:568
+#: src/gmysqlcc_gui_list_server.c:569
 msgid "Can't delete this server !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:611
+#: src/gmysqlcc_gui_list_server.c:612
 msgid "Can't move up more !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:647
+#: src/gmysqlcc_gui_list_server.c:648
 msgid "Can't move down more !!!"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 msgid "Duplicate SQL Windows"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:183 src/gmysqlcc_gui_server.c:235
+#: src/gmysqlcc_gui_query.c:183 src/gmysqlcc_gui_server.c:221
 msgid "Dump"
 msgstr ""
 
@@ -330,101 +330,151 @@ msgstr ""
 msgid "Can't use the charset : '%s'"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:102
+#: src/gmysqlcc_gui_server.c:88
 #, c-format
 msgid "Server : %s"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:128
+#: src/gmysqlcc_gui_server.c:114
 msgid "Exec SQL Query"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:132
+#: src/gmysqlcc_gui_server.c:118
 msgid "SQL File"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:138
+#: src/gmysqlcc_gui_server.c:124
 msgid "Exec SQL File"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:187 src/gmysqlcc_gui_server.c:223
+#: src/gmysqlcc_gui_server.c:173 src/gmysqlcc_gui_server.c:209
 msgid "Add"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:193 src/gmysqlcc_gui_server.c:241
+#: src/gmysqlcc_gui_server.c:179 src/gmysqlcc_gui_server.c:227
 msgid "Delete"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:229
+#: src/gmysqlcc_gui_server.c:215
 msgid "Modify"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:247 src/gmysqlcc_gui_server.c:355
+#. Databases columns
+#: src/gmysqlcc_gui_server.c:233 src/gmysqlcc_gui_server.c:668
 msgid "Databases"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:254 src/gmysqlcc_gui_server.c:266
-msgid "In construction"
+#: src/gmysqlcc_gui_server.c:270
+msgid "User informations :"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:259
+#: src/gmysqlcc_gui_server.c:281
+msgid "Login :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:317
+msgid "Already encrypted password"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:374
+msgid "Max"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:378
+msgid "Queries :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:388
+msgid "Updates :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:398
+msgid "Connections :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:424
+msgid "User"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:438
+msgid "SSL type :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:459
+msgid "SSL cypher :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:475
+msgid "x509 issuer :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:491
+msgid "x509 subject :"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:510
+msgid "Ssl"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:591
+msgid "Database rights :"
+msgstr ""
+
+#. Database List Rights columns
+#: src/gmysqlcc_gui_server.c:595 src/gmysqlcc_gui_server.c:711
+msgid "Database"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:599
+msgid "Rights :"
+msgstr ""
+
+#. Users columns
+#: src/gmysqlcc_gui_server.c:603 src/gmysqlcc_gui_server.c:690
 msgid "Users"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:287
+#: src/gmysqlcc_gui_server.c:609
+msgid "In construction"
+msgstr ""
+
+#: src/gmysqlcc_gui_server.c:630
 msgid "Refresh"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:294
+#: src/gmysqlcc_gui_server.c:637
 msgid "Display all create structures"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:304
+#: src/gmysqlcc_gui_server.c:647
 msgid "Display create structure"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:391
+#. Table columns
+#: src/gmysqlcc_gui_server.c:676
 msgid "Table name"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:393
+#: src/gmysqlcc_gui_server.c:678
 msgid "Rows"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:395
+#: src/gmysqlcc_gui_server.c:680
 msgid "Size"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:397
+#: src/gmysqlcc_gui_server.c:682
 msgid "Type"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:624
-#, c-format
-msgid "Database '%s' created !"
+#. User Rights columns
+#. Database Rights columns
+#: src/gmysqlcc_gui_server.c:698 src/gmysqlcc_gui_server.c:719
+msgid "Name"
 msgstr ""
 
-#: src/gmysqlcc_gui_server.c:627
-#, c-format
-msgid "Can't create database '%s' !"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:653
-#, c-format
-msgid "Database '%s' deleted !"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:714
-msgid "Delete Table"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:714
-msgid "Are you sure ?"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:724
-#, c-format
-msgid "Table '%s'.'%s' deleted !"
+#: src/gmysqlcc_gui_server.c:703 src/gmysqlcc_gui_server.c:724
+msgid "Value"
 msgstr ""
 
 #: src/gmysqlcc_gui_text.c:52
