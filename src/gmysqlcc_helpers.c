@@ -114,13 +114,13 @@ void gmysqlcc_helpers_field_capability_init_array () {
 		Character conversion helpers
 */
 
-int gmysqlcc_helpers_count_noascii_character (const unsigned char * string) {
+int gmysqlcc_helpers_count_noascii_character (const gchar * string) {
 	int i, size, retNbr = 0;
 	
 	size = strlen(string);
 	
 	for (i = 0; i < size; i++) {
-		if (string[i] > 127) {
+		if ((unsigned char)string[i] > 127) {
 			retNbr ++;
 		}
 	}

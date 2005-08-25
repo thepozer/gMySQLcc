@@ -39,7 +39,7 @@ p_fieldTypeCapability gmysqlcc_helpers_field_capability_create (char * name, int
 void gmysqlcc_helpers_field_capability_init_array ();
 
 /* Character conversion helpers */
-int gmysqlcc_helpers_count_noascii_character (const unsigned char * string);
+int gmysqlcc_helpers_count_noascii_character (const gchar * string);
 gchar * gmysqlcc_helpers_alloc_iconv(GIConv icv, const char * source);
 
 /* Character protection helpers */

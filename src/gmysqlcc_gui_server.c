@@ -876,7 +876,7 @@ void gmysqlcc_gui_server_fill_user_right_list (p_gmysqlcc_gui_server gui_server)
 		return (strcmp(key, user_data) == 0);
 	}
 	
-	void set_field_value(GtkWidget * entry, const gchar * field) {
+	void set_field_value(GtkWidget * entry, gchar * field) {
 		gchar * value;
 		
 		value = g_hash_table_find(gui_server->curr_mysql_usr->user_rights->hsh_rights, &sub_ht_key_equal, field);
