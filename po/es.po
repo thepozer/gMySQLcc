@@ -22,32 +22,26 @@ msgstr "Volcar consulta"
 #: src/gmysqlcc_gui_dump.c:106 src/gmysqlcc_gui_dump.c:114
 #: src/gmysqlcc_gui_dump.c:122 src/gmysqlcc_gui_dump.c:409
 #: src/gmysqlcc_gui_dump.c:416 src/gmysqlcc_gui_dump.c:423
-
 msgid "-"
 msgstr "-"
 
 #: src/gmysqlcc_gui_dump.c:130
-
 msgid "Server name :"
 msgstr "Nombre del servidor :"
 
 #: src/gmysqlcc_gui_dump.c:139 src/gmysqlcc_gui_server.c:541
-
 msgid "Database name :"
 msgstr "Nombre de la base de datos :"
 
 #: src/gmysqlcc_gui_dump.c:148
-
 msgid "Table name :"
 msgstr "Nombre de la tabla :"
 
 #: src/gmysqlcc_gui_dump.c:157
-
 msgid "SQL query :"
 msgstr "Consulta SQL:"
 
 #: src/gmysqlcc_gui_dump.c:192
-
 msgid "Selection :"
 msgstr "Selección :"
 
@@ -56,37 +50,30 @@ msgid "One file per database"
 msgstr "Un archivo por cada base de datos"
 
 #: src/gmysqlcc_gui_dump.c:216
-
 msgid "All files in a directory"
 msgstr "Todos los archivos de un directorio"
 
 #: src/gmysqlcc_gui_dump.c:224
-
 msgid "Drop database if exist"
 msgstr "Borrar base de datos si existe"
 
 #: src/gmysqlcc_gui_dump.c:228
-
 msgid "Add USE database"
 msgstr "Añadir USAR base de datos"
 
 #: src/gmysqlcc_gui_dump.c:232
-
 msgid "Drop table if exist"
 msgstr "Borrar tabla si existe"
 
 #: src/gmysqlcc_gui_dump.c:236
-
 msgid "Complete inserts"
 msgstr "Comandos inserts completos"
 
 #: src/gmysqlcc_gui_dump.c:250
-
 msgid "Structure"
 msgstr "Estructura"
 
 #: src/gmysqlcc_gui_dump.c:257
-
 msgid "Structure and data"
 msgstr "Estructura y datos"
 
@@ -155,7 +142,6 @@ msgid "Edit Server"
 msgstr "Servidor"
 
 #: src/gmysqlcc_gui_list_server.c:126
-#, fuzzy
 msgid "Display edit server part"
 msgstr "Mostrar edición del servidor"
 
@@ -218,7 +204,6 @@ msgid "Read only server"
 msgstr "Servidor sólo lectura"
 
 #: src/gmysqlcc_gui_list_server.c:303
-#, fuzzy
 msgid "Warning about write query on this server"
 msgstr "Advertencia sobre consulta de modificación en este servidor"
 
@@ -322,7 +307,8 @@ msgid ""
 "\n"
 "Do you want force the execution of the query ?"
 msgstr ""
-"¡¡¡ Advertencia !!! ¡¡¡ Este servidor ha sido marcado con la etiqueta de advertencias de escritura !!!\n"
+"¡¡¡ Advertencia !!! ¡¡¡ Este servidor ha sido marcado con la etiqueta de "
+"advertencias de escritura !!!\n"
 "Esto es peligroso para los datos ... :)\n"
 "¿Quiere forzar la ejecución de la consulta?"
 
