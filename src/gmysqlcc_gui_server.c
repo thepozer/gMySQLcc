@@ -734,6 +734,7 @@ void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 
 void gmysqlcc_gui_server_fill_database_list (p_gmysqlcc_gui_server gui_server) {
 	GtkListStore * lstStrBase;
+	GtkListStore * lstEmpty;
 
 	void sub_ht_fill_database_list(gpointer key, gpointer value, gpointer user_data) {
 		p_mysql_database mysql_db = (p_mysql_database)value;
@@ -754,7 +755,13 @@ void gmysqlcc_gui_server_fill_database_list (p_gmysqlcc_gui_server gui_server) {
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstBase), GTK_TREE_MODEL(lstStrBase));
 	g_object_unref (G_OBJECT (lstStrBase));
 	
+	/* Clean table list */
+	lstEmpty = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gui_server->lstTable), GTK_TREE_MODEL(lstEmpty));
+	g_object_unref (G_OBJECT (lstEmpty));
+	
 	gui_server->curr_mysql_db = NULL;
+	gui_server->curr_mysql_tbl = NULL;
 }
 
 void gmysqlcc_gui_server_fill_table_list (p_gmysqlcc_gui_server gui_server) {

@@ -5,7 +5,7 @@
 void gmysqlcc_gui_server_evt_mnuDBOpsRefresh_activate (GtkWidget *widget, gpointer user_data) {
 	p_gmysqlcc_gui_server gui_server = (p_gmysqlcc_gui_server)user_data;
 	
-	gmysqlcc_gui_server_init_widget(gui_server);
+	gmysqlcc_gui_server_fill_database_list(gui_server);
 }
 
 void gmysqlcc_gui_server_evt_mnuDBOpsShowCreate_activate (GtkWidget *widget, gpointer user_data) {
