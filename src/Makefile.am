@@ -24,9 +24,12 @@ gmysqlcc_SOURCES = \
 	gmysqlcc_gui_list_server.c\
 	gmysqlcc_gui_query.c\
 	gmysqlcc_gui_server.c\
-	gmysqlcc_gui_server_evt.h\
-	gmysqlcc_gui_server_evt_db.c\
-	gmysqlcc_gui_server_evt_user.c\
+	gmysqlcc_gui_server.h\
+	gmysqlcc_gui_server_tab_db.c\
+	gmysqlcc_gui_server_tab_help.c\
+	gmysqlcc_gui_server_tab_proc.c\
+	gmysqlcc_gui_server_tab_server.c\
+	gmysqlcc_gui_server_tab_user.c\
 	gmysqlcc_gui_text.c\
 	gmysqlcc_gui_misc.c\
 	mysql_db_all.h\

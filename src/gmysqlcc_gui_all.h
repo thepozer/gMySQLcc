@@ -61,7 +61,6 @@ p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysq
 gboolean gmysqlcc_gui_list_server_display (p_gmysqlcc_gui_list_server gui_list_server, gboolean display);
 gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_server);
 
-
 /* Server window */
 
 typedef struct _s_gmysqlcc_gui_server {
@@ -83,7 +82,6 @@ typedef struct _s_gmysqlcc_gui_server {
 	GtkWidget *txtUserHost;
 	GtkWidget *txtUserPasswd;
 	GtkWidget *chkEncryptedPasswd;
-/* Rights Part */
 	GtkWidget *lstURUserRights; /* User rights*/
 	GtkWidget *txtMaxQuestions;
 	GtkWidget *txtMaxUpdates;
@@ -95,9 +93,19 @@ typedef struct _s_gmysqlcc_gui_server {
 	GtkWidget *lstDRDatabases;/* Database rights */
 	GtkWidget *txtDRDbName;
 	GtkWidget *lstDRDatabaseRights;
+	
 	p_mysql_user	curr_mysql_usr;
 	p_mysql_right	curr_database_rights;
 	p_mysql_right	curr_table_rights;
+	
+/* Help Part */
+	GtkWidget *trvHelpCategories;
+	GtkWidget *txtHelpSearchKeyword;
+	GtkWidget *trvHelpTopics;
+	GtkWidget *txvHelpTopic;
+	
+	gint iCurrentCategory;
+	gint iCurrentTopic;
 } s_gmysqlcc_gui_server;
 
 typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;
@@ -105,6 +113,8 @@ typedef s_gmysqlcc_gui_server * p_gmysqlcc_gui_server;
 p_gmysqlcc_gui_server gmysqlcc_gui_server_new (p_mysql_server mysql_srv);
 gboolean gmysqlcc_gui_server_display (p_gmysqlcc_gui_server gui_server, gboolean display);
 gboolean gmysqlcc_gui_server_delete (p_gmysqlcc_gui_server gui_server);
+
+void gmysqlcc_gui_server_open_query_window (p_gmysqlcc_gui_server gui_server, gboolean use_table);
 
 /* Exec SQL window */
 

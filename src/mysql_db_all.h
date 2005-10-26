@@ -162,7 +162,6 @@ typedef struct _s_mysql_database {
 	p_mysql_server	mysql_srv;
 	
 /* Tables Informations */
-	GList *					lstTables;
 	GHashTable *		hshTables;
 	
 /* Update database list informations */
@@ -180,9 +179,29 @@ typedef struct _s_mysql_table {
 	gchar *						nbrRow;
 	gchar *						size;
 	gchar *						type;
+
+/* Field infos */
+	GHashTable *		hshFields;
 } s_mysql_table;
 
 typedef s_mysql_table * p_mysql_table;
+
+typedef struct _s_mysql_field {
+/* Data Infos */
+	p_mysql_table ps_mysql_tbl;
+	gchar *	pc_name;
+	gchar * pc_type;
+	gchar * pc_collation;
+	gboolean b_null;
+	gint i_key;
+	gchar * pc_default;
+	gchar * pc_extra;
+	gchar * pc_comment;
+
+	struct _s_mysql_field * ps_mysql_fld;
+} s_mysql_field;
+
+typedef s_mysql_field * p_mysql_field;
 
 typedef struct _s_mysql_query {
 /* Query Infos */
@@ -250,7 +269,6 @@ typedef struct _s_mysql_row {
 } s_mysql_row;
 
 typedef s_mysql_row * p_mysql_row;
-
 
 /***** Dump informations *****/
 

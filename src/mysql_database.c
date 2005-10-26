@@ -41,7 +41,6 @@ p_mysql_database mysql_database_new(p_mysql_server mysql_srv, const gchar * db_n
 	
 	mysql_db->mysql_srv = mysql_srv;
 	mysql_db->name = g_strdup(db_name);
-	mysql_db->lstTables = NULL;
 	mysql_db->hshTables = g_hash_table_new(&g_str_hash, &g_str_equal);
 	mysql_db->found = TRUE;
 		
@@ -138,5 +137,3 @@ gboolean mysql_database_refresh_table_list (p_mysql_database mysql_db) {
 p_mysql_table mysql_database_get_table (p_mysql_database mysql_db, const gchar * tbl_name) {
 	return (p_mysql_table)g_hash_table_lookup(mysql_db->hshTables, tbl_name);
 }
-
-
