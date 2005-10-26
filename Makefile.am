@@ -3,7 +3,7 @@
 ## If you don't want it to overwrite it,
 ## 	Please disable it in the Anjuta project configuration
 
-SUBDIRS = intl po src
+SUBDIRS = data intl po src
 
 gmysqlccdocdir = ${prefix}/doc/gmysqlcc
 gmysqlccdoc_DATA = \

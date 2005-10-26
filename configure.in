@@ -67,6 +67,7 @@ AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Set PACKAGE SOURCE D
 
 dnl Output files
 AC_OUTPUT([Makefile
+data/Makefile
 po/Makefile.in
 intl/Makefile
 src/Makefile
