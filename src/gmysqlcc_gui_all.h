@@ -61,6 +61,13 @@ p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysq
 gboolean gmysqlcc_gui_list_server_display (p_gmysqlcc_gui_list_server gui_list_server, gboolean display);
 gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_server);
 
+#ifndef __GMYSQLCC_MAIN_PART__
+
+/* Global variable for the server list window */
+p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server;
+
+#endif /* __GMYSQLCC_MAIN_PART__ */
+
 /* Server window */
 
 typedef struct _s_gmysqlcc_gui_server {

@@ -51,7 +51,7 @@ gboolean gmysqlcc_gui_dump_delete (p_gmysqlcc_gui_dump gui_dump) {
 	/* Destroy Application if needed */
 	NbrWnd--;
 	g_printerr("Destruction Dump window - nbrWnd : %d\n", NbrWnd);
-	if (NbrWnd <= 0) {
+	if (NbrWnd <= 1) { /* There is always the window server list */
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
 	}

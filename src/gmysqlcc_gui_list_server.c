@@ -42,7 +42,7 @@ p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server_new (p_gmysqlcc_config gmysq
 	/* To hide edition server part */
 	gmysqlcc_gui_list_server_evt_btnTlbrEdit_clicked(NULL, gui_list_server);
 	
-	NbrWnd ++;	
+	NbrWnd ++;
 	
 	return gui_list_server;
 }
@@ -61,10 +61,10 @@ gboolean gmysqlcc_gui_list_server_delete (p_gmysqlcc_gui_list_server gui_list_se
 	/* Destroy Datas */
 	g_free(gui_list_server);
 	
-	/* Destroy Application if needed */
+	/* Destroy Application -- NOT needed */
 	NbrWnd--;
 	g_printerr("Destruction List Server window - nbrWnd : %d\n", NbrWnd);
-	if (NbrWnd <= 0) {
+	if (NbrWnd <= 0) { 
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
 	}
@@ -426,7 +426,9 @@ void gmysqlcc_gui_list_server_evt_destroy (GtkWidget *widget, gpointer user_data
 	p_gmysqlcc_gui_list_server gui_list_server = (p_gmysqlcc_gui_list_server)user_data;
 	
 	gmysqlcc_gui_list_server_display(gui_list_server, FALSE);
-	gmysqlcc_gui_list_server_delete(gui_list_server);
+	if (NbrWnd <= 1) { /* Call only if it's the last window opened */
+		gmysqlcc_gui_list_server_delete(gui_list_server);
+	}
 }
 
 void gmysqlcc_gui_list_server_evt_btnNew_clicked (GtkWidget *widget, gpointer user_data) {
@@ -681,6 +683,7 @@ void gmysqlcc_gui_list_server_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpo
 	if (gui_list_server->curr_mysql_srv != NULL) {
 		gui_server = gmysqlcc_gui_server_new(gui_list_server->curr_mysql_srv);
 		gmysqlcc_gui_server_display(gui_server, TRUE);
+		gmysqlcc_gui_list_server_display(gui_list_server, FALSE);
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(gui_list_server->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a database"));
 		gtk_dialog_run (GTK_DIALOG (msgdlg));

@@ -75,7 +75,7 @@ gboolean gmysqlcc_gui_text_delete (p_gmysqlcc_gui_text gui_text) {
 	/* Destroy Application if needed */
 	NbrWnd--;
 	g_printerr("Destruction Server window - nbrWnd : %d\n", NbrWnd);
-	if (NbrWnd <= 0) {
+	if (NbrWnd <= 1) { /* There is always the window server list */
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
 	}
@@ -90,7 +90,9 @@ void gmysqlcc_gui_text_create_widget (p_gmysqlcc_gui_text gui_text) {
  	GtkWidget * imgToolbar;
 	GtkToolItem * btnTlbrLoad, * btnTlbrSave, * btnTlbrExecute, * btnTlbrClose;
 	GtkTooltips * tooltips;
+#ifdef USE_GTKSOURCEVIEW
 	GtkTextBuffer * txtBuffer;
+#endif /* USE_GTKSOURCEVIEW */
 	
 	tooltips = gtk_tooltips_new();
 	

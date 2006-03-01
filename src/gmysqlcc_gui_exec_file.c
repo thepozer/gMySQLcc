@@ -34,9 +34,6 @@ p_gmysqlcc_gui_exec_file gmysqlcc_gui_exec_file_new_open_file () {
 	response = gtk_dialog_run (GTK_DIALOG (chooser));
 	if (response == GTK_RESPONSE_OK) {
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-	}
-	
-	if (filename != NULL) {
 		gmysqlcc_gui_exec_file_set_file (gui_xcfl, filename);
 		g_free (filename);
 	} else {
@@ -274,8 +271,8 @@ gboolean gmysqlcc_gui_exec_file_delete (p_gmysqlcc_gui_exec_file gui_xcfl) {
 	
 	/* Destroy Application if needed */
 	NbrWnd--;
-	g_printerr("Destruction Server window - nbrWnd : %d\n", NbrWnd);
-	if (NbrWnd <= 0) {
+	g_printerr("Destruction Exec file window - nbrWnd : %d\n", NbrWnd);
+	if (NbrWnd <= 1) { /* There is always the window server list */
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
 	}

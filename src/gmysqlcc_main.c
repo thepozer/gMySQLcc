@@ -12,7 +12,9 @@
 int NbrWnd = 0;
 
 p_gmysqlcc_config gmysqlcc_conf;
-	
+
+p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server;
+
 #ifdef USE_GTKSOURCEVIEW
 GtkSourceLanguagesManager * LangManager;
 #endif /* USE_GTKSOURCEVIEW */
@@ -20,14 +22,13 @@ GtkSourceLanguagesManager * LangManager;
 gboolean gmysqlcc_main_before_end(gpointer data);
 
 int main(int argc, char *argv[]) {
-	p_gmysqlcc_gui_list_server gui_list_server;
 	
 	/* Init gtk library */
 	gtk_init (&argc, &argv);
 	
 	/* Init gettext library */
-  bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
-  textdomain (PACKAGE);
+	bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+	textdomain (PACKAGE);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	
 	/* Init types list */
@@ -50,8 +51,8 @@ int main(int argc, char *argv[]) {
 #endif /* USE_GTKSOURCEVIEW */
 	
 	/* Create server list windows */
-	gui_list_server = gmysqlcc_gui_list_server_new(gmysqlcc_conf);
-	gmysqlcc_gui_list_server_display(gui_list_server, TRUE);
+	gmysqlcc_gui_list_server = gmysqlcc_gui_list_server_new(gmysqlcc_conf);
+	gmysqlcc_gui_list_server_display(gmysqlcc_gui_list_server, TRUE);
 	
 	/* Start the application */
 	gtk_main ();

@@ -18,6 +18,7 @@ void gmysqlcc_gui_query_evt_destroy(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_query_evt_btnExecSql_clicked(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_query_evt_btnDuplicateSql_clicked(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_query_evt_btnDumpSql_clicked(GtkWidget *widget, gpointer user_data);
+void gmysqlcc_gui_query_evt_btnServerList_clicked(GtkWidget *widget, gpointer user_data);
 void gmysqlcc_gui_query_evt_btnClose_clicked(GtkWidget *widget, gpointer user_data);
 
 
@@ -92,7 +93,7 @@ gboolean gmysqlcc_gui_query_delete (p_gmysqlcc_gui_query gui_query) {
 	/* Destroy Application if needed */
 	NbrWnd--;
 	g_printerr("Destruction Exec SQL window - nbrWnd : %d\n", NbrWnd);
-	if (NbrWnd <= 0) {
+	if (NbrWnd <= 1) { /* There is always the window server list */
 		g_printerr("Destroy App\n");
 		gtk_main_quit();
 	}
@@ -121,13 +122,16 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	GtkToolItem *ticmbCharset;
 	GtkToolItem *btnDumpSql;
 	GtkToolItem *btnDuplicateSql;
+	GtkToolItem *btnServerList;
 	GtkToolItem *btnClose;
 	GtkTooltips * tooltips;
 	GtkWidget * imgToolbar;
 	GtkWidget * tlbSql;
 	
 	GtkTreeSelection *select;
+#ifdef USE_GTKSOURCEVIEW
 	GtkTextBuffer * txtBuffer;
+#endif /* USE_GTKSOURCEVIEW */
 	
 	tooltips = gtk_tooltips_new();
 	
@@ -187,6 +191,15 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnDumpSql), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDumpSql), tooltips, _("Dump with current query"), NULL);
 	
+	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgToolbar);
+	btnServerList = gtk_tool_button_new (imgToolbar, _("Servers list"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnServerList), TRUE);
+	g_signal_connect (G_OBJECT (btnServerList), "clicked", G_CALLBACK (gmysqlcc_gui_query_evt_btnServerList_clicked), gui_query);
+	gtk_widget_show(GTK_WIDGET(btnServerList));
+	gtk_toolbar_insert(GTK_TOOLBAR(tlbSql), GTK_TOOL_ITEM(btnServerList), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnServerList), tooltips, _("Open server list window"), NULL);
+
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnClose = gtk_tool_button_new (imgToolbar, _("Close"));
@@ -535,6 +548,12 @@ void gmysqlcc_gui_query_evt_btnDumpSql_clicked(GtkWidget *widget, gpointer user_
 	gmysqlcc_gui_dump_display(gui_dump, TRUE);
 	
 	g_free(sqlQuery);
+}
+
+void gmysqlcc_gui_query_evt_btnServerList_clicked (GtkWidget *widget, gpointer user_data) {
+	/*p_gmysqlcc_gui_query gui_query = (p_gmysqlcc_gui_query)user_data;*/
+	
+	gmysqlcc_gui_list_server_display(gmysqlcc_gui_list_server, TRUE);
 }
 
 void gmysqlcc_gui_query_evt_btnClose_clicked(GtkWidget *widget, gpointer user_data) {
