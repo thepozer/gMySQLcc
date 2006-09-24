@@ -22,6 +22,8 @@ void gmysqlcc_gui_server_create_widget_tab_help (p_gmysqlcc_gui_server gui_serve
 	
 	GtkTreeSelection *select;
 	
+	PangoFontDescription * pCourierFontDesc = NULL;
+	
 	label = gtk_label_new (_("Help"));
 	gtk_widget_show (label);
 	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -100,10 +102,12 @@ void gmysqlcc_gui_server_create_widget_tab_help (p_gmysqlcc_gui_server gui_serve
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
 	
 	gui_server->txvHelpTopic = gtk_text_view_new ();
+	pCourierFontDesc = pango_font_description_from_string(gmysqlcc_conf->pcHelpFontName);
+	gtk_widget_modify_font(gui_server->txvHelpTopic, pCourierFontDesc);
 	gtk_widget_show (gui_server->txvHelpTopic);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), gui_server->txvHelpTopic);
 	gtk_text_view_set_editable (GTK_TEXT_VIEW (gui_server->txvHelpTopic), FALSE);
-	
+	pango_font_description_free(pCourierFontDesc);
 }
 
 void gmysqlcc_gui_server_init_widget_tab_help (p_gmysqlcc_gui_server gui_server) {
@@ -132,7 +136,6 @@ void gmysqlcc_gui_server_init_widget_tab_help (p_gmysqlcc_gui_server gui_server)
 	g_object_unref (G_OBJECT (lstEmpty));
 
 	gmysqlcc_gui_server_fill_help_category_list(gui_server);
-
 }
 
 void gmysqlcc_gui_server_fill_help_category_list(p_gmysqlcc_gui_server gui_server) {
@@ -265,8 +268,6 @@ void gmysqlcc_gui_server_fill_help_topic_list_from_search(p_gmysqlcc_gui_server 
 		iIdx ++;
 	}
 	g_string_append (strSql, " ORDER BY name");
-	
-g_print("SQL Search : '%s'\n", strSql->str);
 	
 	g_strfreev(ppcSplitedSearchedText);
 	g_free(pcSearchedText);

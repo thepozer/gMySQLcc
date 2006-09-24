@@ -141,11 +141,11 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 	iServerVersion = mysql_server_get_version(gui_server->mysql_srv, FALSE);
 	
 	gmysqlcc_gui_server_create_widget_tab_database (gui_server, notebook);
-	if (gui_server->mysql_srv->version >= 50000) {
+	/*if (gui_server->mysql_srv->version >= 50000) {
 		gmysqlcc_gui_server_create_widget_tab_procedure (gui_server, notebook);
-	}
+	}*/
 	gmysqlcc_gui_server_create_widget_tab_user (gui_server, notebook);
-	gmysqlcc_gui_server_create_widget_tab_server (gui_server, notebook);
+	/*gmysqlcc_gui_server_create_widget_tab_server (gui_server, notebook);*/
 	if (gui_server->mysql_srv->version >= 40100) {
 		gmysqlcc_gui_server_create_widget_tab_help (gui_server, notebook);
 	}
@@ -159,11 +159,11 @@ void gmysqlcc_gui_server_create_widget (p_gmysqlcc_gui_server gui_server) {
 void gmysqlcc_gui_server_init_widget (p_gmysqlcc_gui_server gui_server) {
 	
 	gmysqlcc_gui_server_init_widget_tab_database(gui_server);
-	if (gui_server->mysql_srv->version >= 50000) {
+	/*if (gui_server->mysql_srv->version >= 50000) {
 		gmysqlcc_gui_server_init_widget_tab_procedure (gui_server);
-	}
+	}*/
 	gmysqlcc_gui_server_init_widget_tab_user(gui_server);
-	gmysqlcc_gui_server_init_widget_tab_server(gui_server);
+	/*gmysqlcc_gui_server_init_widget_tab_server(gui_server);*/
 	if (gui_server->mysql_srv->version >= 40100) {
 		gmysqlcc_gui_server_init_widget_tab_help (gui_server);
 	}

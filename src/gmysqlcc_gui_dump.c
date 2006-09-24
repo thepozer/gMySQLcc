@@ -79,7 +79,9 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
 	GtkWidget *btnCancel, *btnOk;
 	GtkWidget *btnGetOutputFilename;
 	GtkTextBuffer * txtBuffer;
-
+	
+	PangoFontDescription * pCourierFontDesc = NULL;
+	
 	GSList *grp_rdoBaseDump = NULL;
 	GSList *grp_rdoTypeDump = NULL;
 
@@ -116,58 +118,58 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
 	gtk_table_attach (GTK_TABLE (table2), gui_dump->lblDumpDatabaseName, 1, 2, 1, 2,
 						(GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
 						(GtkAttachOptions) (0), 0, 0);
-  gtk_label_set_justify (GTK_LABEL (gui_dump->lblDumpDatabaseName), GTK_JUSTIFY_CENTER);
-  gtk_misc_set_alignment (GTK_MISC (gui_dump->lblDumpDatabaseName), 0, 0.5);
+	gtk_label_set_justify (GTK_LABEL (gui_dump->lblDumpDatabaseName), GTK_JUSTIFY_CENTER);
+	gtk_misc_set_alignment (GTK_MISC (gui_dump->lblDumpDatabaseName), 0, 0.5);
 
-  gui_dump->lblDumpTableName = gtk_label_new (_("-"));
-  gtk_widget_show (gui_dump->lblDumpTableName);
-  gtk_table_attach (GTK_TABLE (table2), gui_dump->lblDumpTableName, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_label_set_justify (GTK_LABEL (gui_dump->lblDumpTableName), GTK_JUSTIFY_CENTER);
-  gtk_misc_set_alignment (GTK_MISC (gui_dump->lblDumpTableName), 0, 0.5);
+	gui_dump->lblDumpTableName = gtk_label_new (_("-"));
+	gtk_widget_show (gui_dump->lblDumpTableName);
+	gtk_table_attach (GTK_TABLE (table2), gui_dump->lblDumpTableName, 1, 2, 2, 3,
+						(GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+						(GtkAttachOptions) (0), 0, 0);
+	gtk_label_set_justify (GTK_LABEL (gui_dump->lblDumpTableName), GTK_JUSTIFY_CENTER);
+	gtk_misc_set_alignment (GTK_MISC (gui_dump->lblDumpTableName), 0, 0.5);
 
-  gui_dump->rdoDumpServer = gtk_radio_button_new_with_mnemonic (NULL, _("Server name :"));
-  gtk_widget_show (gui_dump->rdoDumpServer);
-  gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpServer, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpServer), grp_rdoBaseDump);
-  grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpServer));
+	gui_dump->rdoDumpServer = gtk_radio_button_new_with_mnemonic (NULL, _("Server name :"));
+	gtk_widget_show (gui_dump->rdoDumpServer);
+	gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpServer, 0, 1, 0, 1,
+					(GtkAttachOptions) (GTK_FILL),
+					(GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpServer), grp_rdoBaseDump);
+	grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpServer));
 	g_signal_connect (G_OBJECT (gui_dump->rdoDumpServer), "toggled", G_CALLBACK (gmysqlcc_gui_dump_evt_level_select), gui_dump);
 	
-  gui_dump->rdoDumpDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("Database name :"));
-  gtk_widget_show (gui_dump->rdoDumpDatabase);
-  gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpDatabase, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_SHRINK | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpDatabase), grp_rdoBaseDump);
-  grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpDatabase));
+	gui_dump->rdoDumpDatabase = gtk_radio_button_new_with_mnemonic (NULL, _("Database name :"));
+	gtk_widget_show (gui_dump->rdoDumpDatabase);
+	gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpDatabase, 0, 1, 1, 2,
+					(GtkAttachOptions) (GTK_SHRINK | GTK_FILL),
+					(GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpDatabase), grp_rdoBaseDump);
+	grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpDatabase));
 	g_signal_connect (G_OBJECT (gui_dump->rdoDumpDatabase), "toggled", G_CALLBACK (gmysqlcc_gui_dump_evt_level_select), gui_dump);
 
-  gui_dump->rdoDumpTable = gtk_radio_button_new_with_mnemonic (NULL, _("Table name :"));
-  gtk_widget_show (gui_dump->rdoDumpTable);
-  gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpTable, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_SHRINK | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpTable), grp_rdoBaseDump);
-  grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpTable));
+	gui_dump->rdoDumpTable = gtk_radio_button_new_with_mnemonic (NULL, _("Table name :"));
+	gtk_widget_show (gui_dump->rdoDumpTable);
+	gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpTable, 0, 1, 2, 3,
+					(GtkAttachOptions) (GTK_SHRINK | GTK_FILL),
+					(GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpTable), grp_rdoBaseDump);
+	grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpTable));
 	g_signal_connect (G_OBJECT (gui_dump->rdoDumpTable), "toggled", G_CALLBACK (gmysqlcc_gui_dump_evt_level_select), gui_dump);
 
-  gui_dump->rdoDumpRequest = gtk_radio_button_new_with_mnemonic (NULL, _("SQL query :"));
-  gtk_widget_show (gui_dump->rdoDumpRequest);
-  gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpRequest, 0, 2, 3, 4,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpRequest), grp_rdoBaseDump);
-  grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpRequest));
+	gui_dump->rdoDumpRequest = gtk_radio_button_new_with_mnemonic (NULL, _("SQL query :"));
+	gtk_widget_show (gui_dump->rdoDumpRequest);
+	gtk_table_attach (GTK_TABLE (table2), gui_dump->rdoDumpRequest, 0, 2, 3, 4,
+					(GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+					(GtkAttachOptions) (0), 0, 0);
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpRequest), grp_rdoBaseDump);
+	grp_rdoBaseDump = gtk_radio_button_get_group (GTK_RADIO_BUTTON (gui_dump->rdoDumpRequest));
 	g_signal_connect (G_OBJECT (gui_dump->rdoDumpRequest), "toggled", G_CALLBACK (gmysqlcc_gui_dump_evt_level_select), gui_dump);
 
-  scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow8);
-  gtk_table_attach (GTK_TABLE (table2), scrolledwindow8, 0, 2, 4, 5,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
+	scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow8);
+	gtk_table_attach (GTK_TABLE (table2), scrolledwindow8, 0, 2, 4, 5,
+					(GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+					(GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
 
 #ifdef USE_GTKSOURCEVIEW
 	gui_dump->txtSQLRequest = gtk_source_view_new ();
@@ -180,6 +182,9 @@ void gmysqlcc_gui_dump_create_widget (p_gmysqlcc_gui_dump gui_dump) {
 #else /* USE_GTKSOURCEVIEW */
 	gui_dump->txtSQLRequest = gtk_text_view_new ();
 #endif /* USE_GTKSOURCEVIEW */
+	pCourierFontDesc = pango_font_description_from_string(gmysqlcc_conf->pcQueryFontName);
+	gtk_widget_modify_font(gui_dump->txtSQLRequest, pCourierFontDesc);
+	pango_font_description_free(pCourierFontDesc);
 	gtk_widget_show (gui_dump->txtSQLRequest);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow8), gui_dump->txtSQLRequest);
 	if (gui_dump->sqlQuery != (gchar *) NULL) {

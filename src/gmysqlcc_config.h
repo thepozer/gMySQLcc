@@ -17,8 +17,12 @@
 #define CONFIG_FILE "gmysqlcc_conf.xml"
 
 typedef struct _s_gmysqlcc_config {
-	gchar * servers_filename;
 	gchar * config_filename;
+	gchar * servers_filename;
+	
+	gchar * pcQueryFontName;
+	gchar * pcHelpFontName;
+	
 	GList * lst_servers;
 } s_gmysqlcc_config;
 

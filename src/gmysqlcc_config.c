@@ -1,6 +1,17 @@
 
 #include "gmysqlcc_config.h"
 
+struct _s_xml_config_read_state {
+	enum {
+			X_CFG_OUT = 0,
+			X_CFG_IN_GMYSQLCC, /* = 1, */
+			X_CFG_IN_GMYSQLCC_FONTS, /* = 2, */
+			X_CFG_IN_GMYSQLCC_FONTS_QUERY, /* = 3, */
+			X_CFG_IN_GMYSQLCC_FONTS_HELP, /* = 4, */
+		} state;
+	GString * text;
+} s_xml_config_read_state;
+
 struct _s_xml_servers_read_state {
 	enum {
 			X_OUT_ROOT = 0,
@@ -28,6 +39,14 @@ struct _s_xml_servers_read_state {
 	gboolean write_warning;
 } xml_servers_read_state;
 
+char * default_gmysqlcc_conf = "<?xml version=\"1.0\"?>"
+"<gmysqlcc>"
+	"<fonts>"
+		"<query><![CDATA[courier 9]]></query>"
+		"<help><![CDATA[courier 9]]></help>"
+	"</fonts>"
+"</gmysqlcc>";
+
 char * default_servers_conf = "<?xml version=\"1.0\"?>"
 "<servers>"
 	"<server>"
@@ -45,13 +64,19 @@ char * default_servers_conf = "<?xml version=\"1.0\"?>"
 	"</server>"
 "</servers>";
 
+gboolean gmysqlcc_config_read_config_file (p_gmysqlcc_config gmysqlcc_conf);
+gboolean gmysqlcc_config_write_config_file (p_gmysqlcc_config gmysqlcc_conf);
+void xml_config_conf_start (GMarkupParseContext *context, const gchar * element_name, const gchar ** attribute_names, const gchar ** attribute_values, gpointer user_data, GError ** error);
+void xml_config_conf_end (GMarkupParseContext *context, const gchar * element_name, gpointer user_data, GError ** error);
+void xml_config_conf_text (GMarkupParseContext *context, const gchar * text, gsize text_len, gpointer user_data, GError ** error);
+void xml_config_conf_passthrough (GMarkupParseContext *context, const gchar * passthrough_text, gsize text_len, gpointer user_data, GError **error);
+
 gboolean gmysqlcc_config_read_servers_file (p_gmysqlcc_config gmysqlcc_conf);
 gboolean gmysqlcc_config_write_servers_file (p_gmysqlcc_config gmysqlcc_conf);
 void xml_servers_conf_start (GMarkupParseContext *context, const gchar * element_name, const gchar ** attribute_names, const gchar ** attribute_values, gpointer user_data, GError ** error);
 void xml_servers_conf_end (GMarkupParseContext *context, const gchar * element_name, gpointer user_data, GError ** error);
 void xml_servers_conf_text (GMarkupParseContext *context, const gchar * text, gsize text_len, gpointer user_data, GError ** error);
 void xml_servers_conf_passthrough (GMarkupParseContext *context, const gchar * passthrough_text, gsize text_len, gpointer user_data, GError **error);
-
 
 /* 
 	gmysqlcc_config functions 
@@ -68,6 +93,10 @@ p_gmysqlcc_config gmysqlcc_config_new () {
 	
 	gmysqlcc_conf->servers_filename = NULL;
 	gmysqlcc_conf->config_filename = NULL;
+	
+	gmysqlcc_conf->pcQueryFontName = NULL;
+	gmysqlcc_conf->pcHelpFontName = NULL;
+
 	gmysqlcc_conf->lst_servers = NULL;
 	
 	return gmysqlcc_conf;
@@ -95,7 +124,7 @@ gboolean gmysqlcc_config_read (p_gmysqlcc_config gmysqlcc_conf) {
 		}
 	}
 	
-	/*gmysqlcc_config_read_config_file(gmysqlcc_conf);*/
+	gmysqlcc_config_read_config_file(gmysqlcc_conf);
 	
 	/* Check new servers file */
 	gmysqlcc_conf->servers_filename = NULL;
@@ -144,7 +173,7 @@ gboolean gmysqlcc_config_write (p_gmysqlcc_config gmysqlcc_conf) {
 	g_string_printf(filePath, "%s/%s/%s/%s", g_get_home_dir(), CONF_DIR, GMYSQLCC_CONF_DIR, CONFIG_FILE);
 	gmysqlcc_conf->config_filename = g_strdup(filePath->str);
 	
-	/*gmysqlcc_config_write_config_file(gmysqlcc_conf);*/
+	gmysqlcc_config_write_config_file(gmysqlcc_conf);
 	
 	/* Check new servers file */
 	gmysqlcc_conf->servers_filename = NULL;
@@ -174,6 +203,9 @@ gboolean gmysqlcc_config_delete (p_gmysqlcc_config gmysqlcc_conf) {
 		
 		g_list_free(gmysqlcc_conf->lst_servers);
 		
+		g_free(gmysqlcc_conf->pcQueryFontName);
+		g_free(gmysqlcc_conf->pcHelpFontName);
+
 		g_free(gmysqlcc_conf->servers_filename);
 		g_free(gmysqlcc_conf->config_filename);
 		g_free(gmysqlcc_conf);
@@ -283,7 +315,149 @@ p_mysql_server gmysqlcc_config_get_server (p_gmysqlcc_config gmysqlcc_conf, cons
 
 /* xml read structures and datas */
 
-/* xml read functions */
+/* xml read functions - Config file */
+
+gboolean gmysqlcc_config_read_config_file (p_gmysqlcc_config gmysqlcc_conf) {
+	GMarkupParser xmlParse;
+	GMarkupParseContext * xmlContext;
+	GError * gerr = NULL;
+	FILE * xmlFile;
+	gchar sbuf[257];
+	int szRead;
+	
+	if (gmysqlcc_conf == NULL) {
+		return FALSE; 
+	}
+	
+	/* Init XMl parser Struct */
+	xmlParse.start_element = xml_config_conf_start;
+	xmlParse.end_element = xml_config_conf_end;
+	xmlParse.text = NULL; /*xml_config_conf_text;*/
+	xmlParse.passthrough = xml_config_conf_passthrough;
+	xmlParse.error = NULL;
+	
+	/* Init XML read status struct */
+	s_xml_config_read_state.state = X_CFG_OUT;
+	s_xml_config_read_state.text = g_string_sized_new(16);
+
+	/* Create XML Parser */
+	xmlContext = g_markup_parse_context_new(&xmlParse, 0, (gpointer)gmysqlcc_conf, (GDestroyNotify)NULL);
+	
+	if (gmysqlcc_conf->config_filename != NULL) {
+		xmlFile = fopen(gmysqlcc_conf->config_filename, "r");
+	} else {
+		xmlFile = NULL;
+		errno = ENOENT;
+	}
+	
+	if (xmlFile == (FILE *)NULL) { /* Not found conf file -> use default conf */
+		g_printerr("Error file open : %s. -> read default configuration\n", strerror(errno));
+		g_markup_parse_context_parse(xmlContext, default_gmysqlcc_conf, strlen(default_gmysqlcc_conf), &gerr);
+		g_markup_parse_context_end_parse (xmlContext, &gerr);
+	} else { /* Read user configuration */
+		do {
+			szRead = fread(sbuf, 1, 256, xmlFile);
+			if (!g_markup_parse_context_parse(xmlContext, sbuf, szRead, &gerr)) {
+				szRead = -1;
+			}
+		} while (szRead > 0);
+		if (szRead > -1) {
+			g_markup_parse_context_end_parse (xmlContext, &gerr);
+		}
+		fclose(xmlFile);
+	}
+	
+	g_markup_parse_context_free(xmlContext);
+
+	return TRUE;
+}
+
+gboolean gmysqlcc_config_write_config_file (p_gmysqlcc_config gmysqlcc_conf) {
+	GString * xmlContent;
+	FILE * xmlFile;
+	
+	if (gmysqlcc_conf == NULL) {
+		return FALSE; 
+	}
+	
+	if (gmysqlcc_conf->config_filename == NULL) {
+		return FALSE;
+	}
+	
+	xmlContent = g_string_new("<?xml version=\"1.0\" ?>\n<gmysqlcc>\n");
+	g_string_append_printf(xmlContent, "\t<fonts>\n\t\t<query><![CDATA[%s]]></query>\n", gmysqlcc_conf->pcQueryFontName);
+	g_string_append_printf(xmlContent, "\t\t<help><![CDATA[%s]]></help>\n\t</fonts>\n", gmysqlcc_conf->pcHelpFontName);
+	g_string_append(xmlContent, "</gmysqlcc>\n");
+	
+	xmlFile = fopen(gmysqlcc_conf->config_filename, "w");
+	if (xmlFile == NULL) {
+		g_printerr("Error file open : %s.\n", strerror(errno));
+		return FALSE;
+	}
+	fwrite(xmlContent->str, 1, xmlContent->len, xmlFile);
+	fclose(xmlFile);
+	
+	g_string_free(xmlContent, TRUE);
+	
+	return TRUE;
+}
+
+void xml_config_conf_start (GMarkupParseContext *context, const gchar * element_name, const gchar ** attribute_names, const gchar ** attribute_values, gpointer user_data, GError ** error) {
+	if (g_ascii_strcasecmp(element_name, "gmysqlcc") == 0 && s_xml_config_read_state.state == X_CFG_OUT) {
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC;
+	} else if (g_ascii_strcasecmp(element_name, "fonts") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC) {
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC_FONTS;
+	} else if (g_ascii_strcasecmp(element_name, "query") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC_FONTS) {
+		g_string_erase(s_xml_config_read_state.text, 0, -1);
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC_FONTS_QUERY;
+	} else if (g_ascii_strcasecmp(element_name, "help") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC_FONTS) {
+		g_string_erase(s_xml_config_read_state.text, 0, -1);
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC_FONTS_HELP;
+	}
+}
+
+void xml_config_conf_end (GMarkupParseContext *context, const gchar * element_name, gpointer user_data, GError ** error) {
+	p_gmysqlcc_config gmysqlcc_conf = (p_gmysqlcc_config)user_data;
+
+	if (g_ascii_strcasecmp(element_name, "gmysqlcc") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC) {
+		s_xml_config_read_state.state = X_CFG_OUT;
+	} else if (g_ascii_strcasecmp(element_name, "fonts") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC_FONTS) {
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC;
+	} else if (g_ascii_strcasecmp(element_name, "query") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC_FONTS_QUERY) {
+		gmysqlcc_conf->pcQueryFontName = strdup(s_xml_config_read_state.text->str);
+		/*g_print("+ SET Font query : '%s'\n", gmysqlcc_conf->pcQueryFontName);*/
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC_FONTS;
+	} else if (g_ascii_strcasecmp(element_name, "help") == 0 && s_xml_config_read_state.state == X_CFG_IN_GMYSQLCC_FONTS_HELP) {
+		gmysqlcc_conf->pcHelpFontName = strdup(s_xml_config_read_state.text->str);
+		/*g_print("+ SET Font help : '%s'\n", gmysqlcc_conf->pcHelpFontName);*/
+		s_xml_config_read_state.state = X_CFG_IN_GMYSQLCC_FONTS;
+	}
+}
+
+void xml_config_conf_text (GMarkupParseContext *context, const gchar * text, gsize text_len, gpointer user_data, GError ** error) {
+}
+
+void xml_config_conf_passthrough (GMarkupParseContext *context, const gchar * passthrough_text, gsize text_len, gpointer user_data, GError **error) {
+
+	if (!(g_ascii_strncasecmp(passthrough_text, "<![CDATA[", 9) == 0 && g_ascii_strncasecmp(passthrough_text + (text_len - 3), "]]>", 3) == 0)) {
+		return;
+	}
+	
+	switch (s_xml_config_read_state.state) {
+		case X_CFG_IN_GMYSQLCC_FONTS_QUERY :
+			g_string_append_len(s_xml_config_read_state.text, passthrough_text + 9, text_len - 12);
+			/*g_print("+ Read Font query : '%s'\n", s_xml_config_read_state.text->str);*/
+			break;
+		case X_CFG_IN_GMYSQLCC_FONTS_HELP :
+			g_string_append_len(s_xml_config_read_state.text, passthrough_text + 9, text_len - 12);
+			/*g_print("+ Read Font help : '%s'\n", s_xml_config_read_state.text->str);*/
+			break;
+		default :
+			break;
+	}
+}
+
+/* xml read functions - Servers file */
 
 gboolean gmysqlcc_config_read_servers_file (p_gmysqlcc_config gmysqlcc_conf) {
 	GMarkupParser xmlParse;
@@ -408,8 +582,6 @@ gboolean gmysqlcc_config_write_servers_file (p_gmysqlcc_config gmysqlcc_conf) {
 	
 	return TRUE;
 }
-
-
 
 void xml_servers_conf_start (GMarkupParseContext *context, const gchar * element_name, const gchar ** attribute_names, const gchar ** attribute_values, gpointer user_data, GError ** error) {
 	if (g_ascii_strcasecmp(element_name, "servers") == 0 && xml_servers_read_state.state == X_OUT_ROOT) {

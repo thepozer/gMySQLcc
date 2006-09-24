@@ -133,6 +133,8 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 	GtkTextBuffer * txtBuffer;
 #endif /* USE_GTKSOURCEVIEW */
 	
+	PangoFontDescription * pCourierFontDesc = NULL;
+	
 	tooltips = gtk_tooltips_new();
 	
 	gui_query->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -229,6 +231,9 @@ void gmysqlcc_gui_query_create_widget (p_gmysqlcc_gui_query gui_query) {
 #else /* USE_GTKSOURCEVIEW */
 	gui_query->txtSQLRequest = gtk_text_view_new ();
 #endif /* USE_GTKSOURCEVIEW */
+	pCourierFontDesc = pango_font_description_from_string(gmysqlcc_conf->pcQueryFontName);
+	gtk_widget_modify_font(gui_query->txtSQLRequest, pCourierFontDesc);
+	pango_font_description_free(pCourierFontDesc);
 	gtk_widget_show (gui_query->txtSQLRequest);
 	gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), gui_query->txtSQLRequest);
   
