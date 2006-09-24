@@ -171,17 +171,20 @@ guint mysql_server_get_version(p_mysql_server mysql_srv, gboolean force_query) {
 	mysql_qry = mysql_server_query(mysql_srv, NULL);
 	mysql_srv->version = 0;
 	
-	version = mysql_get_server_info(mysql_qry->mysql_link);
+	if (mysql_qry->errCode == 0) {
+		version = mysql_get_server_info(mysql_qry->mysql_link);
 	
-	version_split = g_strsplit_set(version, "._-", 4);
+		version_split = g_strsplit_set(version, "._-", 4);
 	
-	if (version_split == NULL || version_split[0] == NULL || version_split[1] == NULL || version_split[2] == NULL) {
-		return 0;
+		if (version_split == NULL || version_split[0] == NULL || version_split[1] == NULL || version_split[2] == NULL) {
+			return 0;
+		}
+		
+		mysql_srv->version = (((atoi(version_split[0]) * 100) + atoi(version_split[1])) * 100) + atoi(version_split[2]);
+		
+		g_strfreev(version_split);
 	}
 	
-	mysql_srv->version = (((atoi(version_split[0]) * 100) + atoi(version_split[1])) * 100) + atoi(version_split[2]);
-	
-	g_strfreev(version_split);
 	mysql_query_delete(mysql_qry);
 	
 	return mysql_srv->version;
