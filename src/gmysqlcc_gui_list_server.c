@@ -348,7 +348,7 @@ void gmysqlcc_gui_list_server_init_widget (p_gmysqlcc_gui_list_server gui_list_s
 
 void gmysqlcc_gui_list_server_fill_server_list (p_gmysqlcc_gui_list_server gui_list_server) {
 	p_mysql_server mysql_srv;
-  GList * items = NULL;
+	GList * items = NULL;
 	GtkListStore * lstStrBase;
 	GtkTreeIter iter, * itSel;
 	GtkTreeSelection* selection;
@@ -715,3 +715,4 @@ gboolean gmysqlcc_gui_list_server_evt_lstListHosts_btnpress(GtkWidget *widget, G
 	}
 	return FALSE;
 }
+
