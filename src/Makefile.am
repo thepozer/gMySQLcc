@@ -10,43 +10,41 @@ AM_CFLAGS =\
 
 #SUBDIRS = tests
 
-bin_PROGRAMS = gmysqlcc
+bin_PROGRAMS = gmysqlcc gmlc_test
+
+gmlc_test_SOURCES = \
+	gmlc_mysql_server.c\
+	gmlc_mysql_server.h\
+	gmlc_mysql_query.c\
+	gmlc_mysql_query.h\
+	gmlc_mysql_database.c\
+	gmlc_mysql_database.h\
+	gmlc_test_main.c
+
+gmlc_test_LDFLAGS = 
+
+gmlc_test_LDADD =  \
+	$(GTK_LIBS) \
+	$(GTKSourceView_LIBS) \
+	$(MySQLc_LIBS)
+
 
 gmysqlcc_SOURCES = \
-	gmysqlcc_main.c\
-	gmysqlcc_config.c\
-	gmysqlcc_config.h\
-	gmysqlcc_helpers.c\
-	gmysqlcc_helpers.h\
-	gmysqlcc_gui_all.h\
-	gmysqlcc_gui_dump.c\
-	gmysqlcc_gui_exec_file.c\
-	gmysqlcc_gui_list_server.c\
-	gmysqlcc_gui_query.c\
-	gmysqlcc_gui_server.c\
-	gmysqlcc_gui_server.h\
-	gmysqlcc_gui_server_tab_db.c\
-	gmysqlcc_gui_server_tab_help.c\
-	gmysqlcc_gui_server_tab_proc.c\
-	gmysqlcc_gui_server_tab_server.c\
-	gmysqlcc_gui_server_tab_user.c\
-	gmysqlcc_gui_text.c\
-	gmysqlcc_gui_misc.c\
-	mysql_db_all.h\
-	mysql_data_list.c\
-	mysql_data_list.h\
-	mysql_database.c\
-	mysql_dump.c\
-	mysql_dump_csv.c\
-	mysql_dump_sql.c\
-	mysql_dump_xml.c\
-	mysql_multi_query.c\
-	mysql_query.c\
-	mysql_right.c\
-	mysql_row.c\
-	mysql_server.c\
-	mysql_table.c\
-	mysql_user.c
+	gmlc_gui_connexions.c\
+	gmlc_gui_connexions.h\
+	gmlc_gui_query.c\
+	gmlc_gui_query.h\
+	gmlc_gui_server.c\
+	gmlc_gui_server.h\
+	gmlc_main.c\
+	gmlc_misc_config.c\
+	gmlc_misc_config.h\
+	gmlc_mysql_server.c\
+	gmlc_mysql_server.h\
+	gmlc_mysql_query.c\
+	gmlc_mysql_query.h\
+	gmlc_mysql_database.c\
+	gmlc_mysql_database.h
 
 gmysqlcc_LDFLAGS = 
 
