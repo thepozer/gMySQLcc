@@ -208,22 +208,22 @@ typedef struct _s_mysql_query {
 	gchar *						query;
 	
 /* Result Infos */
-	int								nbrField;
-	int								editResult;
-	int								errCode;
+	int							nbrField;
+	int							editResult;
+	int							errCode;
 	gchar *						errMsg;
 	GArray *					rawHeaders;
 	gboolean					can_edit;
 	
 /* Connection Infos */
-	p_mysql_server		mysql_srv;
+	p_mysql_server				mysql_srv;
 	gchar *						db_name;
 	gchar *						abs_tbl_name;
 	gchar *						tbl_name;
 	
 /* Mysql Infos */
 	MYSQL *						mysql_link;
-	MYSQL_RES *				mysql_result;
+	MYSQL_RES *					mysql_result;
 	
 /* Charset Infos */
 	gchar *						charset;
@@ -235,23 +235,23 @@ typedef s_mysql_query * p_mysql_query;
 
 typedef struct _s_mysql_multi_query {
 	/* Connection Infos */
-	p_mysql_database	mysql_db;
+	p_mysql_database			mysql_db;
 	
 	/* Execution Infos */
-	p_mysql_query			mysql_qry;
+	p_mysql_query				mysql_qry;
 	void (* status_callback) (struct _s_mysql_multi_query * mysql_mlt_qry, gboolean error, gpointer user_data);
 	gpointer status_user_data;
 	
 	/* Thread params */
-	const gchar *			content;
+	const gchar *				content;
 	gboolean					stop_error;
 	gboolean					finished;
 	gboolean					finish_ok;
 	
 	/* Report Infos */
 	GString *					report;
-	gint 							nbr_query;
-	gint							nbr_error;
+	gint 						nbr_query;
+	gint						nbr_error;
 } s_mysql_multi_query;
 
 typedef s_mysql_multi_query * p_mysql_multi_query;
@@ -261,7 +261,7 @@ typedef struct _s_mysql_row {
 	GArray *					results;
 	
 /* Connection infos */
-	p_mysql_query			mysql_qry;
+	p_mysql_query				mysql_qry;
 	
 /* Request for update infos */
 	gchar *						abs_tbl_name;

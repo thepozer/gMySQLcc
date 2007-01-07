@@ -461,6 +461,7 @@ gboolean mysql_query_set_can_edit (p_mysql_query mysql_qry, gboolean new_value) 
 gboolean mysql_query_get_can_edit (p_mysql_query mysql_qry) {
 	return mysql_qry->can_edit;
 }
+
 gchar * mysql_query_get_charset(p_mysql_query mysql_qry) {
 
 	if (mysql_qry == NULL) {
@@ -509,6 +510,7 @@ gboolean mysql_query_change_charset (p_mysql_query mysql_qry, const gchar * char
 	
 	return TRUE;
 }
+
 gboolean mysql_query_is_read_query(p_mysql_query mysql_qry, const gchar * query) {
 	gchar * pc_query_up;
 	
