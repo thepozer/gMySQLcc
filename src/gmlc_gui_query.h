@@ -40,7 +40,7 @@ struct _GmlcGuiQuery {
 	GtkWidget * vbxSQLQueries;
 	GtkWidget * lstSQLQueries;
 	GtkWidget * txtSQLRequest;
-	GtkWidget * sclSQLResult;
+	GtkWidget * tabSQLResult;
 	GtkWidget * lstSQLResult;
 	GtkWidget * cmbCharset;
 	GtkWidget * statusbarSQL;
@@ -51,6 +51,7 @@ struct _GmlcGuiQuery {
 	GmlcMysqlServer * pGmlcMysqlSrv;
 	gchar * pcDefDbName;
 	GmlcMysqlQuery * pGmlcMysqlQry;
+	guint iNumResult;
 	
 /*	gint currCharset;*/
 /*	GSList * lstRows;*/

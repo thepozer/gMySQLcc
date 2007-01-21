@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	
 	g_print("Exécution de la query : %s\n", pcSql);
 	
-	if (gmlc_mysql_query_execute(pGmlcMysqlQry, pcSql, strlen(pcSql))) {
+	if (gmlc_mysql_query_execute(pGmlcMysqlQry, pcSql, strlen(pcSql), FALSE)) {
 		g_print("Execution de la query OK.\n");
 		bContinue = TRUE;
 	} else {

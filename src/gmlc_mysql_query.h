@@ -45,7 +45,8 @@ struct _GmlcMysqlQuery {
 /* Mysql Infos */
 	MYSQL *			pMysqlLink;
 	MYSQL_RES *		pMysqlResult;
-	MYSQL_FIELD *	arMysqlFields;
+	MYSQL_FIELD *	pMysqlHeaders;
+	GArray * 		arMysqlHeaders;
 	gchar *			pcSrvCharset;
 	gulong			lVersion;
 };
@@ -66,12 +67,14 @@ GmlcMysqlQuery * gmlc_mysql_query_new (GObject * pGmlcMysqlSrv, gchar * pcDbName
 gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry);
 gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry);
 
-gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * pcQuery, gsize szQuery);
+gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * pcQuery, gsize szQuery, gboolean bForceWrite);
 gboolean gmlc_mysql_query_have_record(GmlcMysqlQuery * pGmlcMysqlQry);
 GArray * gmlc_mysql_query_next_record(GmlcMysqlQuery * pGmlcMysqlQry);
 gboolean gmlc_mysql_query_have_more_result(GmlcMysqlQuery * pGmlcMysqlQry);
 gboolean gmlc_mysql_query_goto_next_result(GmlcMysqlQuery * pGmlcMysqlQry);
 gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry);
+
+GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry);
 
 G_END_DECLS
 

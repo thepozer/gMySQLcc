@@ -166,7 +166,8 @@ static void gmlc_mysql_query_init (GmlcMysqlQuery * pGmlcMysqlQry) {
 	pGmlcMysqlQry->bNoRecord = FALSE;	/* r-- */
 	pGmlcMysqlQry->lVersion = 0;		/* r-- */
 	pGmlcMysqlQry->pcSrvCharset = g_strdup("ISO-8859-1");	/* r-c */
-	pGmlcMysqlQry->arMysqlFields = NULL; /* --- */
+	pGmlcMysqlQry->pMysqlHeaders = NULL; /* --- */
+	pGmlcMysqlQry->arMysqlHeaders = NULL;
 }
 
 static void gmlc_mysql_query_finalize (GmlcMysqlQuery * pGmlcMysqlQry) {
@@ -231,6 +232,8 @@ GmlcMysqlQuery * gmlc_mysql_query_new (GObject * pGmlcMysqlSrv, gchar * pcDbName
 
 static gboolean gmlc_mysql_query_connect(GmlcMysqlQuery * pGmlcMysqlQry) {
 	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
+	
 	if (pGmlcMysqlQry->pMysqlLink != NULL) {
 		return TRUE;
 	}
@@ -258,11 +261,13 @@ static gboolean gmlc_mysql_query_connect(GmlcMysqlQuery * pGmlcMysqlQry) {
 	return TRUE;
 }
 
-gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * pcQuery, gsize szQuery) {
+gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * pcQuery, gsize szQuery, gboolean bForceWrite) {
 	GError * oErr = NULL;
 	gchar * pcTmp = NULL;
 	gsize szTmp = 0;
 	gint iErrCode = 0;
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
 	
 	pcTmp = g_convert(pcQuery, szQuery, pGmlcMysqlQry->pcSrvCharset, "UTF-8", NULL, &szTmp, &oErr);
 	if (pcTmp == NULL && oErr != NULL) {
@@ -279,6 +284,22 @@ gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * 
 
 	if (pGmlcMysqlQry->pMysqlLink == NULL) {
 		return FALSE;
+	}
+	
+	if (pGmlcMysqlQry->pGmlcMysqlSrv->bReadOnly && !gmlc_tools_query_is_read_query(pcQuery)) {
+		gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
+		pGmlcMysqlQry->iErrCode = -1000;
+		pGmlcMysqlQry->pcErrMsg = g_strdup("gmysqlcc : Server in Read-only mode");
+		return FALSE;
+	}
+	
+	if (pGmlcMysqlQry->pGmlcMysqlSrv->bWriteWarning && !gmlc_tools_query_is_read_query(pcQuery)) {
+		if (!bForceWrite) {
+			gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
+			pGmlcMysqlQry->iErrCode = -1001;
+			pGmlcMysqlQry->pcErrMsg = g_strdup("gmysqlcc : Server in write warning mode");
+			return FALSE;
+		}
 	}
 	
 	iErrCode = mysql_real_query(pGmlcMysqlQry->pMysqlLink, pGmlcMysqlQry->pcQuery, pGmlcMysqlQry->szQuery);
@@ -307,6 +328,8 @@ gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * 
 
 gboolean gmlc_mysql_query_have_record(GmlcMysqlQuery * pGmlcMysqlQry) {
 	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
+	
 	return (!pGmlcMysqlQry->bNoRecord);
 }
 
@@ -319,6 +342,8 @@ GArray * gmlc_mysql_query_next_record(GmlcMysqlQuery * pGmlcMysqlQry) {
 	gsize szConverted = 0;
 	int i = 0;
 		
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
+	
 	if (pGmlcMysqlQry->pMysqlResult == NULL) {
 		if (pGmlcMysqlQry->bNoRecord) {
 			gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
@@ -333,11 +358,10 @@ GArray * gmlc_mysql_query_next_record(GmlcMysqlQuery * pGmlcMysqlQry) {
 			return NULL;
 		}
 		
-		pGmlcMysqlQry->arMysqlFields = mysql_fetch_fields(pGmlcMysqlQry->pMysqlResult);
-		if (pGmlcMysqlQry->arMysqlFields == NULL) {
+		pGmlcMysqlQry->pMysqlHeaders = mysql_fetch_fields(pGmlcMysqlQry->pMysqlResult);
+		if (pGmlcMysqlQry->pMysqlHeaders == NULL) {
 			gmlc_mysql_query_read_error(pGmlcMysqlQry, FALSE);
-			g_printerr("gmlc_mysql_query_next_record - mysql_fetch_fields - Failed\nQuery : '%s'\nError: (%d) %s\n", pGmlcMysqlQry->pcQuery, pGmlcMysqlQry->iErrCode, pGmlcMysqlQry->pcErrMsg);
-			return NULL;
+			g_printerr("gmlc_mysql_query_execute - mysql_fetch_fields - Failed to query : '%s'\nError: (%d) %s\n", pGmlcMysqlQry->pcQuery, pGmlcMysqlQry->iErrCode, pGmlcMysqlQry->pcErrMsg);
 		}
 		
 		pGmlcMysqlQry->bNoRecord = FALSE;
@@ -377,13 +401,60 @@ GArray * gmlc_mysql_query_next_record(GmlcMysqlQuery * pGmlcMysqlQry) {
 	return arRecordValue;
 }
 
+GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry) {
+	MYSQL_FIELD * pField = NULL;
+	GArray * arHeaders = NULL;
+	GError * oErr = NULL;
+	gchar * pcTmp = NULL;
+	gsize szTmp = 0;
+	int i = 0;
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, NULL);
+	
+	if (pGmlcMysqlQry->iNbField == 0) {
+		return NULL;
+	}
+	
+	if (pGmlcMysqlQry->pMysqlHeaders == NULL) {
+		return NULL;
+	}
+	
+	if (pGmlcMysqlQry->arMysqlHeaders == NULL) {
+		pGmlcMysqlQry->arMysqlHeaders = g_array_sized_new (FALSE, TRUE, sizeof (char *), pGmlcMysqlQry->iNbField);
+		
+		for(i = 0; i < pGmlcMysqlQry->iNbField; i++) {
+			pField = &pGmlcMysqlQry->pMysqlHeaders[i];
+			pcTmp = g_convert(pField->name, strlen(pField->name), "UTF-8", pGmlcMysqlQry->pcSrvCharset, NULL, &szTmp, &oErr);
+			if (pcTmp == NULL && oErr != NULL) {
+				g_printerr("gmlc_mysql_query_get_headers - g_convert - Failed to convert header\nHeader : '%s'\nError: (%d) %s\n", pField->name, oErr->code, oErr->message);
+				pcTmp = g_strdup(pField->name);
+			}
+			
+			g_array_append_val (pGmlcMysqlQry->arMysqlHeaders, pcTmp);
+		}
+	}
+	
+	arHeaders = g_array_sized_new (FALSE, TRUE, sizeof (char *), pGmlcMysqlQry->iNbField);
+	
+	for(i = 0; i < pGmlcMysqlQry->arMysqlHeaders->len; i++) {
+		pcTmp = g_array_index(pGmlcMysqlQry->arMysqlHeaders, gchar *, i);
+		g_array_append_val (arHeaders, pcTmp);
+	}
+	
+	return arHeaders;
+}
+
 gboolean gmlc_mysql_query_have_more_result(GmlcMysqlQuery * pGmlcMysqlQry) {
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
 	
 	return mysql_more_results(pGmlcMysqlQry->pMysqlLink);
 }
 
 gboolean gmlc_mysql_query_goto_next_result(GmlcMysqlQuery * pGmlcMysqlQry) {
 	gint iNextRes = 0;
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
 	
 	gmlc_mysql_query_free_result(pGmlcMysqlQry);
 	
@@ -412,12 +483,25 @@ gboolean gmlc_mysql_query_goto_next_result(GmlcMysqlQuery * pGmlcMysqlQry) {
 }
 
 gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry) {
+	gchar * pcTmp = NULL;
+	gint i = 0;
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
 	
 	if (pGmlcMysqlQry->pMysqlResult != NULL || (pGmlcMysqlQry->pMysqlResult == NULL && pGmlcMysqlQry->bNoRecord == TRUE)) {
 		mysql_free_result(pGmlcMysqlQry->pMysqlResult);
 		
+		if (pGmlcMysqlQry->arMysqlHeaders != NULL) {
+			for (i = 0; i < pGmlcMysqlQry->arMysqlHeaders->len; i ++) {
+				pcTmp = g_array_index(pGmlcMysqlQry->arMysqlHeaders, gchar *, i);
+				g_free(pcTmp);
+			}
+			g_array_free(pGmlcMysqlQry->arMysqlHeaders, TRUE);
+		}
+		
 		pGmlcMysqlQry->pMysqlResult = NULL;
-		pGmlcMysqlQry->arMysqlFields = NULL;
+		pGmlcMysqlQry->pMysqlHeaders = NULL;
+		pGmlcMysqlQry->arMysqlHeaders = NULL;
 		pGmlcMysqlQry->iNbField = 0;
 		pGmlcMysqlQry->bNoRecord = FALSE;
 		pGmlcMysqlQry->iEditResult = 0;
@@ -427,6 +511,8 @@ gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry) {
 }
 
 gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry) {
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, 0);
 	
 	if (pGmlcMysqlQry->lVersion != 0) {
 		return pGmlcMysqlQry->lVersion;
@@ -448,6 +534,8 @@ gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry) {
 gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry) {
 	gchar * pcCharset = NULL;
 	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, NULL);
+	
 	if (pGmlcMysqlQry->pMysqlLink == NULL) {
 		gmlc_mysql_query_connect(pGmlcMysqlQry);
 	}
@@ -467,6 +555,8 @@ gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry) {
 }
 
 void gmlc_mysql_query_read_error(GmlcMysqlQuery * pGmlcMysqlQry, gboolean bClearOnly) {
+	
+	g_return_if_fail(pGmlcMysqlQry != NULL);
 	
 	if (pGmlcMysqlQry->iErrCode < 0) {
 		g_free(pGmlcMysqlQry->pcErrMsg);

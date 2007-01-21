@@ -15,6 +15,7 @@
  */
 
 #include "gmlc_gui_query.h"
+#include "gmlc_gui_helpers.h"
 #include "gmlc_mysql_query.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -23,7 +24,10 @@ static void gmlc_gui_query_finalize (GmlcGuiQuery * pGmlcGuiQry);
 static void gmlc_gui_query_create_widgets (GmlcGuiQuery * pGmlcGuiQry);
 static void gmlc_gui_query_init_widgets (GmlcGuiQuery * pGmlcGuiQry);
 
-
+void gmlc_gui_query_execute_query (GmlcGuiQuery * pGmlcGuiQry, const gchar * query);
+void gmlc_gui_query_display_all_result(GmlcGuiQuery * pGmlcGuiQry);
+void gmlc_gui_query_display_one_result(GmlcGuiQuery * pGmlcGuiQry);
+void gmlc_gui_query_display_one_info(GmlcGuiQuery * pGmlcGuiQry);
 
 static void gmlc_gui_query_evt_destroy(GtkWidget *widget, gpointer user_data);
 gboolean gmlc_gui_query_evt_window_keyrelease (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
@@ -82,6 +86,7 @@ GmlcGuiQuery * gmlc_gui_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar 
 	
 	pGmlcGuiQry->pGmlcMysqlSrv = pGmlcMysqlSrv;
 	pGmlcGuiQry->pcDefDbName = g_strdup(pcDefDbName);
+	pGmlcGuiQry->pGmlcMysqlQry = gmlc_mysql_query_new(pGmlcGuiQry->pGmlcMysqlSrv, pGmlcGuiQry->pcDefDbName);
 	
 	return pGmlcGuiQry;
 }
@@ -188,19 +193,16 @@ static void gmlc_gui_query_create_widgets (GmlcGuiQuery * pGmlcGuiQry) {
 	pango_font_description_free(pCourierFontDesc);
 	gtk_widget_show (pGmlcGuiQry->txtSQLRequest);
 	gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), pGmlcGuiQry->txtSQLRequest);
-  
-	pGmlcGuiQry->sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (pGmlcGuiQry->sclSQLResult);
-	gtk_paned_pack2 (GTK_PANED (vpanedSQL), pGmlcGuiQry->sclSQLResult, TRUE, TRUE);
+	
+	
+	
+	
+	
+	pGmlcGuiQry->tabSQLResult = gtk_notebook_new ();
+	gtk_widget_show (pGmlcGuiQry->tabSQLResult);
+	gtk_paned_pack2 (GTK_PANED (vpanedSQL), pGmlcGuiQry->tabSQLResult, TRUE, TRUE);
 
-	pGmlcGuiQry->lstSQLResult = gtk_tree_view_new ();
-	gtk_widget_show (pGmlcGuiQry->lstSQLResult);
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiQry->lstSQLResult), TRUE);
-	gtk_container_add (GTK_CONTAINER (pGmlcGuiQry->sclSQLResult), pGmlcGuiQry->lstSQLResult);
-
-	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiQry->lstSQLResult));
-	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-/*	g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (gmysqlcc_gui_query_evt_resultRow_selected), pGmlcGuiQry);*/
+	pGmlcGuiQry->lstSQLResult = NULL;
 
 	pGmlcGuiQry->statusbarSQL = gtk_statusbar_new ();
 	gtk_widget_show (pGmlcGuiQry->statusbarSQL);
@@ -219,7 +221,7 @@ gboolean gmlc_gui_query_set_query (GmlcGuiQuery * pGmlcGuiQry, const gchar * pcQ
 		txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGmlcGuiQry->txtSQLRequest));
 		gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), pcQuery, -1);
 		if (bExecNow) {
-/*			gmlc_gui_query_execute_query (pGmlcGuiQry, pcQuery);*/
+			gmlc_gui_query_execute_query (pGmlcGuiQry, pcQuery);
 		}
 		return TRUE;
 	}
@@ -238,6 +240,177 @@ gchar * gmlc_gui_query_get_query (GmlcGuiQuery * pGmlcGuiQry) {
 	pcSqlQuery = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 	
 	return pcSqlQuery;
+}
+
+void gmlc_gui_query_execute_query (GmlcGuiQuery * pGmlcGuiQry, const gchar * query) {
+	GtkWidget * msgdlg;
+	
+	gmlc_mysql_query_free_result(pGmlcGuiQry->pGmlcMysqlQry);
+	if (!gmlc_mysql_query_execute(pGmlcGuiQry->pGmlcMysqlQry, query, strlen(query), FALSE)) {
+		/* if is it a write warning */
+		if (pGmlcGuiQry->pGmlcMysqlQry->pGmlcMysqlSrv->bWriteWarning && pGmlcGuiQry->pGmlcMysqlQry->iErrCode == -1001) {
+			if (askYesno(_("Write Warning !!!"), _("Warning !!! This server has been marked with Write Warning flags !!!\nIt is dangerous for the data ... :)\n\nDo you want force the execution of the query ?"))) {
+				if (!gmlc_mysql_query_execute(pGmlcGuiQry->pGmlcMysqlQry, query, strlen(query), TRUE)) {
+					/* Query Not Ok */
+					msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiQry), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiQry->pGmlcMysqlQry->iErrCode, pGmlcGuiQry->pGmlcMysqlQry->pcErrMsg);
+					gtk_dialog_run (GTK_DIALOG (msgdlg));
+					gtk_widget_destroy (msgdlg);
+					gmlc_mysql_query_free_result(pGmlcGuiQry->pGmlcMysqlQry);
+					return;
+				}
+			} else {
+				gmlc_mysql_query_free_result(pGmlcGuiQry->pGmlcMysqlQry);
+				return;
+			}
+		} else { /* It is really an error */
+			/* Query Not Ok */
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiQry), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiQry->pGmlcMysqlQry->iErrCode, pGmlcGuiQry->pGmlcMysqlQry->pcErrMsg);
+			gtk_dialog_run (GTK_DIALOG (msgdlg));
+			gtk_widget_destroy (msgdlg);
+			gmlc_mysql_query_free_result(pGmlcGuiQry->pGmlcMysqlQry);
+			return;
+		}
+	}
+	
+	/* Query Ok ... Continue */
+	
+	/* Select query - Display datas */
+	
+	pGmlcGuiQry->iNumResult = 0;
+/*
+	gmysqlcc_gui_query_clean_result (pGmlcGuiQry);
+	
+	gmysqlcc_gui_query_display_result (pGmlcGuiQry);
+*/
+	gmlc_gui_query_display_all_result(pGmlcGuiQry);
+}
+
+void gmlc_gui_query_display_all_result(GmlcGuiQuery * pGmlcGuiQry) {
+	GtkWidget * msgdlg;
+	
+	do {
+		/* Modification query - Display affected rows */
+		if (pGmlcGuiQry->pGmlcMysqlQry->iErrCode == 0 && pGmlcGuiQry->pGmlcMysqlQry->iNbField == 0) {
+			gmlc_gui_query_display_one_info(pGmlcGuiQry);
+		/*
+			g_printerr("Affected row : %d\n", pGmlcGuiQry->pGmlcMysqlQry->iEditResult);
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiQry), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Affected row : %d\n"), pGmlcGuiQry->pGmlcMysqlQry->iEditResult);
+			gtk_dialog_run (GTK_DIALOG (msgdlg));
+			gtk_widget_destroy (msgdlg);
+			gmlc_mysql_query_free_result(pGmlcGuiQry->pGmlcMysqlQry);
+		*/
+		} else {
+			gmlc_gui_query_display_one_result(pGmlcGuiQry);
+		}
+	} while (gmlc_mysql_query_goto_next_result(pGmlcGuiQry->pGmlcMysqlQry));
+}
+
+void gmlc_gui_query_display_one_result(GmlcGuiQuery * pGmlcGuiQry) {
+	GtkWidget * sclSQLResult = NULL;
+	GtkWidget * lstSQLResult = NULL;
+	GtkWidget * select = NULL;
+	GtkWidget * lblTabTitle = NULL;
+	GString * strTitle = NULL;
+	GArray * arRow = NULL;
+	GArray * arHeaders = NULL;
+	gint i = 0;
+	
+	pGmlcGuiQry->iNumResult ++;
+	
+	/* Create widgets */
+	
+	strTitle = g_string_new("");
+	g_string_append_printf(strTitle, _("Result %d"), pGmlcGuiQry->iNumResult);
+	
+	lblTabTitle = gtk_label_new(strTitle->str);
+	gtk_widget_show (lblTabTitle);
+	
+	g_string_free(strTitle, TRUE);
+	
+	sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (sclSQLResult);
+	
+	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiQry->tabSQLResult), sclSQLResult, lblTabTitle);
+	
+	lstSQLResult = gtk_tree_view_new ();
+	gtk_widget_show (lstSQLResult);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (lstSQLResult), TRUE);
+	gtk_container_add (GTK_CONTAINER (sclSQLResult), lstSQLResult);
+
+	/*select = gtk_tree_view_get_selection (GTK_TREE_VIEW (lstSQLResult));
+	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
+	/*g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (gmysqlcc_gui_query_evt_resultRow_selected), gui_pGmlcGuiQry);*/
+	
+	/* Create columns */
+	
+	arRow = gmlc_mysql_query_next_record(pGmlcGuiQry->pGmlcMysqlQry); /* To get back fields headers */
+	arHeaders = gmlc_mysql_query_get_headers(pGmlcGuiQry->pGmlcMysqlQry);
+	
+	if (arHeaders != NULL) {
+		for (i = 0; i < arHeaders->len; i ++) {
+			g_print("'%s';", g_array_index(arHeaders, gchar *, i));
+		}
+		
+		g_array_free(arHeaders, TRUE);
+		
+		g_print("\n");
+	}
+	
+	/* Display values */
+	g_print ("*** Read data of new query \n");
+	do {
+		for (i = 0; i < arRow->len; i ++) {
+			g_print("'%s';", g_array_index(arRow, gchar *, i));
+			g_free(g_array_index(arRow, gchar *, i));
+		}
+		
+		g_array_free(arRow, TRUE);
+		
+		g_print("\n");
+	} while ((arRow = gmlc_mysql_query_next_record(pGmlcGuiQry->pGmlcMysqlQry)) != NULL);
+}
+
+void gmlc_gui_query_display_one_info(GmlcGuiQuery * pGmlcGuiQry) {
+	GtkTextBuffer * txtBuffer;
+	GtkWidget * sclSQLResult = NULL;
+	GtkWidget * txtSQLInfo = NULL;
+	GtkWidget * lblTabTitle = NULL;
+	PangoFontDescription * pCourierFontDesc = NULL;
+	GString * strTitle = NULL;
+	GString * strInfos = NULL;
+	
+	pGmlcGuiQry->iNumResult ++;
+	
+	/* Create widgets */
+	
+	strTitle = g_string_new("");
+	g_string_append_printf(strTitle, _("Result %d"), pGmlcGuiQry->iNumResult);
+	
+	lblTabTitle = gtk_label_new(strTitle->str);
+	gtk_widget_show (lblTabTitle);
+	
+	g_string_free(strTitle, TRUE);
+	
+	sclSQLResult = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (sclSQLResult);
+	
+	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiQry->tabSQLResult), sclSQLResult, lblTabTitle);
+	
+	txtSQLInfo = gtk_text_view_new ();
+	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcQueryFontName);
+	gtk_widget_modify_font(txtSQLInfo, pCourierFontDesc);
+	pango_font_description_free(pCourierFontDesc);
+	gtk_widget_show (txtSQLInfo);
+	gtk_container_add (GTK_CONTAINER (sclSQLResult), txtSQLInfo);
+	
+	/* Display information */
+	strInfos = g_string_new("");
+	g_string_append_printf(strInfos, _("Affected row : %d"), pGmlcGuiQry->pGmlcMysqlQry->iEditResult);
+	
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(txtSQLInfo));
+	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), strInfos->str, -1);
+	
+	g_string_free(strInfos, TRUE);
 }
 
 static void gmlc_gui_query_evt_destroy(GtkWidget *widget, gpointer user_data) {
@@ -266,13 +439,13 @@ void gmlc_gui_query_evt_btnExecSql_clicked(GtkWidget *widget, gpointer user_data
 	gchar * pcSqlQuery;
 	UNUSED_VAR(widget);
 
-	/*g_print("Execute SQL\n");*/
+	g_print("Execute SQL\n");
 	pcSqlQuery = gmlc_gui_query_get_query(pGmlcGuiQry);
-	/*g_print("SQL Query : '%s'\n", pcSqlQuery);*/
+	g_print("SQL Query : '%s'\n", pcSqlQuery);
 	
-/*
+
 	gmlc_gui_query_execute_query(pGmlcGuiQry, pcSqlQuery);
-*/
+
 	
 	g_free(pcSqlQuery);
 }
