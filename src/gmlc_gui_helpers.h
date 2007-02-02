@@ -33,6 +33,8 @@ gboolean askConfirmation(const gchar * title, const gchar * message);
 gboolean askYesno(const gchar * title, const gchar * message);
 gboolean askFilename(const gchar * title, const gchar * filename, void (*okevent) (GtkWidget *widget, gpointer user_data), gpointer user_data);
 
+gchar * gmlc_helpers_protect_underscore (const gchar * str);
+
 G_END_DECLS
 
 #endif /* __GMLC_GUI_HELPERS_H__ */

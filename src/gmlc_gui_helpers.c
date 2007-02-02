@@ -120,3 +120,24 @@ void closeAskFilename (GtkWidget *widget, gpointer user_data) {
 	g_free(paskFnInf);
 }
 
+gchar * gmlc_helpers_protect_underscore (const gchar * str) {
+	GString * strRet = NULL;
+	gchar * pcRet = NULL;
+	int i = 0;
+	
+	strRet = g_string_new(str);
+	
+	for (i = 0; i < strRet->len; i++) {
+		if (strRet->str[i] == '_') {
+			g_string_insert_c(strRet, i, '_');
+			i++;
+		}
+	}
+	
+	pcRet = g_strdup(strRet->str);
+	g_string_free(strRet, TRUE);
+	
+	return pcRet;
+}
+
+

@@ -63,6 +63,11 @@ struct _GmlcGuiQueryClass {
 	/* define vtable methods and signals here */
 };
 
+typedef struct _sColsInfo {
+	GmlcGuiQuery * pGmlcGuiQry;
+	gint iNumCol;
+} sColsInfo;
+
 GType gmlc_gui_query_get_type (void);
 
 GmlcGuiQuery * gmlc_gui_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName);
