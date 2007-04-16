@@ -1,2 +1,0 @@
-?package(gmysqlcc):needs="X11" section="Apps/Databases"\
-  title="gmysqlcc" command="/usr/bin/gmysqlcc"
