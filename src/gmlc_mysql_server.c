@@ -1,7 +1,9 @@
 
 #include "gmlc_mysql_server.h"
-
+#include "gmlc_mysql_database.h"
 #include "gmlc_mysql_query.h"
+
+#include "gmlc_misc_hashtable.h"
 
 static void gmlc_mysql_server_finalize (GmlcMysqlServer * pGmlcMysqlSrv);
 static void gmlc_mysql_server_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
@@ -65,10 +67,12 @@ static void gmlc_mysql_server_init (GmlcMysqlServer * pGmlcMysqlSrv) {
 	pGmlcMysqlSrv->pcAllowedDbs = NULL;
 	pGmlcMysqlSrv->bReadOnly = FALSE;
 	pGmlcMysqlSrv->bWriteWarning = FALSE;
-	pGmlcMysqlSrv->lVersion = 0;	
+	pGmlcMysqlSrv->lVersion = 0;
+	pGmlcMysqlSrv->htbDatabases = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_object_unref);
 }
 
 static void gmlc_mysql_server_finalize (GmlcMysqlServer * pGmlcMysqlSrv) {
+	g_hash_table_destroy(pGmlcMysqlSrv->htbDatabases);
 	g_free(pGmlcMysqlSrv->pcName);
 	g_free(pGmlcMysqlSrv->pcHost);
 	g_free(pGmlcMysqlSrv->pcLogin);
@@ -208,5 +212,76 @@ gchar * gmlc_mysql_server_generate_xml_config(GmlcMysqlServer * pGmlcMysqlSrv) {
 	return pcRet;
 }
 
+GArray * gmlc_mysql_server_databases_name_list (GmlcMysqlServer * pGmlcMysqlSrv, gboolean bUpdateList) {
+	GArray * arList = NULL;
+	
+	void internal_gmlc_mysql_server_database_name_list_append_name (gpointer key, gpointer value, gpointer user_data) {
+		gchar * pcName = (gchar *) key;
+		GArray * arList = (GArray *) user_data;
+		UNUSED_VAR(value);
+		
+		g_array_append_val(arList, pcName);
+	}
+	
+	if (bUpdateList) {
+		gmlc_mysql_server_update_databases_list(pGmlcMysqlSrv);
+	}
+	
+	arList = g_array_new(TRUE, TRUE, sizeof(gchar *));
+	g_hash_table_foreach(pGmlcMysqlSrv->htbDatabases, &internal_gmlc_mysql_server_database_name_list_append_name, arList);
+	
+	return arList;
+}
 
+gboolean gmlc_mysql_server_update_databases_list(GmlcMysqlServer * pGmlcMysqlSrv) {
+	GmlcMysqlDatabase * pGmlcMysqlDb = NULL;
+	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
+	GArray * arListDb = NULL;
+	GArray * arRow = NULL;
+	gchar * pcName = NULL;
+	gint i = 0;
+	
+	pGmlcMysqlQry = gmlc_mysql_query_new (G_OBJECT(pGmlcMysqlSrv), NULL);
+	
+	if (gmlc_mysql_query_execute(pGmlcMysqlQry, "SHOW DATABASES;", 15, TRUE)) {
+		arListDb = g_array_new(TRUE, TRUE, sizeof(gchar *));
+		while ((arRow = gmlc_mysql_query_next_record(pGmlcMysqlQry)) != NULL) {
+			pcName = g_array_index(arRow, gchar *, 0);
+			g_array_append_val(arListDb, pcName);
+			
+			g_array_free(arRow, TRUE);
+		}
+	}
+	
+	g_object_unref(pGmlcMysqlQry);
+	
+	if (arListDb != NULL) {
+		gmlc_misc_hash_table_set_all_flag(pGmlcMysqlSrv->htbDatabases, FALSE);
+		
+		for (i = 0; i < arListDb->len; i++) {
+			pcName = g_array_index(arListDb, gchar *, i);
+			pGmlcMysqlDb = GMLC_MYSQL_DATABASE(g_hash_table_lookup(pGmlcMysqlSrv->htbDatabases, pcName));
+			
+			if (pGmlcMysqlDb == NULL) {
+				pGmlcMysqlDb = gmlc_mysql_database_new(pGmlcMysqlSrv, pcName);
+				g_hash_table_insert(pGmlcMysqlSrv->htbDatabases, g_strdup(pcName), pGmlcMysqlDb);
+			}
+			g_object_set(G_OBJECT(pGmlcMysqlDb), "flagged", TRUE, NULL);
+			
+			g_free(pcName);
+		}
+		
+		gmlc_misc_hash_table_remove_unflag_object(pGmlcMysqlSrv->htbDatabases);
+		
+		g_array_free(arListDb, TRUE);
+	}
+	
+	return TRUE;
+}
 
+GmlcMysqlDatabase * gmlc_mysql_server_get_database(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcName) {
+	
+	g_return_val_if_fail(pcName != NULL, NULL);
+	
+	return GMLC_MYSQL_DATABASE(g_hash_table_lookup(pGmlcMysqlSrv->htbDatabases, pcName));
+}

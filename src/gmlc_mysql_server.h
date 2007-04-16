@@ -5,6 +5,11 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#ifndef __GMLC_MYSQL_DATABASE_H__TYPE__
+#define __GMLC_MYSQL_DATABASE_H__TYPE__
+typedef struct _GmlcMysqlDatabase            GmlcMysqlDatabase;
+#endif /* __GMLC_MYSQL_DATABASE_H__TYPE__ */
+
 #define UNUSED_VAR(x) (x = x)
 
 G_BEGIN_DECLS
@@ -39,7 +44,9 @@ struct _GmlcMysqlServer {
 	gboolean	bWriteWarning;
 
 /* Server datas */
-	gulong		lVersion;	
+	gulong		lVersion;
+	
+	GHashTable * htbDatabases;
 };
 
 struct _GmlcMysqlServerClass {
@@ -50,6 +57,12 @@ struct _GmlcMysqlServerClass {
 };
 
 GType gmlc_mysql_server_get_type (void);
+
+
+GArray * gmlc_mysql_server_databases_name_list(GmlcMysqlServer * pGmlcMysqlSrv, gboolean bUpdateList);
+GmlcMysqlDatabase * gmlc_mysql_server_get_database(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcName);
+gboolean gmlc_mysql_server_update_databases_list(GmlcMysqlServer * pGmlcMysqlSrv);
+
 
 GmlcMysqlServer * gmlc_mysql_server_new (void);
 

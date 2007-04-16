@@ -1,8 +1,8 @@
 /***************************************************************************
  *            gmlc_mysql_table.c
  *
- *  lun jui 24 00:49:12 2006
- *  Copyright  2006  Didier "pozer" Prolhac
+ *  
+ *  Copyright  2007  Didier "pozer" Prolhac
  *  pozer@thepozer.net
  ***************************************************************************/
 
@@ -23,94 +23,142 @@
  */
 
 #include "gmlc_mysql_table.h"
- 
-static void gmlc_mysql_table_class_init(gmlc_mysql_tableClass *klass);
-static void gmlc_mysql_table_init(gmlc_mysql_table *sp);
-static void gmlc_mysql_table_finalize(GObject *object);
 
-struct _gmlc_mysql_tablePrivate {
-	/* Place Private Members Here */
+static void gmlc_mysql_table_finalize (GmlcMysqlTable * pGmlcMysqlTbl);
+static void gmlc_mysql_table_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void gmlc_mysql_table_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
+
+enum {
+	PROP_0,
+	PROP_DATABASE,
+	PROP_NAME,
+	PROP_ROWS,
+	PROP_SIZE,
+	PROP_TYPE,
+	PROP_FLAGGED
 };
 
-typedef struct _gmlc_mysql_tableSignal gmlc_mysql_tableSignal;
-typedef enum _gmlc_mysql_tableSignalType gmlc_mysql_tableSignalType;
 
-enum _gmlc_mysql_tableSignalType {
-	/* Place Signal Types Here */
-	SIGNAL_TYPE_EXAMPLE,
-	LAST_SIGNAL
-};
+G_DEFINE_TYPE (GmlcMysqlTable, gmlc_mysql_table, G_TYPE_OBJECT)
 
-struct _gmlc_mysql_tableSignal {
-	gmlc_mysql_table *object;
-};
+static void gmlc_mysql_table_class_init(GmlcMysqlTableClass *pClass) {
+	GObjectClass * pObjClass = G_OBJECT_CLASS(pClass);
 
-static guint gmlc_mysql_table_signals[LAST_SIGNAL] = { 0 };
-static GObjectClass *parent_class = NULL;
+	pObjClass->finalize = (GObjectFinalizeFunc) gmlc_mysql_table_finalize;
+	pObjClass->get_property = gmlc_mysql_table_get_property;
+	pObjClass->set_property = gmlc_mysql_table_set_property;
+	
+	g_object_class_install_property(pObjClass, PROP_DATABASE, 
+		g_param_spec_object("database", "Database object", "Database object", GMLC_TYPE_MYSQL_DATABASE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_NAME, 
+		g_param_spec_string("name", "Table name", "Name of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_ROWS, 
+		g_param_spec_string("rows", "Table rows", "Rows' number of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_SIZE, 
+		g_param_spec_string("size", "Table size", "Size of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_TYPE, 
+		g_param_spec_string("type", "Table type", "Type of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_FLAGGED, 
+		g_param_spec_boolean("flagged", "Object Flagged", "Object Flagged", FALSE, G_PARAM_READWRITE));
+}
 
-GType
-gmlc_mysql_table_get_type()
-{
-	static GType type = 0;
+static void gmlc_mysql_table_init(GmlcMysqlTable * pGmlcMysqlTbl) {
+	pGmlcMysqlTbl->pGmlcMysqlDb = NULL;
+	pGmlcMysqlTbl->pcName = NULL;
+	pGmlcMysqlTbl->pcRows = NULL;
+	pGmlcMysqlTbl->pcSize = NULL;
+	pGmlcMysqlTbl->pcType = NULL;
+	pGmlcMysqlTbl->bFlagged = FALSE;
+}
 
-	if(type == 0) {
-		static const GTypeInfo our_info = {
-			sizeof (gmlc_mysql_tableClass),
-			NULL,
-			NULL,
-			(GClassInitFunc)gmlc_mysql_table_class_init,
-			NULL,
-			NULL,
-			sizeof (gmlc_mysql_table),
-			0,
-			(GInstanceInitFunc)gmlc_mysql_table_init,
-		};
+static void gmlc_mysql_table_finalize(GmlcMysqlTable * pGmlcMysqlTbl) {
+	
+	g_free(pGmlcMysqlTbl->pcName);
+	g_free(pGmlcMysqlTbl->pcRows);
+	g_free(pGmlcMysqlTbl->pcSize);
+	g_free(pGmlcMysqlTbl->pcType);
+	/*G_OBJECT_CLASS(parent_class)->finalize(object);*/
+}
 
-		type = g_type_register_static(G_TYPE_OBJECT, 
-			"gmlc_mysql_table", &our_info, 0);
+static void gmlc_mysql_table_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
+	GmlcMysqlTable * pGmlcMysqlTbl = GMLC_MYSQL_TABLE(object);
+	
+	switch (prop_id) {
+		case PROP_DATABASE :
+			g_value_set_object(value, pGmlcMysqlTbl->pGmlcMysqlDb);
+			break;
+		case PROP_NAME :
+			g_value_set_string(value, pGmlcMysqlTbl->pcName);
+			break;
+		case PROP_ROWS :
+			g_value_set_string(value, pGmlcMysqlTbl->pcRows);
+			break;
+		case PROP_SIZE :
+			g_value_set_string(value, pGmlcMysqlTbl->pcSize);
+			break;
+		case PROP_TYPE :
+			g_value_set_string(value, pGmlcMysqlTbl->pcType);
+			break;
+		case PROP_FLAGGED :
+			g_value_set_boolean(value, pGmlcMysqlTbl->bFlagged);
+			break;
+		default: {
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+			break;
+		}
 	}
-
-	return type;
 }
 
-static void
-gmlc_mysql_table_class_init(gmlc_mysql_tableClass *klass)
-{
-	GObjectClass *object_class = G_OBJECT_CLASS(klass);
-
-	parent_class = g_type_class_peek_parent(klass);
-	object_class->finalize = gmlc_mysql_table_finalize;
+static void gmlc_mysql_table_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec) {
+	GmlcMysqlTable * pGmlcMysqlTbl = GMLC_MYSQL_TABLE(object);
 	
-	/* Create signals here:
-	   gmlc_mysql_table_signals[SIGNAL_TYPE_EXAMPLE] = g_signal_new(...)
- 	*/
+	switch (prop_id) {
+		case PROP_DATABASE :
+			pGmlcMysqlTbl->pGmlcMysqlDb = g_value_get_object(value);
+			break;
+		case PROP_NAME :
+			g_free(pGmlcMysqlTbl->pcName);
+			
+			pGmlcMysqlTbl->pcName = g_value_dup_string(value);
+			break;
+		case PROP_ROWS :
+			g_free(pGmlcMysqlTbl->pcRows);
+			
+			pGmlcMysqlTbl->pcRows = g_value_dup_string(value);
+			break;
+		case PROP_SIZE :
+			g_free(pGmlcMysqlTbl->pcSize);
+			
+			pGmlcMysqlTbl->pcSize = g_value_dup_string(value);
+			break;
+		case PROP_TYPE :
+			g_free(pGmlcMysqlTbl->pcType);
+			
+			pGmlcMysqlTbl->pcType = g_value_dup_string(value);
+			break;
+		case PROP_FLAGGED :
+			pGmlcMysqlTbl->bFlagged = g_value_get_boolean(value);
+			break;
+		default: {
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+			break;
+		}
+	}
 }
 
-static void
-gmlc_mysql_table_init(gmlc_mysql_table *obj)
-{
-	obj->priv = g_new0(gmlc_mysql_tablePrivate, 1);
-	/* Initialize private members, etc. */
+GmlcMysqlTable * gmlc_mysql_table_new(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcTblName) {
+	GmlcMysqlTable * pGmlcMysqlTbl;
+	
+	pGmlcMysqlTbl = GMLC_MYSQL_TABLE(g_object_new(GMLC_TYPE_MYSQL_TABLE, "database", pGmlcMysqlDb, "name", pcTblName, NULL));
+	
+	return pGmlcMysqlTbl;
 }
 
-static void
-gmlc_mysql_table_finalize(GObject *object)
-{
-	gmlc_mysql_table *cobj;
-	cobj = GMLC_MYSQL_TABLE(object);
+GmlcMysqlTable * gmlc_mysql_table_new_with_stat(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcTblName, gchar * pcRows, gchar * pcSize, gchar * pcType) {
+	GmlcMysqlTable * pGmlcMysqlTbl;
 	
-	/* Free private members, etc. */
-		
-	g_free(cobj->priv);
-	G_OBJECT_CLASS(parent_class)->finalize(object);
+	pGmlcMysqlTbl = GMLC_MYSQL_TABLE(g_object_new(GMLC_TYPE_MYSQL_TABLE, "database", pGmlcMysqlDb, "name", pcTblName, "rows", pcRows, "size", pcSize, "type", pcType, NULL));
+	
+	return pGmlcMysqlTbl;
 }
 
-gmlc_mysql_table *
-gmlc_mysql_table_new()
-{
-	gmlc_mysql_table *obj;
-	
-	obj = GMLC_MYSQL_TABLE(g_object_new(GMLC_TYPE_MYSQL_TABLE, NULL));
-	
-	return obj;
-}

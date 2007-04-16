@@ -219,7 +219,7 @@ static void gmlc_mysql_query_get_property (GObject * object, guint prop_id, GVal
 	}
 }
 
-GmlcMysqlQuery * gmlc_mysql_query_new (GObject * pGmlcMysqlSrv, gchar * pcDbName) {
+GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName) {
 	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
 	
 	pGmlcMysqlQry = GMLC_MYSQL_QUERY(g_object_new (GMLC_TYPE_MYSQL_QUERY, "server", GMLC_MYSQL_SERVER(pGmlcMysqlSrv), "db_name", pcDbName, NULL));
@@ -399,6 +399,16 @@ GArray * gmlc_mysql_query_next_record(GmlcMysqlQuery * pGmlcMysqlQry) {
 	}
 	
 	return arRecordValue;
+}
+
+void gmlc_mysql_query_free_record_content(GArray * arRow) {
+	gint i;
+	
+	for (i = 0; i < arRow->len; i++) {
+		g_free(g_array_index(arRow, gchar *, i));
+	}
+	
+	g_array_free(arRow, TRUE);
 }
 
 GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry) {

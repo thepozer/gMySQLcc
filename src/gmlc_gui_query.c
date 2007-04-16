@@ -87,7 +87,7 @@ GmlcGuiQuery * gmlc_gui_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar 
 	
 	pGmlcGuiQry->pGmlcMysqlSrv = pGmlcMysqlSrv;
 	pGmlcGuiQry->pcDefDbName = g_strdup(pcDefDbName);
-	pGmlcGuiQry->pGmlcMysqlQry = gmlc_mysql_query_new(G_OBJECT(pGmlcGuiQry->pGmlcMysqlSrv), pGmlcGuiQry->pcDefDbName);
+	pGmlcGuiQry->pGmlcMysqlQry = gmlc_mysql_query_new(pGmlcGuiQry->pGmlcMysqlSrv, pGmlcGuiQry->pcDefDbName);
 	
 	return pGmlcGuiQry;
 }
@@ -417,22 +417,25 @@ void gmlc_gui_query_display_one_result(GmlcGuiQuery * pGmlcGuiQry) {
 		g_value_init(&poGVal, G_TYPE_STRING);
 		g_value_init(&poGValPtr, G_TYPE_POINTER);
 		g_print ("*** Read data of new query \n");
-		do {
-			iCount ++;
-			
-			gtk_list_store_append(poLstStore, &iter);
 		
-			for(i = 0; i < arRow->len; i++) {
-				g_value_set_string(&poGVal, g_array_index(arRow, gchar *, i));
-				gtk_list_store_set_value(poLstStore, &iter, i, &poGVal);
+		if (arRow != NULL) {
+			do {
+				iCount ++;
 				
-				g_free(g_array_index(arRow, gchar *, i));
-			}
-			g_value_set_pointer(&poGValPtr, NULL);
-			gtk_list_store_set_value(poLstStore, &iter, arRow->len, &poGValPtr);
+				gtk_list_store_append(poLstStore, &iter);
 			
-			g_array_free(arRow, TRUE);
-		} while ((arRow = gmlc_mysql_query_next_record(pGmlcGuiQry->pGmlcMysqlQry)) != NULL);
+				for(i = 0; i < arRow->len; i++) {
+					g_value_set_string(&poGVal, g_array_index(arRow, gchar *, i));
+					gtk_list_store_set_value(poLstStore, &iter, i, &poGVal);
+					
+					g_free(g_array_index(arRow, gchar *, i));
+				}
+				g_value_set_pointer(&poGValPtr, NULL);
+				gtk_list_store_set_value(poLstStore, &iter, arRow->len, &poGValPtr);
+				
+				g_array_free(arRow, TRUE);
+			} while ((arRow = gmlc_mysql_query_next_record(pGmlcGuiQry->pGmlcMysqlQry)) != NULL);
+		}
 		
 		gtk_tree_view_set_model(GTK_TREE_VIEW(lstSQLResult), GTK_TREE_MODEL(poLstStore));
 		g_object_unref (G_OBJECT (poLstStore));
@@ -454,7 +457,7 @@ void gmlc_gui_query_display_one_info(GmlcGuiQuery * pGmlcGuiQry) {
 	/* Create widgets */
 	
 	strTitle = g_string_new("");
-	g_string_append_printf(strTitle, _("Result %d"), pGmlcGuiQry->iNumResult);
+	g_string_append_printf(strTitle, _("Query ok.\nResult %d"), pGmlcGuiQry->iNumResult);
 	
 	lblTabTitle = gtk_label_new(strTitle->str);
 	gtk_widget_show (lblTabTitle);

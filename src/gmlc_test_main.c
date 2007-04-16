@@ -9,18 +9,20 @@
 #include "../config.h"
 
 #include "gmlc_mysql_server.h"
+#include "gmlc_mysql_database.h"
+#include "gmlc_mysql_table.h"
 #include "gmlc_mysql_query.h"
 
 int main(int argc, char *argv[]) {
 	GmlcMysqlServer * pGmlcMysqlSrv = NULL;
+	GmlcMysqlDatabase * pGmlcMysqlDb = NULL;
 	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
 	GArray * arRow = NULL;
 	/*gchar * pcSql = "SELECT * FROM mysql.user ; INSERT INTO pozer.testme SET a = 2 ; SELECT * FROM mysql.help_category;";*/
-	gchar * pcSql = "INSERT INTO pozer.testme SET a = 2 ; SELECT * FROM mysql.user ; SELECT * FROM mysql.help_category;";
+	gchar * pcSql = "INSERT INTO pozer.testme SET a = 2 ; SELECT * FROM mysql.user ; SELECT * FROM mysql.help_category ; SHOW DATABASES ;";
 	glong lVersion = 0;
 	gint i = 0;
 	gboolean bContinue = FALSE;
-	
 	
 	/* Init gtk library */
 	gtk_init (&argc, &argv);
@@ -36,12 +38,99 @@ int main(int argc, char *argv[]) {
 										  "login", "root", "password", "", NULL);
 	g_print("Ajout du serveur de test\n");
 	
+	pGmlcMysqlQry = gmlc_mysql_query_new(G_OBJECT(pGmlcMysqlSrv), NULL);
+	
+	g_print("Liste des bases de données 1 : \n");
+	arRow = gmlc_mysql_server_databases_name_list(pGmlcMysqlSrv, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" # '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
 	g_object_get(G_OBJECT(pGmlcMysqlSrv), "version", &lVersion, NULL);
 	g_print("Version du serveur de test : %ld\n", lVersion);
 	
-	pGmlcMysqlQry = gmlc_mysql_query_new(G_OBJECT(pGmlcMysqlSrv), NULL);
+	if (gmlc_mysql_query_execute(pGmlcMysqlQry, "CREATE DATABASE `debug_me-now`", 30, FALSE)) {
+		g_print("Database : `debug_me-now` - Creation OK.\n");
+		bContinue = TRUE;
+	} else {
+		g_print("Database : `debug_me-now` - Creation ERREUR !!!\n");
+	}
+	
+	g_print("Liste des bases de données 2 : \n");
+	arRow = gmlc_mysql_server_databases_name_list(pGmlcMysqlSrv, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" # '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+
 	g_print("Charset utilisé par le serveur : %s\n", pGmlcMysqlQry->pcSrvCharset);
 	
+	if (gmlc_mysql_query_execute(pGmlcMysqlQry, "DROP DATABASE `debug_me-now`", 28, FALSE)) {
+		g_print("Database : `debug_me-now` - Destruction OK.\n");
+		bContinue = TRUE;
+	} else {
+		g_print("Database : `debug_me-now` - Destruction ERREUR !!!\n");
+	}
+	
+	g_print("Liste des bases de données 3 : \n");
+	arRow = gmlc_mysql_server_databases_name_list(pGmlcMysqlSrv, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" # '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+
+	
+	g_print("Liste des tables de la base de donnée pozer : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "pozer");
+	arRow = gmlc_mysql_database_tables_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
+	g_print("Liste des vues de la base de donnée pozer : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "pozer");
+	arRow = gmlc_mysql_database_views_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
+	g_print("Liste des tables de la base de donnée mysql : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "mysql");
+	arRow = gmlc_mysql_database_tables_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+
+	g_print("Liste des vues de la base de donnée mysql : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "mysql");
+	arRow = gmlc_mysql_database_views_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
+	g_print("Liste des fonctions de la base de donnée mysql : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "mysql");
+	arRow = gmlc_mysql_database_functions_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
+	g_print("Liste des procedures de la base de donnée mysql : \n");
+	pGmlcMysqlDb = gmlc_mysql_server_get_database(pGmlcMysqlSrv, "mysql");
+	arRow = gmlc_mysql_database_procedures_name_list(pGmlcMysqlDb, TRUE);
+	for (i = 0; i < arRow->len; i ++) {
+		g_print(" - '%s'\n", g_array_index(arRow, gchar *, i));
+	}
+	g_array_free(arRow, TRUE);
+	
+	
+/*
 	g_print("Exécution de la query : %s\n", pcSql);
 	
 	if (gmlc_mysql_query_execute(pGmlcMysqlQry, pcSql, strlen(pcSql), FALSE)) {
@@ -71,6 +160,7 @@ int main(int argc, char *argv[]) {
 			
 		} while (gmlc_mysql_query_goto_next_result(pGmlcMysqlQry));
 	}
+*/
 	
 	g_object_unref(G_OBJECT(pGmlcMysqlQry));
 	g_object_unref(G_OBJECT(pGmlcMysqlSrv));
@@ -82,3 +172,4 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 }
+

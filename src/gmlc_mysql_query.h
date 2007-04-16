@@ -61,8 +61,9 @@ struct _GmlcMysqlQueryClass {
 GType gmlc_mysql_query_get_type (void);
 
 gboolean gmlc_tools_query_is_read_query(const gchar * query);
+void gmlc_mysql_query_free_record_content(GArray * arRow);
 
-GmlcMysqlQuery * gmlc_mysql_query_new (GObject * pGmlcMysqlSrv, gchar * pcDbName);
+GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName);
 
 gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry);
 gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry);

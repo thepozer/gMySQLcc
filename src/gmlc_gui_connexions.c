@@ -1,8 +1,7 @@
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  the Free Software Foundation; either version 2 of the License.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,6 +14,7 @@
  */
 
 #include "gmlc_gui_connexions.h"
+#include "gmlc_gui_server.h"
 #include "gmlc_gui_query.h"
 
 static void gmlc_gui_connexions_finalize (GmlcGuiConnexions * pGmlcGuiCnxns);
@@ -585,7 +585,7 @@ void gmlc_gui_connexions_evt_btnDel_clicked (GtkWidget *widget, gpointer user_da
 			gtk_dialog_run (GTK_DIALOG (msgdlg));
 			gtk_widget_destroy (msgdlg);
 		} else {
-			gmlc_gui_connexions_init_widgets(pGmlcGuiCnxns);
+			gmlc_gui_connexions_fill_server_list(pGmlcGuiCnxns);
 		}
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiCnxns), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a server"));
@@ -691,18 +691,12 @@ void gmlc_gui_connexions_evt_btnTlbrLoad_clicked (GtkWidget *widget, gpointer us
 
 void gmlc_gui_connexions_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpointer user_data) {
 	GmlcGuiConnexions * pGmlcGuiCnxns = GMLC_GUI_CONNEXIONS(user_data);
-	/*p_gmysqlcc_gui_server gui_server;*/
-	GmlcGuiQuery * pGmlcGuiQry;
+	GmlcGuiServer * pGmlcGuiSrv = NULL;
 	GtkWidget * msgdlg;
 	
 	if (pGmlcGuiCnxns->pCurrMysqlSrv != NULL) {
-/*
-		gui_server = gmysqlcc_gui_server_new(pGmlcGuiCnxns->pCurrMysqlSrv);
-		gmysqlcc_gui_server_display(gui_server, TRUE);
-		gtk_widget_hide(GTK_WIDGET(pGmlcGuiCnxns));
-*/
-		pGmlcGuiQry = gmlc_gui_query_new(pGmlcGuiCnxns->pCurrMysqlSrv, "");
-		gtk_widget_show(GTK_WIDGET(pGmlcGuiQry));
+		pGmlcGuiSrv = gmlc_gui_server_new(pGmlcGuiCnxns->pCurrMysqlSrv);
+		gtk_widget_show(GTK_WIDGET(pGmlcGuiSrv));
 /*		gtk_widget_hide(GTK_WIDGET(pGmlcGuiCnxns));*/
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiCnxns), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a server"));
