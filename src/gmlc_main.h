@@ -26,6 +26,7 @@
 
 #include "gmlc_misc_config.h"
 
+
 #ifdef USE_GTKSOURCEVIEW
 	#include <gtksourceview/gtksourceview.h>
 	#include <gtksourceview/gtksourcebuffer.h>
@@ -38,7 +39,9 @@
 	extern int GiNbrWnd;
 	
 	extern GmlcMiscConfig * GpGmlcMscCfg;
-
+	
+	extern GtkWidget * GpGmlcGuiCnxns;
+	
 	#ifdef USE_GTKSOURCEVIEW
 		extern GtkSourceLanguagesManager * LangManager;
 	#endif /* USE_GTKSOURCEVIEW */

@@ -30,6 +30,7 @@ static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv);
 
 static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data);
 void gmlc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data);
+void gmlc_gui_server_evt_btnTlbrSqlServerList_clicked (GtkWidget *widget, gpointer user_data);
 void gmlc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_data);
 
 
@@ -171,8 +172,8 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_widget_show(imgToolbar);
 	btnTlbrSqlServerList = gtk_tool_button_new (imgToolbar, _("Servers list"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrSqlServerList), TRUE);
-	/*g_signal_connect (G_OBJECT (btnTlbrSqlServerList), "clicked", 
-										G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);*/
+	g_signal_connect (G_OBJECT (btnTlbrSqlServerList), "clicked", 
+										G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);
 	gtk_widget_show(GTK_WIDGET(btnTlbrSqlServerList));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrSqlServerList), -1);
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSqlServerList), tooltips, _("Open server list window"), NULL);
@@ -264,6 +265,13 @@ void gmlc_gui_server_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_da
 	UNUSED_VAR(widget);
 	
 	gmlc_gui_server_open_query_window(pGmlcGuiSrv, TRUE);
+}
+
+void gmlc_gui_server_evt_btnTlbrSqlServerList_clicked (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServer * pGmlcGuiSrv = GMLC_GUI_SERVER(user_data);
+	UNUSED_VAR(widget);
+	
+	gtk_widget_show(GpGmlcGuiCnxns);
 }
 
 void gmlc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {

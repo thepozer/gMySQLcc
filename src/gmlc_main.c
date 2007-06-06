@@ -21,7 +21,9 @@
 
 int GiNbrWnd = 0;
 
-GmlcMiscConfig * GpGmlcMscCfg;
+GmlcMiscConfig * GpGmlcMscCfg = NULL;
+
+GtkWidget * GpGmlcGuiCnxns = NULL;
 
 /*p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server;*/
 
@@ -32,7 +34,6 @@ GmlcMiscConfig * GpGmlcMscCfg;
 gboolean gmysqlcc_main_before_end(gpointer data);
 
 int main(int argc, char *argv[]) {
-	GmlcGuiConnexions * pGmlcGuiCnxns = NULL;
 	
 	/* Init gtk library */
 	gtk_init (&argc, &argv);
@@ -62,8 +63,8 @@ int main(int argc, char *argv[]) {
 #endif /* USE_GTKSOURCEVIEW */
 	
 	/* Create server list windows */
-	pGmlcGuiCnxns = gmlc_gui_connexions_new();
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiCnxns));
+	GpGmlcGuiCnxns = GTK_WIDGET(gmlc_gui_connexions_new());
+	gtk_widget_show(GpGmlcGuiCnxns);
 	
 	/* Start the application */
 	gtk_main ();

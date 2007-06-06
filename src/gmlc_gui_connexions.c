@@ -24,6 +24,7 @@ static void gmlc_gui_connexions_init_widgets (GmlcGuiConnexions * pGmlcGuiCnxns)
 void gmlc_gui_connexions_fill_server_list (GmlcGuiConnexions * pGmlcGuiCnxns);
 void gmlc_gui_connexions_dislpay_current_server (GmlcGuiConnexions * pGmlcGuiCnxns);
 
+static gboolean gmlc_gui_connexions_evt_delete (GtkWidget *widget, GdkEvent *event, gpointer user_data);
 static void gmlc_gui_connexions_evt_destroy(GtkWidget *widget, gpointer user_data);
 void gmlc_gui_connexions_evt_btnNew_clicked (GtkWidget *widget, gpointer user_data);
 void gmlc_gui_connexions_evt_btnAdd_clicked (GtkWidget *widget, gpointer user_data);
@@ -54,12 +55,11 @@ static void gmlc_gui_connexions_class_init (GmlcGuiConnexionsClass * pClass) {
 
 static void gmlc_gui_connexions_init (GmlcGuiConnexions * pGmlcGuiCnxns) {
 	
-	GiNbrWnd ++;
-	
 	gtk_window_set_title (GTK_WINDOW(pGmlcGuiCnxns), _("GMySQLcc - Connections list"));
 	gtk_window_set_default_size (GTK_WINDOW(pGmlcGuiCnxns), 640, 480);
 	
-	g_signal_connect(G_OBJECT (pGmlcGuiCnxns), "destroy", G_CALLBACK (gmlc_gui_connexions_evt_destroy), NULL);
+	/*g_signal_connect(G_OBJECT (pGmlcGuiCnxns), "destroy", G_CALLBACK (gmlc_gui_connexions_evt_destroy), NULL);*/
+	g_signal_connect(G_OBJECT (pGmlcGuiCnxns), "delete-event", G_CALLBACK (gmlc_gui_connexions_evt_delete), NULL);
 	
 	pGmlcGuiCnxns->pCurrMysqlSrv = NULL;
 	pGmlcGuiCnxns->bShowEditPart = TRUE;
@@ -433,11 +433,24 @@ void gmlc_gui_connexions_dislpay_current_server (GmlcGuiConnexions * pGmlcGuiCnx
 	}
 }
 
+static gboolean gmlc_gui_connexions_evt_delete (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+	UNUSED_VAR(event);
+	UNUSED_VAR(user_data);
+
+	gtk_widget_hide(GTK_WIDGET(widget));
+	
+	if (GiNbrWnd <= 0) {
+		gtk_main_quit();
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
 static void gmlc_gui_connexions_evt_destroy(GtkWidget *widget, gpointer user_data) {
 	UNUSED_VAR(user_data);
 
 	gtk_widget_hide(GTK_WIDGET(widget));
-	GiNbrWnd --;
 	
 	if (GiNbrWnd <= 0) {
 		gtk_main_quit();
@@ -697,7 +710,7 @@ void gmlc_gui_connexions_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpointer
 	if (pGmlcGuiCnxns->pCurrMysqlSrv != NULL) {
 		pGmlcGuiSrv = gmlc_gui_server_new(pGmlcGuiCnxns->pCurrMysqlSrv);
 		gtk_widget_show(GTK_WIDGET(pGmlcGuiSrv));
-/*		gtk_widget_hide(GTK_WIDGET(pGmlcGuiCnxns));*/
+		gtk_widget_hide(GTK_WIDGET(pGmlcGuiCnxns));
 	} else {
 		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiCnxns), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select a server"));
 		gtk_dialog_run (GTK_DIALOG (msgdlg));
@@ -708,7 +721,11 @@ void gmlc_gui_connexions_evt_btnTlbrConnect_clicked (GtkWidget *widget, gpointer
 void gmlc_gui_connexions_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data) {
 	GmlcGuiConnexions * pGmlcGuiCnxns = GMLC_GUI_CONNEXIONS(user_data);
 	
-	gtk_widget_destroy(GTK_WIDGET(pGmlcGuiCnxns));
+	gtk_widget_hide(GTK_WIDGET(pGmlcGuiCnxns));
+
+	if (GiNbrWnd <= 0) {
+		gtk_main_quit();
+	}
 }
 
 void gmlc_gui_connexions_evt_lstListHosts_selected (GtkTreeSelection *selection, gpointer user_data) {

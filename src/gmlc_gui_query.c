@@ -556,13 +556,10 @@ void gmlc_gui_query_evt_btnDumpSql_clicked(GtkWidget *widget, gpointer user_data
 }
 
 void gmlc_gui_query_evt_btnServerList_clicked (GtkWidget *widget, gpointer user_data) {
-/*	GmlcGuiQuery * pGmlcGuiQry = GMLC_GUI_QUERY(user_data);*/
 	UNUSED_VAR(widget);
 	UNUSED_VAR(user_data);
-
-/*	
-	gmysqlcc_gui_list_server_display(gmysqlcc_gui_list_server, TRUE);
-*/
+	
+	gtk_widget_show(GpGmlcGuiCnxns);
 }
 
 void gmlc_gui_query_evt_btnClose_clicked(GtkWidget *widget, gpointer user_data) {
