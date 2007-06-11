@@ -499,7 +499,8 @@ static void gmlc_gui_query_evt_destroy(GtkWidget *widget, gpointer user_data) {
 
 gboolean gmlc_gui_query_evt_window_keyrelease (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	
-	if (event->state & GDK_CONTROL_MASK && (event->keyval == GDK_e || event->keyval == GDK_E)) {
+	if ((event->state & GDK_CONTROL_MASK && (event->keyval == GDK_e || event->keyval == GDK_E)) 
+		|| (event->keyval == GDK_F5)) {
 		gmlc_gui_query_evt_btnExecSql_clicked (widget, user_data);
 		return TRUE;
 	}

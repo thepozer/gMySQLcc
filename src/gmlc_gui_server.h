@@ -43,30 +43,7 @@ struct _GmlcGuiServer {
 	
 	/* General Widgets */
 	GtkWidget * nbkGeneral;
-	
-	/* Table/View/Proc/Func Part */
-	GtkWidget * lstBase;
-	GtkWidget * lstTables;
-	GtkWidget * lstViews;
-	GtkWidget * lstProcedures;
-	GtkWidget * lstFunctions;
-	GtkWidget * mnuBdOps;
-	GtkWidget * mnuTblOps;
-	
-	GmlcMysqlDatabase	* pGmlcMysqlDb;
-	GmlcMysqlTable		* pGmlcMysqlTbl;
-	GmlcMysqlView		* pGmlcMysqlVw;
-	GmlcMysqlProcedure	* pGmlcMysqlProc;
-	GmlcMysqlFunction	* pGmlcMysqlFunc;
-	
-	/* Help Part */
-	GtkWidget *	trvHelpCategories;
-	GtkWidget *	txtHelpSearchKeyword;
-	GtkWidget *	trvHelpTopics;
-	GtkWidget *	txvHelpTopic;
-	
-	gint iCurrentCategory;
-	gint iCurrentTopic;
+	GtkWidget * tlbMainToolbar;
 };
 
 struct _GmlcGuiServerClass {
@@ -78,8 +55,6 @@ struct _GmlcGuiServerClass {
 GType gmlc_gui_server_get_type (void);
 
 GmlcGuiServer * gmlc_gui_server_new (GmlcMysqlServer * pGmlcMysqlSrv);
-
-void gmlc_gui_server_open_query_window (GmlcGuiServer * pGmlcGuiSrv, gboolean bUseTable);
 
 G_END_DECLS
 

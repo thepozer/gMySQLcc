@@ -10,33 +10,33 @@ AM_CFLAGS =\
 
 #SUBDIRS = tests
 
-bin_PROGRAMS = gmysqlcc gmlc_test
+bin_PROGRAMS = gmysqlcc # gmlc_test
 
-gmlc_test_SOURCES = \
-	gmlc_misc_hashtable.c\
-	gmlc_misc_hashtable.h\
-	gmlc_mysql_server.c\
-	gmlc_mysql_server.h\
-	gmlc_mysql_query.c\
-	gmlc_mysql_query.h\
-	gmlc_mysql_database.c\
-	gmlc_mysql_database.h\
-	gmlc_mysql_table.c\
-	gmlc_mysql_table.h\
-	gmlc_mysql_view.c\
-	gmlc_mysql_view.h\
-	gmlc_mysql_procedure.c\
-	gmlc_mysql_procedure.h\
-	gmlc_mysql_function.c\
-	gmlc_mysql_function.h\
-	gmlc_test_main.c
+#gmlc_test_SOURCES = \
+#	gmlc_misc_hashtable.c\
+#	gmlc_misc_hashtable.h\
+#	gmlc_mysql_server.c\
+#	gmlc_mysql_server.h\
+#	gmlc_mysql_query.c\
+#	gmlc_mysql_query.h\
+#	gmlc_mysql_database.c\
+#	gmlc_mysql_database.h\
+#	gmlc_mysql_table.c\
+#	gmlc_mysql_table.h\
+#	gmlc_mysql_view.c\
+#	gmlc_mysql_view.h\
+#	gmlc_mysql_procedure.c\
+#	gmlc_mysql_procedure.h\
+#	gmlc_mysql_function.c\
+#	gmlc_mysql_function.h\
+#	gmlc_test_main.c
 
-gmlc_test_LDFLAGS = 
+#gmlc_test_LDFLAGS = 
 
-gmlc_test_LDADD =  \
-	$(GTK_LIBS) \
-	$(GTKSourceView_LIBS) \
-	$(MySQLc_LIBS)
+#gmlc_test_LDADD =  \
+#	$(GTK_LIBS) \
+#	$(GTKSourceView_LIBS) \
+#	$(MySQLc_LIBS)
 
 
 gmysqlcc_SOURCES = \
@@ -48,6 +48,8 @@ gmysqlcc_SOURCES = \
 	gmlc_gui_query.h\
 	gmlc_gui_server.c\
 	gmlc_gui_server.h\
+	gmlc_gui_server_tab.c\
+	gmlc_gui_server_tab.h\
 	gmlc_gui_server_tab_data.c\
 	gmlc_gui_server_tab_data.h\
 	gmlc_gui_server_tab_help.c\
