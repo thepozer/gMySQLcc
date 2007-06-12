@@ -18,6 +18,7 @@
 #include "gmlc_gui_server_tab.h"
 #include "gmlc_gui_server_tab_data.h"
 #include "gmlc_gui_server_tab_help.h"
+#include "gmlc_gui_server_tab_query.h"
 #include "gmlc_gui_query.h"
 
 static void gmlc_gui_server_finalize (GmlcGuiServer * pGmlcGuiSrv);
@@ -203,8 +204,6 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	
 	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
 	
-	/*gmysqlcc_gui_server_create_widget_tab_user (pGmlcGuiSrv);*/
-	/*gmysqlcc_gui_server_create_widget_tab_server (pGmlcGuiSrv);*/
 	if (lServerVersion >= 40100) {
 		/*gmlc_gui_server_create_widget_tab_help (pGmlcGuiSrv);*/
 		poLabel = gtk_label_new(_("Help"));
@@ -216,6 +215,16 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
 	}
+	
+	poLabel = gtk_label_new(_("Query"));
+	gtk_widget_show (poLabel);
+	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
+	
+	poTab = GTK_WIDGET(gmlc_gui_server_tab_query_new(pGmlcGuiSrv));
+	gtk_widget_show (poTab);
+	
+	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	
 }
 
 static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv) {
