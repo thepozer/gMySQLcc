@@ -23,7 +23,7 @@ static void gmlc_gui_server_tab_data_get_property (GObject * object, guint prop_
 static void gmlc_gui_server_tab_data_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
 static void gmlc_gui_server_tab_data_interface_init (gpointer g_iface, gpointer iface_data);
-static void gmlc_gui_server_tab_data_update_ui (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
+static void gmlc_gui_server_tab_data_update_ui (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bShow);
 
 void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
 void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
@@ -62,7 +62,7 @@ G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabData, gmlc_gui_server_tab_data, GTK_TYP
 
 static void gmlc_gui_server_tab_data_interface_init (gpointer g_iface, gpointer iface_data) {
   GmlcGuiServerTabInterface *pIface = (GmlcGuiServerTabInterface *)g_iface;
-  pIface->update_ui = (void (*) (GmlcGuiServerTab * self))gmlc_gui_server_tab_data_update_ui;
+  pIface->update_ui = (void (*) (GmlcGuiServerTab * self, gboolean bShow))gmlc_gui_server_tab_data_update_ui;
 }
 
 static void gmlc_gui_server_tab_data_class_init (GmlcGuiServerTabDataClass * pClass) {
@@ -130,9 +130,13 @@ static void gmlc_gui_server_tab_data_finalize (GmlcGuiServerTabData * pGmlcGuiSr
 	
 }
 
-static void gmlc_gui_server_tab_data_update_ui (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSql));
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSqlFile));
+static void gmlc_gui_server_tab_data_update_ui (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bShow) {
+	
+	if (bShow) {
+		gtk_widget_show(pGmlcGuiSrvTabData->poDataToolbar);
+	} else {
+		gtk_widget_hide(pGmlcGuiSrvTabData->poDataToolbar);
+	}
 }
 
 GmlcGuiServerTabData * gmlc_gui_server_tab_data_new (GmlcGuiServer * pGmlcGuiSrv) {
@@ -144,30 +148,38 @@ GmlcGuiServerTabData * gmlc_gui_server_tab_data_new (GmlcGuiServer * pGmlcGuiSrv
 }
 
 void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
-	GtkWidget * imgToolbar = NULL;
-	GtkToolbar * tlbMainToolbar = NULL;
+	GtkWidget * poHBoxToolbar = NULL;
+	GtkWidget * poImgToolbar = NULL;
+	GtkTooltips * tooltips;
 	
-	g_object_get(pGmlcGuiSrvTabData->pGmlcGuiSrv, "toolbar", &tlbMainToolbar, NULL);
+	tooltips = gtk_tooltips_new();
 	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(imgToolbar);
-	pGmlcGuiSrvTabData->btnTlbrSqlFile = gtk_tool_button_new (imgToolbar, _("SQL File"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), TRUE);
-	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabData->btnTlbrSqlFile), "clicked", 
-			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked), pGmlcGuiSrvTabData);
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSqlFile));
-	gtk_toolbar_insert(GTK_TOOLBAR(tlbMainToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), 0);
-	/*gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), tooltips, _("Exec SQL File"), NULL);*/
+	g_object_get(pGmlcGuiSrvTabData->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(imgToolbar);
-	pGmlcGuiSrvTabData->btnTlbrSql = gtk_tool_button_new (imgToolbar, _("SQL"));
+	pGmlcGuiSrvTabData->poDataToolbar = gtk_toolbar_new ();
+	gtk_widget_show (pGmlcGuiSrvTabData->poDataToolbar);
+	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabData->poDataToolbar, TRUE, TRUE, 0);
+	gtk_toolbar_set_style (GTK_TOOLBAR (pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOLBAR_BOTH_HORIZ);
+	
+	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgToolbar);
+	pGmlcGuiSrvTabData->btnTlbrSql = gtk_tool_button_new (poImgToolbar, _("SQL"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), TRUE);
 	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabData->btnTlbrSql), "clicked", 
 			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSql_clicked), pGmlcGuiSrvTabData);
 	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSql));
-	gtk_toolbar_insert(GTK_TOOLBAR(tlbMainToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), 0);
-	/*gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), tooltips, _("Exec SQL Query"), NULL);*/
+	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), tooltips, _("Exec SQL Query"), NULL);
+	
+	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgToolbar);
+	pGmlcGuiSrvTabData->btnTlbrSqlFile = gtk_tool_button_new (poImgToolbar, _("SQL File"));
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), TRUE);
+	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabData->btnTlbrSqlFile), "clicked", 
+			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked), pGmlcGuiSrvTabData);
+	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSqlFile));
+	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), -1);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), tooltips, _("Exec SQL File"), NULL);
 }
 
 void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
@@ -546,25 +558,22 @@ void gmlc_gui_server_tab_data_init_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTa
 }
 
 void gmlc_gui_server_tab_data_open_query_window (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bUseTable) {
-	GmlcGuiQuery * pGmlcGuiQry = NULL;
 	gchar * pcSql = NULL, * pcDbName = NULL, * pcTblName = NULL;
 	
 	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
 		
 		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
 		
-		pGmlcGuiQry = gmlc_gui_query_new(pGmlcGuiSrvTabData->pGmlcMysqlSrv, pcDbName);
-		
 		if (bUseTable && pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
 			g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlTbl), "name", &pcTblName, NULL);
 			
 			pcSql = g_strdup_printf("SELECT * \nFROM `%s`.`%s`\nWHERE 1\nLIMIT 1000", pcDbName, pcTblName);
-						
-			gmlc_gui_query_set_query(pGmlcGuiQry, pcSql, TRUE);
+			
+			gmlc_gui_server_add_query_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, pcDbName, pcSql, TRUE);
 			g_free(pcSql);
+		} else {
+			gmlc_gui_server_add_query_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, pcDbName, NULL, FALSE);
 		}
-		
-		gtk_widget_show(GTK_WIDGET(pGmlcGuiQry));
 	}
 }
 
@@ -778,15 +787,21 @@ static void gmlc_gui_server_tab_data_evt_lstBase_selected (GtkTreeSelection *sel
 	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
 	GtkTreeIter iter;
 	GtkTreeModel *model;
+	glong lServerVersion = 0;
+	
+	g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
 	g_print("Changed !\n");
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 1, &pGmlcGuiSrvTabData->pGmlcMysqlDb, -1);
 		
 		gmlc_gui_server_tab_data_fill_tables_list(pGmlcGuiSrvTabData);
-		gmlc_gui_server_tab_data_fill_views_list(pGmlcGuiSrvTabData);
-		gmlc_gui_server_tab_data_fill_procedures_list(pGmlcGuiSrvTabData);
-		gmlc_gui_server_tab_data_fill_functions_list(pGmlcGuiSrvTabData);
+		
+		if (lServerVersion >= 50001) {
+			gmlc_gui_server_tab_data_fill_views_list(pGmlcGuiSrvTabData);
+			gmlc_gui_server_tab_data_fill_procedures_list(pGmlcGuiSrvTabData);
+			gmlc_gui_server_tab_data_fill_functions_list(pGmlcGuiSrvTabData);
+		}
 	}
 }
 
@@ -795,7 +810,6 @@ static void gmlc_gui_server_tab_data_evt_lstTables_selected (GtkTreeSelection *s
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	
-	g_print("Changed !\n");
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 4, &pGmlcGuiSrvTabData->pGmlcMysqlTbl, -1);
 	}

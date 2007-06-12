@@ -32,12 +32,12 @@ typedef struct _GmlcGuiServerTabInterface GmlcGuiServerTabInterface;
 struct _GmlcGuiServerTabInterface {
 	GTypeInterface parent;
 	
-	void (* update_ui) (GmlcGuiServerTab * self);
+	void (* update_ui) (GmlcGuiServerTab * self, gboolean bShow);
 };
 
 GType gmlc_gui_server_tab_get_type (void);
 
-void gmlc_gui_server_tab_update_ui (GmlcGuiServerTab * self);
+void gmlc_gui_server_tab_update_ui (GmlcGuiServerTab * self, gboolean bShow);
 
 G_END_DECLS
 

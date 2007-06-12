@@ -40,8 +40,28 @@ struct _GmlcGuiServerTabQuery {
 	/* private members */
 	GmlcMysqlServer * pGmlcMysqlSrv;
 	GmlcGuiServer * pGmlcGuiSrv;
+	gchar * pcDbName;
 	
-	/* Help Part */
+	/* Toolbar Part */
+	GtkWidget * poQueryToolbar;
+	GtkToolItem *btnExecSql;
+	GtkToolItem *btnDumpSql;
+	GtkToolItem *btnDuplicateSql;
+
+	/* Query Part */
+	GtkWidget * txtSQLRequest;
+	GtkWidget * tabSQLResult;
+	GtkWidget * lstSQLResult;
+	GtkWidget * statusbarSQL;
+	
+/*
+	p_mysql_database mysql_db;
+*/
+	GmlcMysqlQuery * pGmlcMysqlQry;
+	guint iNumResult;
+	
+/*	gint currCharset;*/
+/*	GSList * lstRows;*/
 };
 
 struct _GmlcGuiServerTabQueryClass {
@@ -52,7 +72,10 @@ struct _GmlcGuiServerTabQueryClass {
 
 GType gmlc_gui_server_tab_query_get_type (void);
 
-GmlcGuiServerTabQuery * gmlc_gui_server_tab_query_new (GmlcGuiServer * pGmlcGuiSrv);
+GmlcGuiServerTabQuery * gmlc_gui_server_tab_query_new (GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDefDbName);
+
+gboolean gmlc_gui_server_tab_query_set_query (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcQuery, gboolean bExecNow);
+gchar * gmlc_gui_server_tab_query_get_query (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery);
 
 G_END_DECLS
 

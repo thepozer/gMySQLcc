@@ -40,6 +40,7 @@ enum {
 	PROP_0,
 	PROP_SERVER,
 	PROP_TOOLBAR,
+	PROP_VBOX_TOOLBAR,
 };
 
 G_DEFINE_TYPE (GmlcGuiServer, gmlc_gui_server, GTK_TYPE_WINDOW);
@@ -56,6 +57,8 @@ static void gmlc_gui_server_class_init (GmlcGuiServerClass * pClass) {
 		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_TOOLBAR, 
 		g_param_spec_object("toolbar", "Toolbar object", "Toolbar object", GTK_TYPE_TOOLBAR, G_PARAM_READABLE));
+	g_object_class_install_property(pObjClass, PROP_VBOX_TOOLBAR, 
+		g_param_spec_object("toolbar-hbox", "HBox where is the toolbar object", "HBox where is the toolbar object", GTK_TYPE_HBOX, G_PARAM_READABLE));
 }
 
 static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
@@ -67,6 +70,9 @@ static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValu
 			break;
 		case PROP_TOOLBAR :
 			g_value_set_object(value, pGmlcGuiSrv->tlbMainToolbar);
+			break;
+		case PROP_VBOX_TOOLBAR :
+			g_value_set_object(value, pGmlcGuiSrv->poHBoxToolbar);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -135,7 +141,8 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	GtkWidget *statusbar;
 	GtkWidget *vbox;
 	GtkWidget * imgToolbar;
-	GtkToolItem * btnTlbrSqlServerList, * sepTlbrSeparator, * btnTlbrClose;
+	/*GtkToolItem * btnTlbrSqlServerList, * sepTlbrSeparator, * btnTlbrClose;*/
+	GtkToolItem * btnTlbrSqlServerList, * btnTlbrClose;
 	
 	GtkTooltips * tooltips;
 	
@@ -144,16 +151,20 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	vbox = gtk_vbox_new (FALSE, 0);
 	gtk_widget_show (vbox);
 	gtk_container_add (GTK_CONTAINER (pGmlcGuiSrv), vbox);
-
+	
+	pGmlcGuiSrv->poHBoxToolbar = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (pGmlcGuiSrv->poHBoxToolbar);
+	gtk_box_pack_start (GTK_BOX (vbox), pGmlcGuiSrv->poHBoxToolbar, FALSE, FALSE, 0);
+	
 	pGmlcGuiSrv->tlbMainToolbar = gtk_toolbar_new ();
 	gtk_widget_show (pGmlcGuiSrv->tlbMainToolbar);
-	gtk_box_pack_start (GTK_BOX (vbox), pGmlcGuiSrv->tlbMainToolbar, FALSE, FALSE, 0);
+	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), pGmlcGuiSrv->tlbMainToolbar, TRUE, TRUE, 0);
 	gtk_toolbar_set_style (GTK_TOOLBAR (pGmlcGuiSrv->tlbMainToolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
-	sepTlbrSeparator = gtk_separator_tool_item_new();
+	/*sepTlbrSeparator = gtk_separator_tool_item_new();
 	gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(sepTlbrSeparator), TRUE);
 	gtk_widget_show(GTK_WIDGET(sepTlbrSeparator));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), GTK_TOOL_ITEM(sepTlbrSeparator), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), GTK_TOOL_ITEM(sepTlbrSeparator), -1);*/
 	
 	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
@@ -194,7 +205,6 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrv->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
-	/*gmlc_gui_server_create_widget_tab_data (pGmlcGuiSrv);*/
 	poLabel = gtk_label_new(_("Databases"));
 	gtk_widget_show (poLabel);
 	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
@@ -205,7 +215,6 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
 	
 	if (lServerVersion >= 40100) {
-		/*gmlc_gui_server_create_widget_tab_help (pGmlcGuiSrv);*/
 		poLabel = gtk_label_new(_("Help"));
 		gtk_widget_show (poLabel);
 		gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
@@ -215,20 +224,35 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
 	}
-	
-	poLabel = gtk_label_new(_("Query"));
-	gtk_widget_show (poLabel);
-	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
-	
-	poTab = GTK_WIDGET(gmlc_gui_server_tab_query_new(pGmlcGuiSrv));
-	gtk_widget_show (poTab);
-	
-	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
-	
 }
 
 static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	
+}
+
+void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery, gboolean bExecNow) {
+	GtkWidget * poLabel = NULL;
+	GtkWidget * poTab = NULL;
+	gchar * pcText = NULL;
+	gint iNewPage = 0;
+	
+	pcText = g_strdup_printf(_("Query - db : '%s'"), pcDbName);
+	
+	poLabel = gtk_label_new(pcText);
+	gtk_widget_show (poLabel);
+	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
+	
+	poTab = GTK_WIDGET(gmlc_gui_server_tab_query_new(pGmlcGuiSrv, pcDbName));
+	gtk_widget_show (poTab);
+	
+	iNewPage = gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), iNewPage);
+	
+	if (pcQuery != NULL) {
+		gmlc_gui_server_tab_query_set_query(GMLC_GUI_SERVER_TAB_QUERY(poTab), pcQuery, bExecNow);
+	}
+	
+	g_free(pcText);
 }
 
 static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data) {
@@ -242,24 +266,18 @@ static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data) {
 	}
 }
 
-static void gmlc_gui_server_evt_tab_selected (GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data) {
-	GmlcGuiServer * pGmlcGuiSrv = GMLC_GUI_SERVER(user_data);
-	GtkToolItem * pToolItem = NULL;
+static void gmlc_gui_server_evt_tab_selected (GtkNotebook *poNoteBook, GtkNotebookPage *page, guint iPageNum, gpointer user_data) {
 	GtkWidget * pChild = NULL;
-	gint iNbPageNum = 0, i = 0;
+	gint iPrevPageNum = 0;
+	UNUSED_VAR(page);
+	UNUSED_VAR(user_data);
 	
-	iNbPageNum = gtk_toolbar_get_n_items(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar));
+	iPrevPageNum = gtk_notebook_get_current_page(poNoteBook);
+	pChild = gtk_notebook_get_nth_page(poNoteBook, iPrevPageNum);
+	gmlc_gui_server_tab_update_ui(GMLC_GUI_SERVER_TAB(pChild), FALSE);
 	
-	for (i = 0; i < iNbPageNum - 3; i++) {
-		pToolItem = gtk_toolbar_get_nth_item(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), i);
-		if (pToolItem != NULL) {
-			gtk_widget_hide(GTK_WIDGET(pToolItem));
-		}
-		
-	}
-	
-	pChild = gtk_notebook_get_nth_page(notebook, page_num);
-	gmlc_gui_server_tab_update_ui(GMLC_GUI_SERVER_TAB(pChild));
+	pChild = gtk_notebook_get_nth_page(poNoteBook, iPageNum);
+	gmlc_gui_server_tab_update_ui(GMLC_GUI_SERVER_TAB(pChild), TRUE);
 }
 
 void gmlc_gui_server_evt_btnTlbrSqlServerList_clicked (GtkWidget *widget, gpointer user_data) {

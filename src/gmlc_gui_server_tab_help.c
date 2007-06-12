@@ -25,7 +25,7 @@ static void gmlc_gui_server_tab_help_get_property (GObject * object, guint prop_
 static void gmlc_gui_server_tab_help_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
 static void gmlc_gui_server_tab_help_interface_init (gpointer g_iface, gpointer iface_data);
-static void gmlc_gui_server_tab_help_update_ui (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp);
+static void gmlc_gui_server_tab_help_update_ui (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp, gboolean bShow);
 
 void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp);
 void gmlc_gui_server_tab_help_init_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp);
@@ -50,7 +50,7 @@ G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabHelp, gmlc_gui_server_tab_help, GTK_TYP
 
 static void gmlc_gui_server_tab_help_interface_init (gpointer g_iface, gpointer iface_data) {
   GmlcGuiServerTabInterface *pIface = (GmlcGuiServerTabInterface *)g_iface;
-  pIface->update_ui = (void (*) (GmlcGuiServerTab * self))gmlc_gui_server_tab_help_update_ui;
+  pIface->update_ui = (void (*) (GmlcGuiServerTab * self, gboolean bShow))gmlc_gui_server_tab_help_update_ui;
 }
 
 static void gmlc_gui_server_tab_help_class_init (GmlcGuiServerTabHelpClass * pClass) {
@@ -111,11 +111,11 @@ static void gmlc_gui_server_tab_help_init (GmlcGuiServerTabHelp * pGmlcGuiSrvTab
 
 static void gmlc_gui_server_tab_help_finalize (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp) {
 	UNUSED_VAR(pGmlcGuiSrvTabHelp);
-	
 }
 
-static void gmlc_gui_server_tab_help_update_ui (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp) {
+static void gmlc_gui_server_tab_help_update_ui (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp, gboolean bShow) {
 	UNUSED_VAR(pGmlcGuiSrvTabHelp);
+	UNUSED_VAR(bShow);
 }
 
 GmlcGuiServerTabHelp * gmlc_gui_server_tab_help_new (GmlcGuiServer * pGmlcGuiSrv) {

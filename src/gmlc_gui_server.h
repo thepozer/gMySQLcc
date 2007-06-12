@@ -44,6 +44,7 @@ struct _GmlcGuiServer {
 	/* General Widgets */
 	GtkWidget * nbkGeneral;
 	GtkWidget * tlbMainToolbar;
+	GtkWidget * poHBoxToolbar;
 };
 
 struct _GmlcGuiServerClass {
@@ -55,6 +56,8 @@ struct _GmlcGuiServerClass {
 GType gmlc_gui_server_get_type (void);
 
 GmlcGuiServer * gmlc_gui_server_new (GmlcMysqlServer * pGmlcMysqlSrv);
+
+void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery, gboolean bExecNow);
 
 G_END_DECLS
 

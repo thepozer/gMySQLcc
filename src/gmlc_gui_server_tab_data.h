@@ -45,6 +45,7 @@ struct _GmlcGuiServerTabData {
 	GmlcGuiServer * pGmlcGuiSrv;
 	
 	/* Global toolbar */
+	GtkWidget * poDataToolbar;
 	GtkToolItem * btnTlbrSql;
 	GtkToolItem * btnTlbrSqlFile;
 	
