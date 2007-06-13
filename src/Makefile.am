@@ -44,8 +44,6 @@ gmysqlcc_SOURCES = \
 	gmlc_gui_helpers.h\
 	gmlc_gui_connexions.c\
 	gmlc_gui_connexions.h\
-	gmlc_gui_query.c\
-	gmlc_gui_query.h\
 	gmlc_gui_server.c\
 	gmlc_gui_server.h\
 	gmlc_gui_server_tab.c\
