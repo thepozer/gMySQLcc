@@ -205,6 +205,8 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrv->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
+	gtk_notebook_set_scrollable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), TRUE);
+	
 	poLabel = gtk_label_new(_("Databases"));
 	gtk_widget_show (poLabel);
 	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
@@ -213,6 +215,7 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_widget_show (poTab);
 	
 	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
 	
 	if (lServerVersion >= 40100) {
 		poLabel = gtk_label_new(_("Help"));
@@ -223,6 +226,7 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 		gtk_widget_show (poTab);
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+		gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
 	}
 }
 
@@ -246,6 +250,7 @@ void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pc
 	gtk_widget_show (poTab);
 	
 	iNewPage = gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), iNewPage);
 	
 	if (pcQuery != NULL) {
