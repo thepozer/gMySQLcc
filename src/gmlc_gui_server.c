@@ -202,20 +202,11 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 	GtkWidget * poLabel = NULL;
 	GtkWidget * poTab = NULL;
 	glong lServerVersion = 0;
+	gint iPageShow = 0;
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrv->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), TRUE);
-	
-	poLabel = gtk_label_new(_("Databases"));
-	gtk_widget_show (poLabel);
-	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
-	
-	poTab = GTK_WIDGET(gmlc_gui_server_tab_data_new(pGmlcGuiSrv));
-	gtk_widget_show (poTab);
-	
-	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
-	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
 	
 	if (lServerVersion >= 40100) {
 		poLabel = gtk_label_new(_("Help"));
@@ -227,7 +218,21 @@ static void gmlc_gui_server_create_tabs(GmlcGuiServer * pGmlcGuiSrv) {
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
 		gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
+		
+		iPageShow = 1;
 	}
+	
+	poLabel = gtk_label_new(_("Databases"));
+	gtk_widget_show (poLabel);
+	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
+	
+	poTab = GTK_WIDGET(gmlc_gui_server_tab_data_new(pGmlcGuiSrv));
+	gtk_widget_show (poTab);
+	
+	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
+	
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), iPageShow);
 }
 
 static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv) {
@@ -258,6 +263,13 @@ void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pc
 	}
 	
 	g_free(pcText);
+}
+
+void gmlc_gui_server_close_query_tab(GmlcGuiServer * pGmlcGuiSrv, GtkWidget * pTabQuery) {
+	gint iPageIdx = 0;
+	
+	iPageIdx = gtk_notebook_page_num(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), pTabQuery);
+	gtk_notebook_remove_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), iPageIdx);
 }
 
 static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data) {

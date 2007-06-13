@@ -44,9 +44,6 @@ struct _GmlcGuiServerTabQuery {
 	
 	/* Toolbar Part */
 	GtkWidget * poQueryToolbar;
-	GtkToolItem *btnExecSql;
-	GtkToolItem *btnDumpSql;
-	GtkToolItem *btnDuplicateSql;
 
 	/* Query Part */
 	GtkWidget * txtSQLRequest;

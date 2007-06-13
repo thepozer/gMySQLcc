@@ -58,6 +58,7 @@ GType gmlc_gui_server_get_type (void);
 GmlcGuiServer * gmlc_gui_server_new (GmlcMysqlServer * pGmlcMysqlSrv);
 
 void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery, gboolean bExecNow);
+void gmlc_gui_server_close_query_tab(GmlcGuiServer * pGmlcGuiSrv, GtkWidget * pTabQuery);
 
 G_END_DECLS
 
