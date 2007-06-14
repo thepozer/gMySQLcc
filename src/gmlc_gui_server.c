@@ -19,7 +19,6 @@
 #include "gmlc_gui_server_tab_data.h"
 #include "gmlc_gui_server_tab_help.h"
 #include "gmlc_gui_server_tab_query.h"
-#include "gmlc_gui_query.h"
 
 static void gmlc_gui_server_finalize (GmlcGuiServer * pGmlcGuiSrv);
 static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);

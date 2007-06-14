@@ -15,7 +15,6 @@
 
 #include "gmlc_gui_server_tab_data.h"
 #include "gmlc_gui_server_tab.h"
-#include "gmlc_gui_query.h"
 #include "gmlc_mysql_query.h"
 
 static void gmlc_gui_server_tab_data_finalize (GmlcGuiServerTabData * pGmlcGuiSrvTabData);

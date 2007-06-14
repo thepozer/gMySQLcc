@@ -48,3 +48,4 @@ GType gmlc_gui_server_tab_get_type (void)
 void gmlc_gui_server_tab_update_ui (GmlcGuiServerTab * self, gboolean bShow) {
 	GMLC_GUI_SERVER_TAB_GET_INTERFACE(self)->update_ui(self, bShow);
 }
+

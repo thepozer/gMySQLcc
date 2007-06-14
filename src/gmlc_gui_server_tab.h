@@ -42,3 +42,4 @@ void gmlc_gui_server_tab_update_ui (GmlcGuiServerTab * self, gboolean bShow);
 G_END_DECLS
 
 #endif /* __GMLC_GUI_SERVER_TAB_H__ */
+

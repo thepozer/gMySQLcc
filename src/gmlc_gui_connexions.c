@@ -15,7 +15,6 @@
 
 #include "gmlc_gui_connexions.h"
 #include "gmlc_gui_server.h"
-#include "gmlc_gui_query.h"
 
 static void gmlc_gui_connexions_finalize (GmlcGuiConnexions * pGmlcGuiCnxns);
 static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxns);
