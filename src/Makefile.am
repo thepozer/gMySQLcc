@@ -60,6 +60,8 @@ gmysqlcc_SOURCES = \
 	gmlc_misc_config.h\
 	gmlc_misc_hashtable.c\
 	gmlc_misc_hashtable.h\
+	gmlc_mysql_structure.c\
+	gmlc_mysql_structure.h\
 	gmlc_mysql_server.c\
 	gmlc_mysql_server.h\
 	gmlc_mysql_query.c\

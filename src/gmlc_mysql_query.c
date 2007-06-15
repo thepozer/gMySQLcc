@@ -140,7 +140,7 @@ static void gmlc_mysql_query_class_init (GmlcMysqlQueryClass * pClass) {
 		g_param_spec_string("", "", "", "", G_PARAM_READWRITE));
 */
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
-		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_QUERY, 
 		g_param_spec_string("query", "Query string", "Sql Query string", "", G_PARAM_READABLE));
 	g_object_class_install_property(pObjClass, PROP_SRV_CHARSET, 
@@ -222,12 +222,33 @@ static void gmlc_mysql_query_get_property (GObject * object, guint prop_id, GVal
 GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName) {
 	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
 	
-	pGmlcMysqlQry = GMLC_MYSQL_QUERY(g_object_new (GMLC_TYPE_MYSQL_QUERY, "server", GMLC_MYSQL_SERVER(pGmlcMysqlSrv), "db_name", pcDbName, NULL));
+	pGmlcMysqlQry = GMLC_MYSQL_QUERY(g_object_new (GMLC_MYSQL_TYPE_QUERY, "server", GMLC_MYSQL_SERVER(pGmlcMysqlSrv), "db_name", pcDbName, NULL));
 	
 	gmlc_mysql_query_get_version(pGmlcMysqlQry);
 	gmlc_mysql_query_get_current_charset(pGmlcMysqlQry);
 	
 	return pGmlcMysqlQry;
+}
+
+gchar * gmlc_mysql_query_static_get_one_result(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName, const gchar * pcQuery, const gint iIdxField) {
+	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
+	gchar * pcRetValue = NULL;
+	
+	pGmlcMysqlQry = gmlc_mysql_query_new(pGmlcMysqlSrv, pcDbName);
+	
+	g_return_val_if_fail(pGmlcMysqlQry != NULL, NULL);
+	
+	if (pGmlcMysqlQry->pMysqlLink == NULL) {
+		gmlc_mysql_query_connect(pGmlcMysqlQry);
+	}
+	
+	g_return_val_if_fail(pGmlcMysqlQry->pMysqlLink != NULL, NULL);
+	
+	pcRetValue = gmlc_tools_query_get_one_result(pGmlcMysqlQry->pMysqlLink, pGmlcMysqlQry->pcSrvCharset, pcQuery, iIdxField);
+	
+	g_object_unref(pGmlcMysqlQry);
+	
+	return pcRetValue;
 }
 
 static gboolean gmlc_mysql_query_connect(GmlcMysqlQuery * pGmlcMysqlQry) {

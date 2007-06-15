@@ -43,6 +43,7 @@ typedef struct _GmlcMysqlProcedure	GmlcMysqlProcedure;
 #endif /* __GMLC_MYSQL_PROCEDURE_H__TYPE__ */
 
 
+#include "gmlc_mysql_structure.h"
 
 #include "gmlc_mysql_function.h"
 #include "gmlc_mysql_procedure.h"
@@ -53,12 +54,12 @@ typedef struct _GmlcMysqlProcedure	GmlcMysqlProcedure;
 
 G_BEGIN_DECLS
 
-#define GMLC_TYPE_MYSQL_DATABASE			(gmlc_mysql_database_get_type ())
-#define GMLC_MYSQL_DATABASE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), GMLC_TYPE_MYSQL_DATABASE, GmlcMysqlDatabase))
-#define GMLC_MYSQL_DATABASE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GMLC_TYPE_MYSQL_DATABASE, GmlcMysqlDatabaseClass))
-#define GMLC_IS_MYSQL_DATABASE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMLC_TYPE_MYSQL_DATABASE))
-#define GMLC_IS_MYSQL_DATABASE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GMLC_TYPE_MYSQL_DATABASE))
-#define GMLC_GET_MYSQL_DATABASE_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GMLC_TYPE_MYSQL_DATABASE, GmlcMysqlDatabaseClass))
+#define GMLC_MYSQL_TYPE_DATABASE			(gmlc_mysql_database_get_type ())
+#define GMLC_MYSQL_DATABASE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), GMLC_MYSQL_TYPE_DATABASE, GmlcMysqlDatabase))
+#define GMLC_MYSQL_DATABASE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GMLC_MYSQL_TYPE_DATABASE, GmlcMysqlDatabaseClass))
+#define GMLC_MYSQL_IS_DATABASE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMLC_MYSQL_TYPE_DATABASE))
+#define GMLC_MYSQL_IS_DATABASE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GMLC_MYSQL_TYPE_DATABASE))
+#define GMLC_MYSQL_GET_DATABASE_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GMLC_MYSQL_TYPE_DATABASE, GmlcMysqlDatabaseClass))
 
 #ifndef __GMLC_MYSQL_DATABASE_H__TYPE__
 #define __GMLC_MYSQL_DATABASE_H__TYPE__

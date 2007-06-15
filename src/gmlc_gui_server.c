@@ -53,7 +53,7 @@ static void gmlc_gui_server_class_init (GmlcGuiServerClass * pClass) {
 	pObjClass->set_property = gmlc_gui_server_set_property;
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
-		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_VBOX_TOOLBAR, 
 		g_param_spec_object("toolbar-hbox", "HBox where is the toolbar object", "HBox where is the toolbar object", GTK_TYPE_HBOX, G_PARAM_READABLE));
 }

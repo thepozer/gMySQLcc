@@ -13,12 +13,12 @@
 
 G_BEGIN_DECLS
 
-#define GMLC_TYPE_MYSQL_QUERY             (gmlc_mysql_query_get_type ())
-#define GMLC_MYSQL_QUERY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GMLC_TYPE_MYSQL_QUERY, GmlcMysqlQuery))
-#define GMLC_MYSQL_QUERY_CLASS(obj)       (G_TYPE_CHECK_CLASS_CAST ((obj), GMLC_TYPE_MYSQL_QUERY,  GmlcMysqlQueryClass))
-#define GMLC_IS_MYSQL_QUERY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMLC_TYPE_MYSQL_QUERY))
-#define GMLC_IS_MYSQL_QUERY_CLASS(obj)    (G_TYPE_CHECK_CLASS_TYPE ((obj), GMLC_TYPE_MYSQL_QUERY))
-#define GMLC_MYSQL_QUERY_GET_CLASS        (G_TYPE_INSTANCE_GET_CLASS ((obj), GMLC_TYPE_MYSQL_QUERY, GmlcMysqlQueryClass))
+#define GMLC_MYSQL_TYPE_QUERY             (gmlc_mysql_query_get_type ())
+#define GMLC_MYSQL_QUERY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GMLC_MYSQL_TYPE_QUERY, GmlcMysqlQuery))
+#define GMLC_MYSQL_QUERY_CLASS(obj)       (G_TYPE_CHECK_CLASS_CAST ((obj), GMLC_MYSQL_TYPE_QUERY,  GmlcMysqlQueryClass))
+#define GMLC_MYSQL_IS_QUERY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMLC_MYSQL_TYPE_QUERY))
+#define GMLC_MYSQL_IS_QUERY_CLASS(obj)    (G_TYPE_CHECK_CLASS_TYPE ((obj), GMLC_MYSQL_TYPE_QUERY))
+#define GMLC_MYSQL_QUERY_GET_CLASS        (G_TYPE_INSTANCE_GET_CLASS ((obj), GMLC_MYSQL_TYPE_QUERY, GmlcMysqlQueryClass))
 
 typedef struct _GmlcMysqlQuery            GmlcMysqlQuery;
 typedef struct _GmlcMysqlQueryClass       GmlcMysqlQueryClass;
@@ -64,6 +64,8 @@ gboolean gmlc_tools_query_is_read_query(const gchar * query);
 void gmlc_mysql_query_free_record_content(GArray * arRow);
 
 GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName);
+gchar * gmlc_mysql_query_static_get_one_result(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName, const gchar * pcQuery, const gint iIdxField);
+
 
 gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry);
 gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry);

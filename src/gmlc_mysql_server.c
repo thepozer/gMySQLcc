@@ -172,7 +172,7 @@ static void gmlc_mysql_server_get_property (GObject * object, guint prop_id, GVa
 		case PROP_VERSION :
 			if (pGmlcMysqlSrv->lVersion == 0) {
 				GmlcMysqlQuery * pGmlcMysqlQry = NULL;
-				pGmlcMysqlQry = gmlc_mysql_query_new(G_OBJECT(pGmlcMysqlSrv), NULL);
+				pGmlcMysqlQry = gmlc_mysql_query_new(pGmlcMysqlSrv, NULL);
 				pGmlcMysqlSrv->lVersion = gmlc_mysql_query_get_version(pGmlcMysqlQry);
 				g_object_unref(G_OBJECT(pGmlcMysqlQry));
 			}
@@ -185,7 +185,7 @@ static void gmlc_mysql_server_get_property (GObject * object, guint prop_id, GVa
 }
 
 GmlcMysqlServer * gmlc_mysql_server_new (void) {
-	return GMLC_MYSQL_SERVER(g_object_new (GMLC_TYPE_MYSQL_SERVER, NULL));
+	return GMLC_MYSQL_SERVER(g_object_new (GMLC_MYSQL_TYPE_SERVER, NULL));
 }
 
 gchar * gmlc_mysql_server_generate_xml_config(GmlcMysqlServer * pGmlcMysqlSrv) {
@@ -255,7 +255,7 @@ gboolean gmlc_mysql_server_update_databases_list(GmlcMysqlServer * pGmlcMysqlSrv
 	gchar * pcName = NULL;
 	gint i = 0;
 	
-	pGmlcMysqlQry = gmlc_mysql_query_new (G_OBJECT(pGmlcMysqlSrv), NULL);
+	pGmlcMysqlQry = gmlc_mysql_query_new (pGmlcMysqlSrv, NULL);
 	
 	if (gmlc_mysql_query_execute(pGmlcMysqlQry, "SHOW DATABASES;", 15, TRUE)) {
 		arListDb = g_array_new(TRUE, TRUE, sizeof(gchar *));

@@ -16,12 +16,16 @@
 #include <string.h>
 
 #include "gmlc_mysql_database.h"
-
 #include "gmlc_misc_hashtable.h"
 
 static void gmlc_mysql_database_finalize (GmlcMysqlDatabase * pGmlcMysqlDb);
 static void gmlc_mysql_database_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void gmlc_mysql_database_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+
+static void gmlc_mysql_database_interface_structure_init (gpointer g_iface, gpointer iface_data);
+static gchar * gmlc_mysql_database_structure_get_create (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_database_structure_get_alter (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_database_structure_get_drop (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName);
 
 enum {
 	PROP_0,
@@ -30,7 +34,15 @@ enum {
 	PROP_DB_NAME
 };
 
-G_DEFINE_TYPE (GmlcMysqlDatabase, gmlc_mysql_database, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (GmlcMysqlDatabase, gmlc_mysql_database, G_TYPE_OBJECT, 
+	G_IMPLEMENT_INTERFACE (GMLC_MYSQL_TYPE_STRUCTURE, gmlc_mysql_database_interface_structure_init));
+
+static void gmlc_mysql_database_interface_structure_init (gpointer g_iface, gpointer iface_data) {
+	GmlcMysqlStructureInterface * pIface = (GmlcMysqlStructureInterface *) g_iface;
+	pIface->get_create = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_database_structure_get_create;
+	pIface->get_alter = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_database_structure_get_alter;
+	pIface->get_drop = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_database_structure_get_drop;
+}
 
 static void gmlc_mysql_database_class_init (GmlcMysqlDatabaseClass *pClass) {
 	GObjectClass *pObjClass = G_OBJECT_CLASS(pClass);
@@ -41,7 +53,7 @@ static void gmlc_mysql_database_class_init (GmlcMysqlDatabaseClass *pClass) {
 	pObjClass->set_property = gmlc_mysql_database_set_property;
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
-		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_DB_NAME, 
 		g_param_spec_string("db_name", "Database name", "Name of the database", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_FLAGGED, 
@@ -103,8 +115,65 @@ static void gmlc_mysql_database_set_property (GObject * object, guint prop_id, c
 	}
 }
 
+static gchar * gmlc_mysql_database_structure_get_create (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName) {
+	const gchar * pcDbName = NULL;
+	gchar * pcDefCharset = NULL, * pcDefCollation = NULL, * pcSqlQuery = NULL;
+	
+	if (bMyself) {
+		pcDbName = pGmlcMysqlDb->pcDbName;
+	} else if (pcOtherName != NULL) {
+		pcDbName = pcOtherName; 
+	} else {
+		pcDbName = "<Name of the database>";
+	}
+	
+	pcDefCharset = gmlc_mysql_query_static_get_one_result(pGmlcMysqlDb->pGmlcMysqlSrv, NULL, "SHOW LOCAL VARIABLES LIKE 'character_set_server'", 1);
+	pcDefCollation = gmlc_mysql_query_static_get_one_result(pGmlcMysqlDb->pGmlcMysqlSrv, NULL, "SHOW LOCAL VARIABLES LIKE 'collation_server'", 1);
+	
+	pcSqlQuery = g_strdup_printf("CREATE DATABASE `%s`\n\tCHARACTER SET '%s'\n\tCOLLATE '%s';", pcDbName, pcDefCharset, pcDefCollation);
+	
+	return pcSqlQuery;
+}
+
+static gchar * gmlc_mysql_database_structure_get_alter (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName) {
+	const gchar * pcDbName = NULL;
+	gchar * pcDefCharset = NULL, * pcDefCollation = NULL, * pcSqlQuery = NULL;
+	
+	if (bMyself) {
+		pcDbName = pGmlcMysqlDb->pcDbName;
+	} else if (pcOtherName != NULL) {
+		pcDbName = pcOtherName; 
+	} else {
+		pcDbName = "<Name of the database>";
+	}
+	
+	pcDefCharset = gmlc_mysql_query_static_get_one_result(pGmlcMysqlDb->pGmlcMysqlSrv, NULL, "SHOW LOCAL VARIABLES LIKE 'character_set_server'", 1);
+	pcDefCollation = gmlc_mysql_query_static_get_one_result(pGmlcMysqlDb->pGmlcMysqlSrv, NULL, "SHOW LOCAL VARIABLES LIKE 'collation_server'", 1);
+	
+	pcSqlQuery = g_strdup_printf("ALTER DATABASE `%s`\n\tCHARACTER SET '%s'\n\tCOLLATE '%s';", pcDbName, pcDefCharset, pcDefCollation);
+	
+	return pcSqlQuery;
+}
+
+static gchar * gmlc_mysql_database_structure_get_drop (GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bMyself, const gchar * pcOtherName) {
+	const gchar * pcDbName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (bMyself) {
+		pcDbName = pGmlcMysqlDb->pcDbName;
+	} else if (pcOtherName != NULL) {
+		pcDbName = pcOtherName; 
+	} else {
+		pcDbName = "<Name of the database>";
+	}
+	
+	pcSqlQuery = g_strdup_printf("DROP DATABASE `%s`;", pcDbName);
+	
+	return pcSqlQuery;
+}
+
 GmlcMysqlDatabase * gmlc_mysql_database_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName) {
-	return GMLC_MYSQL_DATABASE(g_object_new(GMLC_TYPE_MYSQL_DATABASE, "server", pGmlcMysqlSrv, "db_name", pcDbName, NULL));
+	return GMLC_MYSQL_DATABASE(g_object_new(GMLC_MYSQL_TYPE_DATABASE, "server", pGmlcMysqlSrv, "db_name", pcDbName, NULL));
 }
 
 GArray * gmlc_mysql_database_tables_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList) {

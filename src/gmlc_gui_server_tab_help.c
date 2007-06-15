@@ -62,7 +62,7 @@ static void gmlc_gui_server_tab_help_class_init (GmlcGuiServerTabHelpClass * pCl
 	pObjClass->set_property = gmlc_gui_server_tab_help_set_property;
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
-		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READABLE));
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READABLE));
 	g_object_class_install_property(pObjClass, PROP_SERVER_WINDOW, 
 		g_param_spec_object("server_window", "Server window object", "Server window object", GMLC_GUI_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }

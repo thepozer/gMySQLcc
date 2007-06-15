@@ -45,15 +45,15 @@ GType gmlc_mysql_structure_get_type (void)
   return type;
 }
 
-void gmlc_mysql_structure_get_create (GmlcMysqlStructure * self, gboolean bMyself, const gchar * pcOtherName) {
-	GMLC_MYSQL_STRUCTURE_GET_INTERFACE(self)->get_create(self, bMyself, pcOtherName);
+gchar * gmlc_mysql_structure_get_create (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName) {
+	return GMLC_MYSQL_STRUCTURE_GET_INTERFACE(poSelf)->get_create(poSelf, bMyself, pcOtherName);
 }
 
-void gmlc_mysql_structure_get_alter (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName) {
-	GMLC_MYSQL_STRUCTURE_GET_INTERFACE(self)->get_alter(self, bMyself, pcOtherName);
+gchar * gmlc_mysql_structure_get_alter (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName) {
+	return GMLC_MYSQL_STRUCTURE_GET_INTERFACE(poSelf)->get_alter(poSelf, bMyself, pcOtherName);
 }
 
-void gmlc_mysql_structure_get_drop (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName) {
-	GMLC_MYSQL_STRUCTURE_GET_INTERFACE(self)->get_drop(self, bMyself, pcOtherName);
+gchar * gmlc_mysql_structure_get_drop (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName) {
+	return GMLC_MYSQL_STRUCTURE_GET_INTERFACE(poSelf)->get_drop(poSelf, bMyself, pcOtherName);
 }
 

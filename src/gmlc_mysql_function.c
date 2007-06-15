@@ -46,7 +46,7 @@ static void gmlc_mysql_function_class_init(GmlcMysqlFunctionClass *pClass) {
 	pObjClass->set_property = gmlc_mysql_function_set_property;
 	
 	g_object_class_install_property(pObjClass, PROP_DATABASE, 
-		g_param_spec_object("database", "Database object", "Database object", GMLC_TYPE_MYSQL_DATABASE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		g_param_spec_object("database", "Database object", "Database object", GMLC_MYSQL_TYPE_DATABASE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_NAME, 
 		g_param_spec_string("name", "Function name", "Name of the function", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_FLAGGED, 

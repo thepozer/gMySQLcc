@@ -16,6 +16,8 @@
 #ifndef __GMLC_MYSQL_STRUCTURE_H__
 #define __GMLC_MYSQL_STRUCTURE_H__ 
 
+#define UNUSED_VAR(x) (x = x)
+
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -31,16 +33,16 @@ typedef struct _GmlcMysqlStructureInterface GmlcMysqlStructureInterface;
 struct _GmlcMysqlStructureInterface {
 	GTypeInterface parent;
 	
-	void (* get_create) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
-	void (* get_alter) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
-	void (* get_drop) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+	gchar * (* get_create) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+	gchar * (* get_alter) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+	gchar * (* get_drop) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
 };
 
 GType gmlc_mysql_structure_get_type (void);
 
-void gmlc_mysql_structure_get_create (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
-void gmlc_mysql_structure_get_alter (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
-void gmlc_mysql_structure_get_drop (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+gchar * gmlc_mysql_structure_get_create (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+gchar * gmlc_mysql_structure_get_alter (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
+gchar * gmlc_mysql_structure_get_drop (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName);
 
 G_END_DECLS
 
