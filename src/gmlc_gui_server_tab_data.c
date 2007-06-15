@@ -149,37 +149,35 @@ GmlcGuiServerTabData * gmlc_gui_server_tab_data_new (GmlcGuiServer * pGmlcGuiSrv
 
 void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
 	GtkWidget * poHBoxToolbar = NULL;
-	GtkWidget * poImgToolbar = NULL;
-	GtkTooltips * tooltips;
-	
-	tooltips = gtk_tooltips_new();
+	GtkWidget * poImgBtn = NULL;
+	GtkWidget * poBtnSql = NULL;
+	GtkWidget * poBtnSqlFile = NULL;
 	
 	g_object_get(pGmlcGuiSrvTabData->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
-	pGmlcGuiSrvTabData->poDataToolbar = gtk_toolbar_new ();
+	pGmlcGuiSrvTabData->poDataToolbar = gtk_hbox_new (FALSE, 2);
 	gtk_widget_show (pGmlcGuiSrvTabData->poDataToolbar);
 	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabData->poDataToolbar, TRUE, TRUE, 0);
-	gtk_toolbar_set_style (GTK_TOOLBAR (pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOLBAR_BOTH_HORIZ);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	pGmlcGuiSrvTabData->btnTlbrSql = gtk_tool_button_new (poImgToolbar, _("SQL"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), TRUE);
-	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabData->btnTlbrSql), "clicked", 
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnSql = gtk_button_new_with_label (_("SQL"));
+	gtk_button_set_image(GTK_BUTTON(poBtnSql), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnSql), GTK_RELIEF_NONE);
+	g_signal_connect (poBtnSql, "clicked", 
 			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSql_clicked), pGmlcGuiSrvTabData);
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSql));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSql), tooltips, _("Exec SQL Query"), NULL);
+	gtk_widget_show(poBtnSql);
+	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData->poDataToolbar), poBtnSql, FALSE, FALSE, 0);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	pGmlcGuiSrvTabData->btnTlbrSqlFile = gtk_tool_button_new (poImgToolbar, _("SQL File"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), TRUE);
-	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabData->btnTlbrSqlFile), "clicked", 
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnSqlFile = gtk_button_new_with_label (_("SQL File"));
+	gtk_button_set_image(GTK_BUTTON(poBtnSqlFile), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnSqlFile), GTK_RELIEF_NONE);
+	g_signal_connect (poBtnSqlFile, "clicked", 
 			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked), pGmlcGuiSrvTabData);
-	gtk_widget_show(GTK_WIDGET(pGmlcGuiSrvTabData->btnTlbrSqlFile));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabData->poDataToolbar), GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(pGmlcGuiSrvTabData->btnTlbrSqlFile), tooltips, _("Exec SQL File"), NULL);
+	gtk_widget_show(poBtnSqlFile);
+	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData->poDataToolbar), poBtnSqlFile, FALSE, FALSE, 0);
 }
 
 void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {

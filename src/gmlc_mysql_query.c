@@ -470,6 +470,13 @@ gboolean gmlc_mysql_query_goto_next_result(GmlcMysqlQuery * pGmlcMysqlQry) {
 	
 	iNextRes = mysql_next_result(pGmlcMysqlQry->pMysqlLink);
 	
+	if (iNextRes < 0) {
+		pGmlcMysqlQry->iEditResult = 0;
+		pGmlcMysqlQry->bNoRecord = TRUE;
+		gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
+		return FALSE;
+	}
+	
 	if (iNextRes > 0) {
 		gmlc_mysql_query_read_error(pGmlcMysqlQry, FALSE);
 		g_printerr("gmlc_mysql_query_goto_next_result - mysql_next_result - Failed\nQuery : '%s'\nError: (%d) %s\n", pGmlcMysqlQry->pcQuery, pGmlcMysqlQry->iErrCode, pGmlcMysqlQry->pcErrMsg);
@@ -515,6 +522,7 @@ gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry) {
 		pGmlcMysqlQry->iNbField = 0;
 		pGmlcMysqlQry->bNoRecord = FALSE;
 		pGmlcMysqlQry->iEditResult = 0;
+		gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
 	}
 	
 	return TRUE;

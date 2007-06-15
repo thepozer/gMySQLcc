@@ -155,58 +155,55 @@ GmlcGuiServerTabQuery * gmlc_gui_server_tab_query_new (GmlcGuiServer * pGmlcGuiS
 
 void gmlc_gui_server_tab_query_create_toolbar_items (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
 	GtkWidget * poHBoxToolbar = NULL;
-	GtkWidget * poImgToolbar = NULL;
-	GtkToolItem *btnExecSql;
-	GtkToolItem *btnDuplicateSql;
-	GtkToolItem *btnDumpSql;
-	GtkToolItem *btnClose;
-	GtkTooltips * tooltips;
-	
-	tooltips = gtk_tooltips_new();
+	GtkWidget * poImgBtn = NULL;
+	GtkWidget * poBtnExecSql = NULL;
+	GtkWidget * poBtnDuplicateSql = NULL;
+	GtkWidget * poBtnDumpSql = NULL;
+	GtkWidget * poBtnClose = NULL;
 	
 	g_object_get(pGmlcGuiSrvTabQuery->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
-	pGmlcGuiSrvTabQuery->poQueryToolbar = gtk_toolbar_new ();
+	pGmlcGuiSrvTabQuery->poQueryToolbar = gtk_hbox_new (FALSE, 2);
 	gtk_widget_show (pGmlcGuiSrvTabQuery->poQueryToolbar);
 	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabQuery->poQueryToolbar, TRUE, TRUE, 0);
-	gtk_toolbar_set_style (GTK_TOOLBAR (pGmlcGuiSrvTabQuery->poQueryToolbar), GTK_TOOLBAR_BOTH_HORIZ);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	btnExecSql = gtk_tool_button_new (poImgToolbar, _("Execute"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnExecSql), TRUE);
-	g_signal_connect (G_OBJECT (btnExecSql), "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnExecSql_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(GTK_WIDGET(btnExecSql));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabQuery->poQueryToolbar), GTK_TOOL_ITEM(btnExecSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnExecSql), tooltips, _("Execute SQL query"), NULL);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	btnDuplicateSql = gtk_tool_button_new (poImgToolbar, _("Duplicate"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnDuplicateSql), TRUE);
-	g_signal_connect (G_OBJECT (btnDuplicateSql), "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(GTK_WIDGET(btnDuplicateSql));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabQuery->poQueryToolbar), GTK_TOOL_ITEM(btnDuplicateSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDuplicateSql), tooltips, _("Duplicate SQL Windows"), NULL);
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnExecSql = gtk_button_new_with_label(_("Execute"));
+	gtk_button_set_image(GTK_BUTTON(poBtnExecSql), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnExecSql), GTK_RELIEF_NONE);
+	g_signal_connect(poBtnExecSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnExecSql_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtnExecSql);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnExecSql, FALSE, FALSE, 0);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	btnDumpSql = gtk_tool_button_new (poImgToolbar, _("Dump"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnDumpSql), TRUE);
-	/*g_signal_connect (G_OBJECT (btnDumpSql), "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery);*/
-	gtk_widget_set_sensitive(GTK_WIDGET(btnDumpSql), FALSE);
-	gtk_widget_show(GTK_WIDGET(btnDumpSql));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabQuery->poQueryToolbar), GTK_TOOL_ITEM(btnDumpSql), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnDumpSql), tooltips, _("Dump with current query"), NULL);
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnDuplicateSql = gtk_button_new_with_label(_("Duplicate"));
+	gtk_button_set_image(GTK_BUTTON(poBtnDuplicateSql), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnDuplicateSql), GTK_RELIEF_NONE);
+	g_signal_connect(poBtnDuplicateSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtnDuplicateSql);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnDuplicateSql, FALSE, FALSE, 0);
 	
-	poImgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(poImgToolbar);
-	btnClose = gtk_tool_button_new (poImgToolbar, _("Close tab"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnClose), TRUE);
-	g_signal_connect (G_OBJECT (btnClose), "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnClose_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(GTK_WIDGET(btnClose));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrvTabQuery->poQueryToolbar), GTK_TOOL_ITEM(btnClose), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnClose), tooltips, _("Close the current query"), NULL);
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnDumpSql = gtk_button_new_with_label(_("Dump"));
+	gtk_button_set_image(GTK_BUTTON(poBtnDumpSql), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnDumpSql), GTK_RELIEF_NONE);
+/*	g_signal_connect(poBtnDumpSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery);*/
+	gtk_widget_show(poBtnDumpSql);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnDumpSql, FALSE, FALSE, 0);
+	
+	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(poImgBtn);
+	poBtnClose = gtk_button_new_with_label(_("Close tab"));
+	gtk_button_set_image(GTK_BUTTON(poBtnClose), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtnClose), GTK_RELIEF_NONE);
+	g_signal_connect(poBtnClose, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnClose_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtnClose);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnClose, FALSE, FALSE, 0);
+	
 }
 
 void gmlc_gui_server_tab_query_create_widgets (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
@@ -307,7 +304,7 @@ void gmlc_gui_server_tab_query_execute_query (GmlcGuiServerTabQuery * pGmlcGuiSr
 			if (askYesno(_("Write Warning !!!"), _("Warning !!! This server has been marked with Write Warning flags !!!\nIt is dangerous for the data ... :)\n\nDo you want force the execution of the query ?"))) {
 				if (!gmlc_mysql_query_execute(pGmlcGuiSrvTabQuery->pGmlcMysqlQry, query, strlen(query), TRUE)) {
 					/* Query Not Ok */
-					msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiSrvTabQuery), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode, pGmlcGuiSrvTabQuery->pGmlcMysqlQry->pcErrMsg);
+					msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode, pGmlcGuiSrvTabQuery->pGmlcMysqlQry->pcErrMsg);
 					gtk_dialog_run (GTK_DIALOG (msgdlg));
 					gtk_widget_destroy (msgdlg);
 					gmlc_mysql_query_free_result(pGmlcGuiSrvTabQuery->pGmlcMysqlQry);
@@ -319,7 +316,7 @@ void gmlc_gui_server_tab_query_execute_query (GmlcGuiServerTabQuery * pGmlcGuiSr
 			}
 		} else { /* It is really an error */
 			/* Query Not Ok */
-			msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiSrvTabQuery), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode, pGmlcGuiSrvTabQuery->pGmlcMysqlQry->pcErrMsg);
+			msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode, pGmlcGuiSrvTabQuery->pGmlcMysqlQry->pcErrMsg);
 			gtk_dialog_run (GTK_DIALOG (msgdlg));
 			gtk_widget_destroy (msgdlg);
 			gmlc_mysql_query_free_result(pGmlcGuiSrvTabQuery->pGmlcMysqlQry);
@@ -347,6 +344,7 @@ void gmlc_gui_server_tab_query_clean_all_result(GmlcGuiServerTabQuery * pGmlcGui
 }
 
 void gmlc_gui_server_tab_query_display_all_result(GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
+	GtkWidget * msgdlg;
 	
 	do {
 		/* Modification query - Display affected rows */
@@ -355,7 +353,16 @@ void gmlc_gui_server_tab_query_display_all_result(GmlcGuiServerTabQuery * pGmlcG
 		} else {
 			gmlc_gui_server_tab_query_display_one_result(pGmlcGuiSrvTabQuery);
 		}
+		
 	} while (gmlc_mysql_query_goto_next_result(pGmlcGuiSrvTabQuery->pGmlcMysqlQry));
+	
+	if (pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode != 0) {
+		/* Query Not Ok */
+		msgdlg = gtk_message_dialog_new(GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Error during the query : (%d) %s"), pGmlcGuiSrvTabQuery->pGmlcMysqlQry->iErrCode, pGmlcGuiSrvTabQuery->pGmlcMysqlQry->pcErrMsg);
+		gtk_dialog_run (GTK_DIALOG (msgdlg));
+		gtk_widget_destroy (msgdlg);
+		gmlc_mysql_query_free_result(pGmlcGuiSrvTabQuery->pGmlcMysqlQry);
+	}
 }
 
 void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {

@@ -43,7 +43,6 @@ struct _GmlcGuiServer {
 	
 	/* General Widgets */
 	GtkWidget * nbkGeneral;
-	GtkWidget * tlbMainToolbar;
 	GtkWidget * poHBoxToolbar;
 };
 

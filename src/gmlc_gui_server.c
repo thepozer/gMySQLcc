@@ -54,8 +54,6 @@ static void gmlc_gui_server_class_init (GmlcGuiServerClass * pClass) {
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
 		g_param_spec_object("server", "Server object", "Server object", GMLC_TYPE_MYSQL_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-	g_object_class_install_property(pObjClass, PROP_TOOLBAR, 
-		g_param_spec_object("toolbar", "Toolbar object", "Toolbar object", GTK_TYPE_TOOLBAR, G_PARAM_READABLE));
 	g_object_class_install_property(pObjClass, PROP_VBOX_TOOLBAR, 
 		g_param_spec_object("toolbar-hbox", "HBox where is the toolbar object", "HBox where is the toolbar object", GTK_TYPE_HBOX, G_PARAM_READABLE));
 }
@@ -66,9 +64,6 @@ static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValu
 	switch (prop_id) {
 		case PROP_SERVER :
 			g_value_set_object(value, pGmlcGuiSrv->pGmlcMysqlSrv);
-			break;
-		case PROP_TOOLBAR :
-			g_value_set_object(value, pGmlcGuiSrv->tlbMainToolbar);
 			break;
 		case PROP_VBOX_TOOLBAR :
 			g_value_set_object(value, pGmlcGuiSrv->poHBoxToolbar);
@@ -137,11 +132,10 @@ GmlcGuiServer * gmlc_gui_server_new (GmlcMysqlServer * pGmlcMysqlSrv) {
 }
 
 static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
-	GtkWidget *statusbar;
-	GtkWidget *vbox;
-	GtkWidget * imgToolbar;
-	/*GtkToolItem * btnTlbrSqlServerList, * sepTlbrSeparator, * btnTlbrClose;*/
-	GtkToolItem * btnTlbrSqlServerList, * btnTlbrClose;
+	GtkWidget * statusbar;
+	GtkWidget * vbox;
+	GtkWidget * imgBtn;
+	GtkWidget * btnSqlServerList, * btnClose;
 	
 	GtkTooltips * tooltips;
 	
@@ -155,35 +149,22 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_widget_show (pGmlcGuiSrv->poHBoxToolbar);
 	gtk_box_pack_start (GTK_BOX (vbox), pGmlcGuiSrv->poHBoxToolbar, FALSE, FALSE, 0);
 	
-	pGmlcGuiSrv->tlbMainToolbar = gtk_toolbar_new ();
-	gtk_widget_show (pGmlcGuiSrv->tlbMainToolbar);
-	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), pGmlcGuiSrv->tlbMainToolbar, TRUE, TRUE, 0);
-	gtk_toolbar_set_style (GTK_TOOLBAR (pGmlcGuiSrv->tlbMainToolbar), GTK_TOOLBAR_BOTH_HORIZ);
-
-	/*sepTlbrSeparator = gtk_separator_tool_item_new();
-	gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(sepTlbrSeparator), TRUE);
-	gtk_widget_show(GTK_WIDGET(sepTlbrSeparator));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), GTK_TOOL_ITEM(sepTlbrSeparator), -1);*/
-	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(imgToolbar);
-	btnTlbrSqlServerList = gtk_tool_button_new (imgToolbar, _("Servers list"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrSqlServerList), TRUE);
-	g_signal_connect (G_OBJECT (btnTlbrSqlServerList), "clicked", 
-			G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);
-	gtk_widget_show(GTK_WIDGET(btnTlbrSqlServerList));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), GTK_TOOL_ITEM(btnTlbrSqlServerList), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrSqlServerList), tooltips, _("Open server list window"), NULL);
-
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_widget_show(imgToolbar);
-	btnTlbrClose = gtk_tool_button_new (imgToolbar, _("Close"));
-	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrClose), TRUE);
-	g_signal_connect (G_OBJECT (btnTlbrClose), "clicked", 
+	btnClose = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_button_set_relief(GTK_BUTTON(btnClose), GTK_RELIEF_NONE);
+	g_signal_connect (G_OBJECT (btnClose), "clicked", 
 			G_CALLBACK (gmlc_gui_server_evt_btnTlbrClose_clicked), pGmlcGuiSrv);
-	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
-	gtk_toolbar_insert(GTK_TOOLBAR(pGmlcGuiSrv->tlbMainToolbar), GTK_TOOL_ITEM(btnTlbrClose), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
+	gtk_widget_show(GTK_WIDGET(btnClose));
+	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), btnClose, FALSE, FALSE, 0);
+	
+	imgBtn = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_show(imgBtn);
+	btnSqlServerList = gtk_button_new_with_label (_("Servers list"));
+	gtk_button_set_image(GTK_BUTTON(btnSqlServerList), imgBtn);
+	gtk_button_set_relief(GTK_BUTTON(btnSqlServerList), GTK_RELIEF_NONE);
+	g_signal_connect (G_OBJECT (btnSqlServerList), "clicked", 
+			G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);
+	gtk_widget_show(GTK_WIDGET(btnSqlServerList));
+	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), btnSqlServerList, FALSE, FALSE, 0);
 	
 	pGmlcGuiSrv->nbkGeneral = gtk_notebook_new ();
 	gtk_widget_show (pGmlcGuiSrv->nbkGeneral);
