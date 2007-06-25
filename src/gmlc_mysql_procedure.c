@@ -28,6 +28,11 @@ static void gmlc_mysql_procedure_finalize (GmlcMysqlProcedure * pGmlcMysqlPrc);
 static void gmlc_mysql_procedure_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void gmlc_mysql_procedure_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
+static void gmlc_mysql_procedure_interface_structure_init (gpointer g_iface, gpointer iface_data);
+static gchar * gmlc_mysql_procedure_structure_get_create (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_procedure_structure_get_alter (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_procedure_structure_get_drop (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
+
 enum {
 	PROP_0,
 	PROP_DATABASE,
@@ -36,7 +41,16 @@ enum {
 };
 
 
-G_DEFINE_TYPE (GmlcMysqlProcedure, gmlc_mysql_procedure, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (GmlcMysqlProcedure, gmlc_mysql_procedure, G_TYPE_OBJECT,
+	G_IMPLEMENT_INTERFACE (GMLC_MYSQL_TYPE_STRUCTURE, gmlc_mysql_procedure_interface_structure_init));
+
+static void gmlc_mysql_procedure_interface_structure_init (gpointer g_iface, gpointer iface_data) {
+	GmlcMysqlStructureInterface * pIface = (GmlcMysqlStructureInterface *) g_iface;
+	pIface->get_create = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_procedure_structure_get_create;
+	pIface->get_alter = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_procedure_structure_get_alter;
+	pIface->get_drop = (gchar * (*) (GmlcMysqlStructure * poSelf, gboolean bMyself, const gchar * pcOtherName))gmlc_mysql_procedure_structure_get_drop;
+}
+
 
 static void gmlc_mysql_procedure_class_init(GmlcMysqlProcedureClass *pClass) {
 	GObjectClass * pObjClass = G_OBJECT_CLASS(pClass);
@@ -105,6 +119,18 @@ static void gmlc_mysql_procedure_set_property (GObject * object, guint prop_id, 
 			break;
 		}
 	}
+}
+
+static gchar * gmlc_mysql_procedure_structure_get_create (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
+	return NULL;
+}
+
+static gchar * gmlc_mysql_procedure_structure_get_alter (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
+	return NULL;
+}
+
+static gchar * gmlc_mysql_procedure_structure_get_drop (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
+	return NULL;
 }
 
 GmlcMysqlProcedure * gmlc_mysql_procedure_new(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcName) {

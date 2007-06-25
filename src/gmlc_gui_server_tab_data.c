@@ -14,6 +14,7 @@
  */
 
 #include "gmlc_gui_server_tab_data.h"
+#include "gmlc_gui_server_tab_query.h"
 #include "gmlc_gui_server_tab.h"
 #include "gmlc_mysql_query.h"
 
@@ -29,6 +30,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 void gmlc_gui_server_tab_data_init_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
 
 void gmlc_gui_server_tab_data_open_query (GmlcGuiServerTabData * pGmlcGuiSrvTabData, const gchar * pcQuery, gboolean bExecNow);
+void gmlc_gui_server_tab_data_open_file (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
 void gmlc_gui_server_tab_data_open_query_select (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bUseTable);
 
 void gmlc_gui_server_tab_data_fill_database_list (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
@@ -41,20 +43,39 @@ static gboolean gmlc_gui_server_tab_data_evt_lstBase_btnpress (GtkWidget *widget
 static gboolean gmlc_gui_server_tab_data_evt_lstTables_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lstBase_selected (GtkTreeSelection *selection, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lstTables_selected (GtkTreeSelection *selection, gpointer user_data);
-static void gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data);
-static void gmlc_gui_server_tab_data_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_btn_sql_file_clicked (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_btn_sql_clicked (GtkWidget *widget, gpointer user_data);
 
 static void gmlc_gui_server_tab_data_evt_menu_db_add_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_db_alter_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_db_remove_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_db_refresh_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_db_show_create_activate (GtkWidget *widget, gpointer user_data);
 
-/*
-static void gmlc_gui_server_tab_data_evt_btnTblAdd_clicked (GtkWidget *widget, gpointer user_data);
-static void gmlc_gui_server_tab_data_evt_btnTblEdit_clicked (GtkWidget *widget, gpointer user_data);
-static void gmlc_gui_server_tab_data_evt_btnTblDump_clicked (GtkWidget *widget, gpointer user_data);
-static void gmlc_gui_server_tab_data_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user_data);
-*/
+static void gmlc_gui_server_tab_data_evt_menu_tbl_add_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_tbl_alter_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_tbl_remove_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_tbl_refresh_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate (GtkWidget *widget, gpointer user_data);
+
+static void gmlc_gui_server_tab_data_evt_menu_vw_add_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_alter_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_remove_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_refresh_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate (GtkWidget *widget, gpointer user_data);
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_add_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_proc_alter_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_proc_remove_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_proc_refresh_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate (GtkWidget *widget, gpointer user_data);
+
+static void gmlc_gui_server_tab_data_evt_menu_func_add_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_func_alter_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_func_remove_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_func_refresh_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_func_show_create_activate (GtkWidget *widget, gpointer user_data);
+
 enum {
 	PROP_0,
 	PROP_SERVER,
@@ -168,8 +189,7 @@ void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlc
 	poBtnSql = gtk_button_new_with_label (_("SQL"));
 	gtk_button_set_image(GTK_BUTTON(poBtnSql), poImgBtn);
 	gtk_button_set_relief(GTK_BUTTON(poBtnSql), GTK_RELIEF_NONE);
-	g_signal_connect (poBtnSql, "clicked", 
-			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSql_clicked), pGmlcGuiSrvTabData);
+	g_signal_connect (poBtnSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_data_evt_btn_sql_clicked), pGmlcGuiSrvTabData);
 	gtk_widget_show(poBtnSql);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData->poDataToolbar), poBtnSql, FALSE, FALSE, 0);
 	
@@ -178,20 +198,17 @@ void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlc
 	poBtnSqlFile = gtk_button_new_with_label (_("SQL File"));
 	gtk_button_set_image(GTK_BUTTON(poBtnSqlFile), poImgBtn);
 	gtk_button_set_relief(GTK_BUTTON(poBtnSqlFile), GTK_RELIEF_NONE);
-	g_signal_connect (poBtnSqlFile, "clicked", 
-			G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked), pGmlcGuiSrvTabData);
+	g_signal_connect (poBtnSqlFile, "clicked", G_CALLBACK (gmlc_gui_server_tab_data_evt_btn_sql_file_clicked), pGmlcGuiSrvTabData);
 	gtk_widget_show(poBtnSqlFile);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData->poDataToolbar), poBtnSqlFile, FALSE, FALSE, 0);
 }
 
 void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
-	GtkWidget *vbox, *hpaned/*, *hbuttonbox*/, *nbkDatas;
-	GtkWidget *label;
-	GtkWidget *scrolledwindow;
-	/*GtkWidget *btnTblAdd, *btnTblEdit, *btnTblDump, *btnTblDel;*/
-	/*GtkWidget *btnAdd, *btnEdit, *btnDump, *btnDel;*/
-	GtkWidget * poMenuDbOpsItem, * poMenuTblOpsItem;
-	GtkTreeSelection *select;
+	GtkTreeSelection * select;
+	GtkWidget * vbox, * hpaned, * nbkDatas;
+	GtkWidget * label;
+	GtkWidget * scrolledwindow;
+	GtkWidget * poMenuOpsItem;
 	glong lServerVersion = 0;
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
@@ -199,7 +216,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	hpaned = gtk_hpaned_new ();
 	gtk_widget_show (hpaned);
 	gtk_paned_set_position (GTK_PANED (hpaned), 200);
-	/*gtk_container_add(GTK_CONTAINER(pGmlcGuiSrvTabData), hpaned);*/
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData), hpaned, TRUE, TRUE, 0);
 
 	vbox = gtk_vbox_new (FALSE, 0);
@@ -226,38 +242,38 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	pGmlcGuiSrvTabData->mnuBdOps = gtk_menu_new();
 	gtk_widget_show (pGmlcGuiSrvTabData->mnuBdOps);
 
-	poMenuDbOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
-	g_signal_connect (poMenuDbOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_refresh_activate), pGmlcGuiSrvTabData);
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_refresh_activate), pGmlcGuiSrvTabData);
 
-	poMenuDbOpsItem = gtk_separator_menu_item_new();
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
+	poMenuOpsItem = gtk_separator_menu_item_new();
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	
-	poMenuDbOpsItem = gtk_menu_item_new_with_label(_("Add a database"));
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
-	g_signal_connect (poMenuDbOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_add_activate), pGmlcGuiSrvTabData);
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a database"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_add_activate), pGmlcGuiSrvTabData);
 
-	poMenuDbOpsItem = gtk_menu_item_new_with_label(_("Alter a database"));
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
-	g_signal_connect (poMenuDbOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_alter_activate), pGmlcGuiSrvTabData);
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a database"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_alter_activate), pGmlcGuiSrvTabData);
 
-	poMenuDbOpsItem = gtk_menu_item_new_with_label(_("Remove a database"));
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
-	g_signal_connect (poMenuDbOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_remove_activate), pGmlcGuiSrvTabData);
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a database"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_remove_activate), pGmlcGuiSrvTabData);
 
-	poMenuDbOpsItem = gtk_separator_menu_item_new();
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
+	poMenuOpsItem = gtk_separator_menu_item_new();
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	
-	poMenuDbOpsItem = gtk_menu_item_new_with_label(_("Display all create structures"));
-	gtk_widget_show (poMenuDbOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuDbOpsItem);
-	/*g_signal_connect (poMenuDbOpsItem, "activate", G_CALLBACK (gmysqlcc_gui_server_evt_menu_db_show_create_activate), pGmlcGuiSrvTabData);*/
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display all create structures"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_show_create_activate), pGmlcGuiSrvTabData);
 
 	
 	nbkDatas = gtk_notebook_new ();
@@ -290,47 +306,41 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	g_signal_connect (G_OBJECT (select), "changed", 
 										G_CALLBACK (gmlc_gui_server_tab_data_evt_lstTables_selected), pGmlcGuiSrvTabData);
 	
-	/*
-	hbuttonbox = gtk_hbutton_box_new ();
-	gtk_widget_show (hbuttonbox);
-	gtk_box_pack_start (GTK_BOX (vbox), hbuttonbox, FALSE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox), GTK_BUTTONBOX_SPREAD);
-	gtk_box_set_spacing (GTK_BOX (hbuttonbox), 2);
-	
-	btnTblAdd = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_widget_show (btnTblAdd);
-	gtk_box_pack_start (GTK_BOX (hbuttonbox), btnTblAdd, TRUE, TRUE, 0);
-	g_signal_connect (G_OBJECT (btnTblAdd), "clicked", 
-										G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTblAdd_clicked), pGmlcGuiSrvTabData);
-
-	/ *btnTblEdit = createIconButton("gtk-apply", _("Modify"));* /
-	btnTblEdit = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_widget_show (btnTblEdit);
-	gtk_box_pack_start (GTK_BOX (hbuttonbox), btnTblEdit, TRUE, TRUE, 0);
-	g_signal_connect (G_OBJECT (btnTblEdit), "clicked", 
-										G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTblEdit_clicked), pGmlcGuiSrvTabData);
-
-	/ *btnTblDump = createIconButton("gtk-save", _("Dump"));* /
-	btnTblDump = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
-	gtk_widget_show (btnTblDump);
-	gtk_box_pack_start (GTK_BOX (hbuttonbox), btnTblDump, TRUE, TRUE, 0);
-	g_signal_connect (G_OBJECT (btnTblDump), "clicked", 
-										G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTblDump_clicked), pGmlcGuiSrvTabData);
-
-	btnTblDel = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_widget_show (btnTblDel);
-	gtk_box_pack_start (GTK_BOX (hbuttonbox), btnTblDel, TRUE, TRUE, 0);
-	g_signal_connect (G_OBJECT (btnTblDel), "clicked", 
-										G_CALLBACK (gmlc_gui_server_tab_data_evt_btnTblDel_clicked), pGmlcGuiSrvTabData);*/
-
 	pGmlcGuiSrvTabData->mnuTblOps = gtk_menu_new();
 	gtk_widget_show (pGmlcGuiSrvTabData->mnuTblOps);
 
-	poMenuTblOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
-	gtk_widget_show (poMenuTblOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuTblOpsItem);
-	/*g_signal_connect (G_OBJECT (poMenuTblOpsItem), "activate", 
-										G_CALLBACK (gmysqlcc_gui_server_evt_mnuTBLOpsShowCreate_activate), pGmlcGuiSrvTabData);*/
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_refresh_activate), pGmlcGuiSrvTabData);
+
+	poMenuOpsItem = gtk_separator_menu_item_new();
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a table"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_add_activate), pGmlcGuiSrvTabData);
+
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a table"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_alter_activate), pGmlcGuiSrvTabData);
+
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a table"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_remove_activate), pGmlcGuiSrvTabData);
+
+	poMenuOpsItem = gtk_separator_menu_item_new();
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate), pGmlcGuiSrvTabData);
 
 	if (lServerVersion >= 50001) {
 		
@@ -359,37 +369,43 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		/*g_signal_connect (G_OBJECT (select), "changed", 
 											G_CALLBACK (gmlc_gui_server_tab_data_evt_lstTable_selected), pGmlcGuiSrvTabData);*/
 		
-		/*
-		hbuttonbox = gtk_hbutton_box_new ();
-		gtk_widget_show (hbuttonbox);
-		gtk_box_pack_start (GTK_BOX (vbox), hbuttonbox, FALSE, TRUE, 0);
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox), GTK_BUTTONBOX_SPREAD);
-		gtk_box_set_spacing (GTK_BOX (hbuttonbox), 2);
+		pGmlcGuiSrvTabData->mnuVwOps = gtk_menu_new();
+		gtk_widget_show (pGmlcGuiSrvTabData->mnuVwOps);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_refresh_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		
-		btnAdd = gtk_button_new_from_stock(GTK_STOCK_ADD);
-		gtk_widget_show (btnAdd);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnAdd, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnAdd), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwAdd_clicked), pGmlcGuiSrvTabData);* /
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a view"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_add_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a view"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_alter_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a view"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_remove_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		
-		btnEdit = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-		gtk_widget_show (btnEdit);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnEdit, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnEdit), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwEdit_clicked), pGmlcGuiSrvTabData);* /
-		
-		btnDump = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
-		gtk_widget_show (btnDump);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDump, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDump), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDump_clicked), pGmlcGuiSrvTabData);* /
-		
-		btnDel = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-		gtk_widget_show (btnDel);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDel, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDel), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDel_clicked), pGmlcGuiSrvTabData);*/
-		
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate), pGmlcGuiSrvTabData);
+
+
 		label = gtk_label_new (_("Procedures"));
 		gtk_widget_show (label);
 		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -415,37 +431,43 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		/*g_signal_connect (G_OBJECT (select), "changed", 
 											G_CALLBACK (gmlc_gui_server_tab_data_evt_lstTable_selected), pGmlcGuiSrvTabData);*/
 		
-		/*
-		hbuttonbox = gtk_hbutton_box_new ();
-		gtk_widget_show (hbuttonbox);
-		gtk_box_pack_start (GTK_BOX (vbox), hbuttonbox, FALSE, TRUE, 0);
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox), GTK_BUTTONBOX_SPREAD);
-		gtk_box_set_spacing (GTK_BOX (hbuttonbox), 2);
+		pGmlcGuiSrvTabData->mnuProcOps = gtk_menu_new();
+		gtk_widget_show (pGmlcGuiSrvTabData->mnuProcOps);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_refresh_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
-		btnAdd = gtk_button_new_from_stock(GTK_STOCK_ADD);
-		gtk_widget_show (btnAdd);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnAdd, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnAdd), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwAdd_clicked), pGmlcGuiSrvTabData);* /
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a procedure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_add_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a procedure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_alter_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a procedure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_remove_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
-		btnEdit = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-		gtk_widget_show (btnEdit);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnEdit, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnEdit), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwEdit_clicked), pGmlcGuiSrvTabData);* /
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate), pGmlcGuiSrvTabData);
 		
-		btnDump = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
-		gtk_widget_show (btnDump);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDump, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDump), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDump_clicked), pGmlcGuiSrvTabData);* /
-		
-		btnDel = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-		gtk_widget_show (btnDel);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDel, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDel), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDel_clicked), pGmlcGuiSrvTabData);*/
-		
+				
 		label = gtk_label_new (_("Functions"));
 		gtk_widget_show (label);
 		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -470,36 +492,42 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 		/*g_signal_connect (G_OBJECT (select), "changed", 
 											G_CALLBACK (gmlc_gui_server_tab_data_evt_lstTable_selected), pGmlcGuiSrvTabData);*/
-		/*
-		hbuttonbox = gtk_hbutton_box_new ();
-		gtk_widget_show (hbuttonbox);
-		gtk_box_pack_start (GTK_BOX (vbox), hbuttonbox, FALSE, TRUE, 0);
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox), GTK_BUTTONBOX_SPREAD);
-		gtk_box_set_spacing (GTK_BOX (hbuttonbox), 2);
 		
-		btnAdd = gtk_button_new_from_stock(GTK_STOCK_ADD);
-		gtk_widget_show (btnAdd);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnAdd, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnAdd), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwAdd_clicked), pGmlcGuiSrvTabData);* /
+		pGmlcGuiSrvTabData->mnuFuncOps = gtk_menu_new();
+		gtk_widget_show (pGmlcGuiSrvTabData->mnuFuncOps);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_refresh_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		
-		btnEdit = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-		gtk_widget_show (btnEdit);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnEdit, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnEdit), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwEdit_clicked), pGmlcGuiSrvTabData);* /
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a function"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_add_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a function"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_alter_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a function"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_remove_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		
-		btnDump = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
-		gtk_widget_show (btnDump);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDump, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDump), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDump_clicked), pGmlcGuiSrvTabData);* /
-		
-		btnDel = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-		gtk_widget_show (btnDel);
-		gtk_box_pack_start (GTK_BOX (hbuttonbox), btnDel, TRUE, TRUE, 0);
-		/ *g_signal_connect (G_OBJECT (btnDel), "clicked", 
-											G_CALLBACK (gmlc_gui_server_tab_data_evt_btnVwDel_clicked), pGmlcGuiSrvTabData);*/
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_show_create_activate), pGmlcGuiSrvTabData);
 	}
 }
 
@@ -563,6 +591,20 @@ void gmlc_gui_server_tab_data_init_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTa
 	}
 	
 	gmlc_gui_server_tab_data_fill_database_list(pGmlcGuiSrvTabData);
+}
+
+void gmlc_gui_server_tab_data_open_file (GmlcGuiServerTabData * pGmlcGuiSrvTabData) {
+	gchar * pcDbName = NULL;
+	GtkWidget * poQueryTab = NULL;
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		poQueryTab = gmlc_gui_server_add_query_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, pcDbName, NULL, FALSE);
+	} else {
+		poQueryTab = gmlc_gui_server_add_query_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, NULL, NULL, FALSE);
+	}
+	
+	gmlc_gui_server_tab_query_evt_btn_load_clicked(NULL, poQueryTab);
 }
 
 void gmlc_gui_server_tab_data_open_query (GmlcGuiServerTabData * pGmlcGuiSrvTabData, const gchar * pcQuery, gboolean bExecNow) {
@@ -650,12 +692,12 @@ void gmlc_gui_server_tab_data_fill_tables_list (GmlcGuiServerTabData * pGmlcGuiS
 		GmlcMysqlTable * pGmlcMysqlTbl = GMLC_MYSQL_TABLE(value);
 		GtkListStore * lstStrTable = GTK_LIST_STORE(user_data);
 		GtkTreeIter iter;
-		gchar * pcName = NULL, * pcRows = NULL, * pcSize = NULL, * pcType = NULL;
+		gchar * pcName = NULL, * pcRows = NULL, * pcSize = NULL, * pcEngine = NULL;
 		
-		g_object_get(G_OBJECT(pGmlcMysqlTbl), "name", &pcName, "rows", &pcRows, "size", &pcSize, "type", &pcType, NULL);
+		g_object_get(G_OBJECT(pGmlcMysqlTbl), "name", &pcName, "rows", &pcRows, "size", &pcSize, "engine", &pcEngine, NULL);
 		
 		gtk_list_store_append (lstStrTable, &iter);
-		gtk_list_store_set (lstStrTable, &iter, 0, pcName, 1, pcRows, 2, pcSize, 3, pcType, 4, pGmlcMysqlTbl, -1);
+		gtk_list_store_set (lstStrTable, &iter, 0, pcName, 1, pcRows, 2, pcSize, 3, pcEngine, 4, pGmlcMysqlTbl, -1);
 	}
 	
 	lstStrTable = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -828,13 +870,15 @@ static void gmlc_gui_server_tab_data_evt_lstTables_selected (GtkTreeSelection *s
 	}
 }
 
-static void gmlc_gui_server_tab_data_evt_btnTlbrSqlFile_clicked (GtkWidget *widget, gpointer user_data) {
+static void gmlc_gui_server_tab_data_evt_btn_sql_file_clicked (GtkWidget *widget, gpointer user_data) {
 	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
 	UNUSED_VAR(widget);
 	UNUSED_VAR(pGmlcGuiSrvTabData);
+	
+	gmlc_gui_server_tab_data_open_file(pGmlcGuiSrvTabData);
 }
 
-static void gmlc_gui_server_tab_data_evt_btnTlbrSql_clicked (GtkWidget *widget, gpointer user_data) {
+static void gmlc_gui_server_tab_data_evt_btn_sql_clicked (GtkWidget *widget, gpointer user_data) {
 	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
 	UNUSED_VAR(widget);
 	
@@ -890,28 +934,177 @@ static void gmlc_gui_server_tab_data_evt_menu_db_remove_activate (GtkWidget *wid
 	}
 }
 
-/*
-static void gmlc_gui_server_tab_data_evt_btnTblAdd_clicked (GtkWidget *widget, gpointer user_data) {
+static void gmlc_gui_server_tab_data_evt_menu_db_show_create_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
 	UNUSED_VAR(widget);
-	UNUSED_VAR(user_data);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlDb), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_add_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlTbl), FALSE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_alter_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
+		pcQuery = gmlc_mysql_structure_get_alter(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlTbl), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_remove_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
+		pcQuery = gmlc_mysql_structure_get_drop(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlTbl), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_refresh_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
+		gmlc_gui_server_tab_data_fill_tables_list(pGmlcGuiSrvTabData);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlTbl), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+
+static void gmlc_gui_server_tab_data_evt_menu_vw_add_activate (GtkWidget *widget, gpointer user_data) {
 	
 }
 
-static void gmlc_gui_server_tab_data_evt_btnTblEdit_clicked (GtkWidget *widget, gpointer user_data) {
-	UNUSED_VAR(widget);
-	UNUSED_VAR(user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_alter_activate (GtkWidget *widget, gpointer user_data) {
 	
 }
 
-static void gmlc_gui_server_tab_data_evt_btnTblDump_clicked (GtkWidget *widget, gpointer user_data) {
-	UNUSED_VAR(widget);
-	UNUSED_VAR(user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_remove_activate (GtkWidget *widget, gpointer user_data) {
 	
 }
 
-static void gmlc_gui_server_tab_data_evt_btnTblDel_clicked (GtkWidget *widget, gpointer user_data) {
-	UNUSED_VAR(widget);
-	UNUSED_VAR(user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_refresh_activate (GtkWidget *widget, gpointer user_data) {
 	
 }
-*/
+
+static void gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlVw != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlVw), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_add_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_alter_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_remove_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_refresh_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlProc), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+
+static void gmlc_gui_server_tab_data_evt_menu_func_add_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_func_alter_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_func_remove_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_func_refresh_activate (GtkWidget *widget, gpointer user_data) {
+	
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_func_show_create_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlFunc != NULL) {
+		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlFunc), TRUE, NULL);
+		
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		
+		g_free(pcQuery);
+	}
+}
+
+
+

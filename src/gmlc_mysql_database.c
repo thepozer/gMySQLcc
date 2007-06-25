@@ -258,6 +258,8 @@ gboolean gmlc_mysql_database_update_tables_list(GmlcMysqlDatabase * pGmlcMysqlDb
 				if (pGmlcMysqlTbl == NULL) {
 					pGmlcMysqlTbl = gmlc_mysql_table_new_with_stat(pGmlcMysqlDb, pcName, pcRows, pcSize, pcEngine);
 					g_hash_table_insert(pGmlcMysqlDb->htbTables, g_strdup(pcName), pGmlcMysqlTbl);
+				} else {
+					g_object_set(pGmlcMysqlTbl, "rows", pcRows, "size", pcSize, "engine", pcEngine, NULL);
 				}
 				g_object_set(G_OBJECT(pGmlcMysqlTbl), "flagged", TRUE, NULL);
 			}

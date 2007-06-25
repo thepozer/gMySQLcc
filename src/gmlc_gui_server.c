@@ -135,7 +135,7 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	GtkWidget * statusbar;
 	GtkWidget * vbox;
 	GtkWidget * imgBtn;
-	GtkWidget * btnSqlServerList, * btnClose;
+	GtkWidget * poBtn;
 	
 	GtkTooltips * tooltips;
 	
@@ -149,22 +149,22 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_widget_show (pGmlcGuiSrv->poHBoxToolbar);
 	gtk_box_pack_start (GTK_BOX (vbox), pGmlcGuiSrv->poHBoxToolbar, FALSE, FALSE, 0);
 	
-	btnClose = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_button_set_relief(GTK_BUTTON(btnClose), GTK_RELIEF_NONE);
-	g_signal_connect (G_OBJECT (btnClose), "clicked", 
-			G_CALLBACK (gmlc_gui_server_evt_btnTlbrClose_clicked), pGmlcGuiSrv);
-	gtk_widget_show(GTK_WIDGET(btnClose));
-	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), btnClose, FALSE, FALSE, 0);
+	/*
+	poBtn = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_evt_btnTlbrClose_clicked), pGmlcGuiSrv);
+	gtk_widget_show(poBtn);
+	gtk_box_pack_end(GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), poBtn, FALSE, FALSE, 0);
+	*/
 	
 	imgBtn = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgBtn);
-	btnSqlServerList = gtk_button_new_with_label (_("Servers list"));
-	gtk_button_set_image(GTK_BUTTON(btnSqlServerList), imgBtn);
-	gtk_button_set_relief(GTK_BUTTON(btnSqlServerList), GTK_RELIEF_NONE);
-	g_signal_connect (G_OBJECT (btnSqlServerList), "clicked", 
-			G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);
-	gtk_widget_show(GTK_WIDGET(btnSqlServerList));
-	gtk_box_pack_end (GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), btnSqlServerList, FALSE, FALSE, 0);
+	poBtn = gtk_button_new_with_label (_("Servers list"));
+	gtk_button_set_image(GTK_BUTTON(poBtn), imgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_evt_btnTlbrSqlServerList_clicked), pGmlcGuiSrv);
+	gtk_widget_show(poBtn);
+	gtk_box_pack_end(GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), poBtn, FALSE, FALSE, 0);
 	
 	pGmlcGuiSrv->nbkGeneral = gtk_notebook_new ();
 	gtk_widget_show (pGmlcGuiSrv->nbkGeneral);
@@ -219,7 +219,7 @@ static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	
 }
 
-void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery, gboolean bExecNow) {
+GtkWidget * gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery, gboolean bExecNow) {
 	GtkWidget * poLabel = NULL;
 	GtkWidget * poTab = NULL;
 	gchar * pcText = NULL;
@@ -243,6 +243,8 @@ void gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pc
 	}
 	
 	g_free(pcText);
+	
+	return poTab;
 }
 
 void gmlc_gui_server_close_query_tab(GmlcGuiServer * pGmlcGuiSrv, GtkWidget * pTabQuery) {

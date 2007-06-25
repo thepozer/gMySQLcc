@@ -38,6 +38,11 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 void gmlc_gui_server_tab_query_display_one_info(GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery);
 
 gboolean gmlc_gui_server_tab_query_evt_window_keyrelease (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+
+void gmlc_gui_server_tab_query_load_from_file (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcFileName);
+void gmlc_gui_server_tab_query_save_to_file (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcFileName);
+void gmlc_gui_server_tab_query_evt_btn_save_clicked(GtkWidget *widget, gpointer user_data);
+
 void gmlc_gui_server_tab_query_evt_btnExecSql_clicked(GtkWidget *widget, gpointer user_data);
 void gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked(GtkWidget *widget, gpointer user_data);
 void gmlc_gui_server_tab_query_evt_btnDumpSql_clicked(GtkWidget *widget, gpointer user_data);
@@ -47,7 +52,8 @@ enum {
 	PROP_0,
 	PROP_SERVER,
 	PROP_SERVER_WINDOW,
-	PROP_DATABASE_NAME
+	PROP_DATABASE_NAME,
+	PROP_FILENAME,
 };
 
 G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabQuery, gmlc_gui_server_tab_query, GTK_TYPE_VBOX, 
@@ -72,6 +78,8 @@ static void gmlc_gui_server_tab_query_class_init (GmlcGuiServerTabQueryClass * p
 		g_param_spec_object("server_window", "Server window object", "Server window object", GMLC_GUI_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_DATABASE_NAME, 
 		g_param_spec_string("db_name", "Database name", "Name of the database", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_FILENAME, 
+		g_param_spec_string("filename", "File name", "File name of the sql script", "", G_PARAM_READWRITE));
 }
 
 static void gmlc_gui_server_tab_query_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
@@ -86,6 +94,9 @@ static void gmlc_gui_server_tab_query_get_property (GObject * object, guint prop
 			break;
 		case PROP_DATABASE_NAME :
 			g_value_set_string(value, pGmlcGuiSrvTabQuery->pcDbName);
+			break;
+		case PROP_FILENAME :
+			g_value_set_string(value, pGmlcGuiSrvTabQuery->pcFileName);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -113,6 +124,11 @@ static void gmlc_gui_server_tab_query_set_property (GObject * object, guint prop
 			
 			pGmlcGuiSrvTabQuery->pcDbName = g_value_dup_string(value);
 			break;
+		case PROP_FILENAME :
+			g_free(pGmlcGuiSrvTabQuery->pcFileName);
+			
+			pGmlcGuiSrvTabQuery->pcFileName = g_value_dup_string(value);
+			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 			break;
@@ -125,6 +141,7 @@ static void gmlc_gui_server_tab_query_init (GmlcGuiServerTabQuery * pGmlcGuiSrvT
 	pGmlcGuiSrvTabQuery->pcDbName = NULL;
 	pGmlcGuiSrvTabQuery->pGmlcMysqlSrv = NULL;
 	pGmlcGuiSrvTabQuery->pGmlcMysqlQry = NULL;
+	pGmlcGuiSrvTabQuery->pcFileName = NULL;
 	
 	g_signal_connect (G_OBJECT (pGmlcGuiSrvTabQuery), "key-release-event", G_CALLBACK (gmlc_gui_server_tab_query_evt_window_keyrelease), pGmlcGuiSrvTabQuery);
 }
@@ -156,10 +173,7 @@ GmlcGuiServerTabQuery * gmlc_gui_server_tab_query_new (GmlcGuiServer * pGmlcGuiS
 void gmlc_gui_server_tab_query_create_toolbar_items (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
 	GtkWidget * poHBoxToolbar = NULL;
 	GtkWidget * poImgBtn = NULL;
-	GtkWidget * poBtnExecSql = NULL;
-	GtkWidget * poBtnDuplicateSql = NULL;
-	GtkWidget * poBtnDumpSql = NULL;
-	GtkWidget * poBtnClose = NULL;
+	GtkWidget * poBtn = NULL;
 	
 	g_object_get(pGmlcGuiSrvTabQuery->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
@@ -168,41 +182,53 @@ void gmlc_gui_server_tab_query_create_toolbar_items (GmlcGuiServerTabQuery * pGm
 	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabQuery->poQueryToolbar, TRUE, TRUE, 0);
 	
 	
+	poBtn = gtk_button_new_from_stock(GTK_STOCK_OPEN);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect (poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btn_load_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(GTK_WIDGET(poBtn));
+	gtk_box_pack_start(GTK_BOX (pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
+	
+	poBtn = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect (poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btn_save_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(GTK_WIDGET(poBtn));
+	gtk_box_pack_start(GTK_BOX (pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
+	
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
-	poBtnExecSql = gtk_button_new_with_label(_("Execute"));
-	gtk_button_set_image(GTK_BUTTON(poBtnExecSql), poImgBtn);
-	gtk_button_set_relief(GTK_BUTTON(poBtnExecSql), GTK_RELIEF_NONE);
-	g_signal_connect(poBtnExecSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnExecSql_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(poBtnExecSql);
-	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnExecSql, FALSE, FALSE, 0);
+	poBtn = gtk_button_new_with_label(_("Execute"));
+	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnExecSql_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtn);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
-	poBtnDuplicateSql = gtk_button_new_with_label(_("Duplicate"));
-	gtk_button_set_image(GTK_BUTTON(poBtnDuplicateSql), poImgBtn);
-	gtk_button_set_relief(GTK_BUTTON(poBtnDuplicateSql), GTK_RELIEF_NONE);
-	g_signal_connect(poBtnDuplicateSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(poBtnDuplicateSql);
-	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnDuplicateSql, FALSE, FALSE, 0);
+	poBtn = gtk_button_new_with_label(_("Duplicate"));
+	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtn);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
-	poBtnDumpSql = gtk_button_new_with_label(_("Dump"));
-	gtk_button_set_image(GTK_BUTTON(poBtnDumpSql), poImgBtn);
-	gtk_button_set_relief(GTK_BUTTON(poBtnDumpSql), GTK_RELIEF_NONE);
-/*	g_signal_connect(poBtnDumpSql, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery);*/
-	gtk_widget_show(poBtnDumpSql);
-	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnDumpSql, FALSE, FALSE, 0);
+	poBtn = gtk_button_new_with_label(_("Dump"));
+	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+/*	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery);*/
+	gtk_widget_show(poBtn);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
-	poBtnClose = gtk_button_new_with_label(_("Close tab"));
-	gtk_button_set_image(GTK_BUTTON(poBtnClose), poImgBtn);
-	gtk_button_set_relief(GTK_BUTTON(poBtnClose), GTK_RELIEF_NONE);
-	g_signal_connect(poBtnClose, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnClose_clicked), pGmlcGuiSrvTabQuery);
-	gtk_widget_show(poBtnClose);
-	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtnClose, FALSE, FALSE, 0);
+	poBtn = gtk_button_new_with_label(_("Close tab"));
+	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
+	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
+	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnClose_clicked), pGmlcGuiSrvTabQuery);
+	gtk_widget_show(poBtn);
+	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
 }
 
@@ -249,6 +275,7 @@ void gmlc_gui_server_tab_query_create_widgets (GmlcGuiServerTabQuery * pGmlcGuiS
 	pango_font_description_free(pCourierFontDesc);
 	
 	pGmlcGuiSrvTabQuery->tabSQLResult = gtk_notebook_new ();
+	gtk_notebook_set_scrollable(GTK_NOTEBOOK(pGmlcGuiSrvTabQuery->tabSQLResult), TRUE);
 	gtk_widget_show (pGmlcGuiSrvTabQuery->tabSQLResult);
 	gtk_paned_pack2 (GTK_PANED (vpanedSQL), pGmlcGuiSrvTabQuery->tabSQLResult, TRUE, TRUE);
 
@@ -558,6 +585,103 @@ gboolean gmlc_gui_server_tab_query_evt_window_keyrelease (GtkWidget *widget, Gdk
 	}
 	
 	return FALSE;
+}
+
+void gmlc_gui_server_tab_query_load_from_file (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcFileName) {
+	gchar * content = NULL;
+	GtkTextBuffer * txtBuffer;
+	GIOChannel * loadFile;
+	GError * err = NULL;
+	gsize nbBytes;
+	
+	g_return_if_fail (pcFileName != NULL);
+	
+	g_object_set(pGmlcGuiSrvTabQuery, "filename", pcFileName, NULL);
+	
+	loadFile = g_io_channel_new_file(pcFileName, "r", &err);
+	g_io_channel_set_encoding(loadFile, "ISO-8859-15", &err);
+	if (g_io_channel_read_to_end(loadFile, &content, &nbBytes, &err) != G_IO_STATUS_NORMAL) {
+		content = NULL;
+	}
+	g_io_channel_unref(loadFile);
+	
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest));
+	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(txtBuffer), content, -1);
+}
+
+void gmlc_gui_server_tab_query_evt_btn_load_clicked(GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery = GMLC_GUI_SERVER_TAB_QUERY(user_data);
+	GtkWidget * poChooser = NULL;
+	gint response;
+	
+	poChooser = gtk_file_chooser_dialog_new (_("Load sql file"), GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_FILE_CHOOSER_ACTION_OPEN,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+	
+	if (pGmlcGuiSrvTabQuery->pcFileName != NULL) {
+		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (poChooser), pGmlcGuiSrvTabQuery->pcFileName);
+	}
+	
+	response = gtk_dialog_run (GTK_DIALOG (poChooser));
+	if (response == GTK_RESPONSE_OK) {
+		gchar * pcFileName = NULL;
+		
+		pcFileName = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (poChooser));
+		if (pcFileName != NULL) {
+			gmlc_gui_server_tab_query_load_from_file (pGmlcGuiSrvTabQuery, pcFileName);
+			g_free (pcFileName);
+		}
+	}
+	
+	gtk_widget_destroy (poChooser);
+}
+
+void gmlc_gui_server_tab_query_save_to_file (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcFileName) {
+	gchar * content = NULL;
+	GtkTextBuffer * txtBuffer;
+	GtkTextIter begin, end;
+	GIOChannel * saveFile;
+	GError * err = NULL;
+	gsize nbBytes;
+	
+	g_return_if_fail (pcFileName != NULL);
+	
+	g_object_set(pGmlcGuiSrvTabQuery, "filename", pcFileName, NULL);
+	
+	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest));
+	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
+	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
+	content = (gchar *)gtk_text_buffer_get_text (GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
+
+	saveFile = g_io_channel_new_file(pcFileName, "w", &err);
+	g_io_channel_set_encoding(saveFile, "ISO-8859-15", &err);
+	g_io_channel_write_chars(saveFile, content, -1, &nbBytes, &err);
+	g_io_channel_unref(saveFile);
+}
+
+void gmlc_gui_server_tab_query_evt_btn_save_clicked(GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery = GMLC_GUI_SERVER_TAB_QUERY(user_data);
+	GtkWidget * poChooser = NULL;
+	gint response;
+	
+	poChooser = gtk_file_chooser_dialog_new (_("Save sql file"), GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+	
+	if (pGmlcGuiSrvTabQuery->pcFileName != NULL) {
+		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (poChooser), pGmlcGuiSrvTabQuery->pcFileName);
+	}
+	
+	response = gtk_dialog_run (GTK_DIALOG (poChooser));
+	if (response == GTK_RESPONSE_OK) {
+		gchar * pcFileName = NULL;
+		
+		pcFileName = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (poChooser));
+		if (pcFileName != NULL) {
+			gmlc_gui_server_tab_query_save_to_file (pGmlcGuiSrvTabQuery, pcFileName);
+			g_free (pcFileName);
+		}
+	}
+	
+	gtk_widget_destroy (poChooser);
 }
 
 void gmlc_gui_server_tab_query_evt_btnExecSql_clicked(GtkWidget *widget, gpointer user_data) {

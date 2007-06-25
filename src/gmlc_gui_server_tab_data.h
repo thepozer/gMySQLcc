@@ -53,8 +53,13 @@ struct _GmlcGuiServerTabData {
 	GtkWidget * lstViews;
 	GtkWidget * lstProcedures;
 	GtkWidget * lstFunctions;
+	
+	/* Menu Part */
 	GtkWidget * mnuBdOps;
 	GtkWidget * mnuTblOps;
+	GtkWidget * mnuVwOps;
+	GtkWidget * mnuProcOps;
+	GtkWidget * mnuFuncOps;
 	
 	GmlcMysqlDatabase	* pGmlcMysqlDb;
 	GmlcMysqlTable		* pGmlcMysqlTbl;

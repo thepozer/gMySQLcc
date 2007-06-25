@@ -41,6 +41,7 @@ struct _GmlcGuiServerTabQuery {
 	GmlcMysqlServer * pGmlcMysqlSrv;
 	GmlcGuiServer * pGmlcGuiSrv;
 	gchar * pcDbName;
+	gchar * pcFileName;
 	
 	/* Toolbar Part */
 	GtkWidget * poQueryToolbar;
@@ -73,6 +74,8 @@ GmlcGuiServerTabQuery * gmlc_gui_server_tab_query_new (GmlcGuiServer * pGmlcGuiS
 
 gboolean gmlc_gui_server_tab_query_set_query (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery, const gchar * pcQuery, gboolean bExecNow);
 gchar * gmlc_gui_server_tab_query_get_query (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery);
+
+void gmlc_gui_server_tab_query_evt_btn_load_clicked(GtkWidget *widget, gpointer user_data);
 
 G_END_DECLS
 

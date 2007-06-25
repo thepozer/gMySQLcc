@@ -29,6 +29,7 @@
 #include <glib-object.h>
 
 #include "gmlc_mysql_database.h"
+#include "gmlc_mysql_structure.h"
 
 #define UNUSED_VAR(x) (x = x)
 
@@ -56,7 +57,7 @@ struct _GmlcMysqlTable {
 	
 	gchar * pcRows;
 	gchar * pcSize;
-	gchar * pcType;
+	gchar * pcEngine;
 	
 	gboolean bFlagged;
 };

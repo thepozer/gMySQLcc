@@ -28,6 +28,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gmlc_mysql_structure.h"
+
 #ifndef __GMLC_MYSQL_DATABASE_H__TYPE__
 #define __GMLC_MYSQL_DATABASE_H__TYPE__
 typedef struct _GmlcMysqlDatabase            GmlcMysqlDatabase;
