@@ -314,8 +314,10 @@ gchar * gmlc_gui_server_tab_query_get_query (GmlcGuiServerTabQuery * pGmlcGuiSrv
 	gchar * pcSqlQuery;
 	
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest));
-	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
-	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
+	if (!gtk_text_buffer_get_selection_bounds(txtBuffer, &begin, &end)) {
+		gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER(txtBuffer), &begin);
+		gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER(txtBuffer), &end);
+	}
 	pcSqlQuery = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(txtBuffer), &begin, &end, FALSE);
 	
 	return pcSqlQuery;
