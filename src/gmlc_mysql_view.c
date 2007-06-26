@@ -26,14 +26,14 @@
 
 #include "gmlc_mysql_database.h"
 
-static void gmlc_mysql_view_finalize (GmlcMysqlView * pGmlcMysqlViw);
+static void gmlc_mysql_view_finalize (GmlcMysqlView * pGmlcMysqlVw);
 static void gmlc_mysql_view_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void gmlc_mysql_view_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
 static void gmlc_mysql_view_interface_structure_init (gpointer g_iface, gpointer iface_data);
-static gchar * gmlc_mysql_view_structure_get_create (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
-static gchar * gmlc_mysql_view_structure_get_alter (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
-static gchar * gmlc_mysql_view_structure_get_drop (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_view_structure_get_create (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_view_structure_get_alter (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName);
+static gchar * gmlc_mysql_view_structure_get_drop (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName);
 
 enum {
 	PROP_0,
@@ -69,15 +69,15 @@ static void gmlc_mysql_view_class_init(GmlcMysqlViewClass *pClass) {
 		g_param_spec_boolean("flagged", "Object Flagged", "Object Flagged", FALSE, G_PARAM_READWRITE));
 }
 
-static void gmlc_mysql_view_init(GmlcMysqlView * pGmlcMysqlViw) {
-	pGmlcMysqlViw->pGmlcMysqlDb = NULL;
-	pGmlcMysqlViw->pcName = NULL;
-	pGmlcMysqlViw->bFlagged = FALSE;
+static void gmlc_mysql_view_init(GmlcMysqlView * pGmlcMysqlVw) {
+	pGmlcMysqlVw->pGmlcMysqlDb = NULL;
+	pGmlcMysqlVw->pcName = NULL;
+	pGmlcMysqlVw->bFlagged = FALSE;
 }
 
-static void gmlc_mysql_view_finalize(GmlcMysqlView * pGmlcMysqlViw) {
+static void gmlc_mysql_view_finalize(GmlcMysqlView * pGmlcMysqlVw) {
 	
-	g_free(pGmlcMysqlViw->pcName);
+	g_free(pGmlcMysqlVw->pcName);
 	/*G_OBJECT_CLASS(parent_class)->finalize(object);*/
 }
 
@@ -123,22 +123,36 @@ static void gmlc_mysql_view_set_property (GObject * object, guint prop_id, const
 	}
 }
 
-static gchar * gmlc_mysql_view_structure_get_create (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
+static gchar * gmlc_mysql_view_structure_get_create (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName) {
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL, * pcQuery = NULL;
+	
+	if (bMyself) {
+		g_object_get(pGmlcMysqlVw, "name", &pcName, NULL);
+		pcQuery = g_strdup_printf("SHOW CREATE VIEW `%s`;", pcName);
+		
+		pcSqlQuery = gmlc_mysql_query_static_get_one_result(pGmlcMysqlVw->pGmlcMysqlDb->pGmlcMysqlSrv, pGmlcMysqlVw->pGmlcMysqlDb->pcDbName, pcQuery, 1);
+		
+		g_free(pcQuery);
+	} else {
+		pcSqlQuery =  gmlc_mysql_database_create_new_view_sql(pGmlcMysqlVw->pGmlcMysqlDb, pcOtherName);
+	}
+	
+	return pcSqlQuery;
+}
+
+static gchar * gmlc_mysql_view_structure_get_alter (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName) {
 	return NULL;
 }
 
-static gchar * gmlc_mysql_view_structure_get_alter (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
-	return NULL;
-}
-
-static gchar * gmlc_mysql_view_structure_get_drop (GmlcMysqlTable * pGmlcMysqlTbl, gboolean bMyself, const gchar * pcOtherName) {
+static gchar * gmlc_mysql_view_structure_get_drop (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName) {
 	return NULL;
 }
 
 GmlcMysqlView * gmlc_mysql_view_new(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcName) {
-	GmlcMysqlView * pGmlcMysqlViw;
+	GmlcMysqlView * pGmlcMysqlVw;
 	
-	pGmlcMysqlViw = GMLC_MYSQL_VIEW(g_object_new(GMLC_TYPE_MYSQL_VIEW, "database", pGmlcMysqlDb, "name", pcName, NULL));
+	pGmlcMysqlVw = GMLC_MYSQL_VIEW(g_object_new(GMLC_TYPE_MYSQL_VIEW, "database", pGmlcMysqlDb, "name", pcName, NULL));
 	
-	return pGmlcMysqlViw;
+	return pGmlcMysqlVw;
 }

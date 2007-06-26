@@ -171,12 +171,7 @@ static gchar * gmlc_mysql_table_structure_get_create (GmlcMysqlTable * pGmlcMysq
 		
 		g_free(pcQuery);
 	} else {
-		if (pcOtherName != NULL) {
-			pcName = pcOtherName; 
-		} else {
-			pcName = "<Name of the database>";
-		}
-		pcSqlQuery = g_strdup_printf("CREATE TABLE `%s`;", pcName);
+		pcSqlQuery =  gmlc_mysql_database_create_new_table_sql(pGmlcMysqlTbl->pGmlcMysqlDb, pcOtherName);
 	}
 	
 	return pcSqlQuery;

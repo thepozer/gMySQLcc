@@ -277,6 +277,20 @@ gboolean gmlc_mysql_database_update_tables_list(GmlcMysqlDatabase * pGmlcMysqlDb
 	return TRUE;
 }
 
+gchar * gmlc_mysql_database_create_new_table_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName) {
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the database>";
+	}
+	pcSqlQuery = g_strdup_printf("CREATE TABLE `%s` (\n<Add fields>);", pcName);
+	
+	return pcSqlQuery;
+}
+
 GArray * gmlc_mysql_database_views_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList) {
 	GArray * arList = NULL;
 	
@@ -357,6 +371,20 @@ gboolean gmlc_mysql_database_update_views_list(GmlcMysqlDatabase * pGmlcMysqlDb)
 	}
 	
 	return TRUE;
+}
+
+gchar * gmlc_mysql_database_create_new_view_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName) {
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the database>";
+	}
+	pcSqlQuery = g_strdup_printf("CREATE VIEW `%s` AS SELECT * FROM <Tables> WHERE 1;", pcName);
+	
+	return pcSqlQuery;
 }
 
 GArray * gmlc_mysql_database_functions_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList) {
@@ -449,6 +477,20 @@ gboolean gmlc_mysql_database_update_functions_list(GmlcMysqlDatabase * pGmlcMysq
 	return TRUE;
 }
 
+gchar * gmlc_mysql_database_create_new_function_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName) {
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the database>";
+	}
+	pcSqlQuery = g_strdup_printf("CREATE FUNCTION `%s` ()\n RETURNS <type>\n<Actions>\n ;", pcName);
+	
+	return pcSqlQuery;
+}
+
 GArray * gmlc_mysql_database_procedures_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList) {
 	GArray * arList = NULL;
 	
@@ -537,6 +579,20 @@ gboolean gmlc_mysql_database_update_procedures_list(GmlcMysqlDatabase * pGmlcMys
 	}
 	
 	return TRUE;
+}
+
+gchar * gmlc_mysql_database_create_new_procedure_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName) {
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the database>";
+	}
+	pcSqlQuery = g_strdup_printf("CREATE PROCEDURE `%s` ()\n <Actions>\n ;", pcName);
+	
+	return pcSqlQuery;
 }
 
 
