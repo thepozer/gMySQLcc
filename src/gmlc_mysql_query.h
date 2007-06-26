@@ -60,10 +60,10 @@ struct _GmlcMysqlQueryClass {
 
 GType gmlc_mysql_query_get_type (void);
 
-gboolean gmlc_tools_query_is_read_query(const gchar * query);
+gboolean gmlc_tools_query_is_read_query(const gchar * pcQuery, gsize szQuery);
 void gmlc_mysql_query_free_record_content(GArray * arRow);
 
-GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName);
+GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName);
 gchar * gmlc_mysql_query_static_get_one_result(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName, const gchar * pcQuery, const gint iIdxField);
 
 

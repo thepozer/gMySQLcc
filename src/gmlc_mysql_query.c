@@ -31,37 +31,90 @@ enum {
 
 G_DEFINE_TYPE (GmlcMysqlQuery, gmlc_mysql_query, G_TYPE_OBJECT);
 
-gboolean gmlc_tools_query_is_read_query(const gchar * pcQuery) {
-	gchar * pcQueryUp;
+gboolean gmlc_tools_query_is_read_query(const gchar * pcQuery, gsize szQuery) {
+	GString * pstrWord = NULL;
+	gchar * pcQueryUp = NULL, * pcTmp = NULL, * pcPrevTmp = NULL;
+	gunichar ucChar = 0;
+	gsize szPos = 0;
+	gboolean bReturn = TRUE;
+	gboolean bEndLoop, bFirstWord, bInString;
 	
-	pcQueryUp = g_utf8_strup(pcQuery, -1);
+	pcQueryUp = g_utf8_strup(pcQuery, szQuery);
 	
 	if (pcQueryUp == NULL) {
 		return FALSE;
 	}
 	
-	if (g_ascii_strncasecmp(pcQueryUp, "SELECT", 6) == 0) {
-		g_free (pcQueryUp);
-		return TRUE;
+	if (!g_utf8_validate(pcQueryUp, szQuery, NULL)) {
+		return FALSE;
 	}
 	
-	if (g_ascii_strncasecmp(pcQueryUp, "SHOW", 4) == 0) {
-		g_free (pcQueryUp);
-		return TRUE;
+	/*g_print("Test query (%d) : '%s'\n", szQuery, pcQueryUp);*/
+	
+	pcTmp = pcQueryUp;
+	pstrWord = g_string_sized_new(16);
+	bFirstWord = TRUE;
+	bEndLoop = FALSE;
+	bInString = FALSE;
+	szPos = 0;
+	
+	while (!bEndLoop && szPos < szQuery) {
+		ucChar = g_utf8_get_char(pcTmp);
+		
+		/*g_print("Current (%d/%d) '%c' : '%s'\n", szPos, szQuery, *pcTmp, pcTmp);*/
+		
+		if (bFirstWord) {
+			if (!g_unichar_isspace(ucChar)) {
+				g_string_append_unichar(pstrWord, ucChar);
+			} else if (g_unichar_isspace(ucChar) && pstrWord->len == 0) {
+				/* Do nothing ! */
+			} else { /* Check word */
+				gboolean bReadCmd = FALSE;
+				
+				/*g_print("**** Checked first word : '%s' : ", pstrWord->str);*/
+				
+				if (g_ascii_strncasecmp(pstrWord->str, "SELECT", 6) == 0) {
+					bReadCmd = TRUE;
+				} else if (g_ascii_strncasecmp(pstrWord->str, "SHOW", 4) == 0) {
+					bReadCmd = TRUE;
+				} else if (g_ascii_strncasecmp(pstrWord->str, "EXPLAIN", 7) == 0) {
+					bReadCmd = TRUE;
+				} else if (g_ascii_strncasecmp(pstrWord->str, "DESCRIBE", 8) == 0) {
+					bReadCmd = TRUE;
+				} else if (g_ascii_strncasecmp(pstrWord->str, "#", 1) == 0) { /* Comments */
+					bReadCmd = TRUE;
+					while (*pcTmp != '\n') {
+						pcTmp = g_utf8_next_char(pcTmp);
+						szPos ++;
+					}
+				}
+				
+				if (!bReadCmd) {
+					bReturn = FALSE;
+					bEndLoop = TRUE;
+				}
+				
+				/*g_print("- Word status : %s - Global status : %s ****\n", ((bReadCmd) ? "True" : "False"), ((bReturn) ? "True" : "False"));*/
+				
+				bFirstWord = FALSE;
+			}
+		} else if ((*pcTmp) == ';' && !bInString) {
+			g_string_set_size(pstrWord, 0);
+			bFirstWord = TRUE;
+		} else if (((*pcTmp) == '\'' || (*pcTmp) == '"') && (*pcPrevTmp) != '\\') {
+			bInString = !bInString;
+			/*g_print("In a string : %s\n", ((bInString) ? "True" : "False"));*/
+		}
+		
+		pcPrevTmp = pcTmp;
+		pcTmp = g_utf8_next_char(pcTmp);
+		szPos ++;
 	}
 	
-	if (g_ascii_strncasecmp(pcQueryUp, "EXPLAIN", 7) == 0) {
-		g_free (pcQueryUp);
-		return TRUE;
-	}
-	
-	if (g_ascii_strncasecmp(pcQueryUp, "DESCRIBE", 8) == 0) {
-		g_free (pcQueryUp);
-		return TRUE;
-	}
+	/*g_print("Returned value : %s\n", ((bReturn) ? "True" : "False"));*/
 	
 	g_free (pcQueryUp);
-	return FALSE;
+	return bReturn;
 }
 
 gchar * gmlc_tools_query_get_one_result(MYSQL * pMysqlLink, const gchar * pcCharset, const gchar * pcQuery, const gint iIdxField) {
@@ -131,14 +184,7 @@ static void gmlc_mysql_query_class_init (GmlcMysqlQueryClass * pClass) {
 	
 	pObjClass->get_property = gmlc_mysql_query_get_property;
 	pObjClass->set_property = gmlc_mysql_query_set_property;
-/*	
-	g_object_class_install_property(pObjClass, PROP_, 
-		g_param_spec_int("", "", "", 0,, 65536, 0, G_PARAM_READWRITE));
-	g_object_class_install_property(pObjClass, PROP_, 
-		g_param_spec_object("", "", "", G_TYPE_OBJECT, G_PARAM_READWRITE));
-	g_object_class_install_property(pObjClass, PROP_, 
-		g_param_spec_string("", "", "", "", G_PARAM_READWRITE));
-*/
+	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
 		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_QUERY, 
@@ -219,7 +265,7 @@ static void gmlc_mysql_query_get_property (GObject * object, guint prop_id, GVal
 	}
 }
 
-GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, gchar * pcDbName) {
+GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName) {
 	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
 	
 	pGmlcMysqlQry = GMLC_MYSQL_QUERY(g_object_new (GMLC_MYSQL_TYPE_QUERY, "server", GMLC_MYSQL_SERVER(pGmlcMysqlSrv), "db_name", pcDbName, NULL));
@@ -287,6 +333,7 @@ gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * 
 	gchar * pcTmp = NULL;
 	gsize szTmp = 0;
 	gint iErrCode = 0;
+	gboolean bIsReadQuery = FALSE;
 	
 	g_return_val_if_fail(pGmlcMysqlQry != NULL, FALSE);
 	
@@ -307,14 +354,16 @@ gboolean gmlc_mysql_query_execute(GmlcMysqlQuery * pGmlcMysqlQry, const gchar * 
 		return FALSE;
 	}
 	
-	if (pGmlcMysqlQry->pGmlcMysqlSrv->bReadOnly && !gmlc_tools_query_is_read_query(pcQuery)) {
+	bIsReadQuery = gmlc_tools_query_is_read_query(pcQuery, szQuery);
+	
+	if (pGmlcMysqlQry->pGmlcMysqlSrv->bReadOnly && !bIsReadQuery) {
 		gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
 		pGmlcMysqlQry->iErrCode = -1000;
 		pGmlcMysqlQry->pcErrMsg = g_strdup("gmysqlcc : Server in Read-only mode");
 		return FALSE;
 	}
 	
-	if (pGmlcMysqlQry->pGmlcMysqlSrv->bWriteWarning && !gmlc_tools_query_is_read_query(pcQuery)) {
+	if (pGmlcMysqlQry->pGmlcMysqlSrv->bWriteWarning && !bIsReadQuery) {
 		if (!bForceWrite) {
 			gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
 			pGmlcMysqlQry->iErrCode = -1001;
