@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-02 08:30+0100\n"
+"POT-Creation-Date: 2007-07-26 10:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,295 +16,194 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gmysqlcc_gui_dump.c:89
-msgid "Dump Query"
+#: src/gmlc_gui_connexions.c:58
+msgid "GMySQLcc - Connections list"
 msgstr ""
 
-#: src/gmysqlcc_gui_dump.c:108 src/gmysqlcc_gui_dump.c:116
-#: src/gmysqlcc_gui_dump.c:124 src/gmysqlcc_gui_dump.c:414
-#: src/gmysqlcc_gui_dump.c:421 src/gmysqlcc_gui_dump.c:428
-msgid "-"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:132
-msgid "Server name :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:141
-msgid "Database name :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:150
-msgid "Table name :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:159
-msgid "SQL query :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:197
-msgid "Selection :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:212
-msgid "One file per database"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:221
-msgid "All files in a directory"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:229
-msgid "Drop database if exist"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:233
-msgid "Add USE database"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:237
-msgid "Drop table if exist"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:241
-msgid "Complete inserts"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:255
-msgid "Structure"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:262
-msgid "Structure and data"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:269
-msgid "Data only"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:278
-msgid "Table :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:283
-msgid "Options :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:296
-msgid "File name :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:313
-msgid "..."
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:318
-msgid "Format :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:332
-msgid "Charset :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:344
-msgid "Output :"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:373 src/gmysqlcc_gui_server.c:99
-msgid "SQL"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:374
-msgid "CSV"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:375
-msgid "XML"
-msgstr ""
-
-#: src/gmysqlcc_gui_dump.c:555
-msgid "Dump file name"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:94 src/gmysqlcc_gui_query.c:198
-#: src/gmysqlcc_gui_server.c:119
-msgid "Servers list"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:110
+#: src/gmlc_gui_connexions.c:117
 msgid "Connection"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:116
+#: src/gmlc_gui_connexions.c:123
 msgid "Connect to a server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:120
+#: src/gmlc_gui_connexions.c:127
 msgid "Edit Server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:126
+#: src/gmlc_gui_connexions.c:133
 msgid "Display edit server part"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:130
+#: src/gmlc_gui_connexions.c:137
 msgid "Execute SQL file"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:136
+#: src/gmlc_gui_connexions.c:143
 msgid "Execute an SQL file on a MySQL server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:140 src/gmysqlcc_gui_query.c:207
-#: src/gmysqlcc_gui_server.c:129 src/gmysqlcc_gui_text.c:144
+#: src/gmlc_gui_connexions.c:147
 msgid "Close"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:146 src/gmysqlcc_gui_query.c:212
-#: src/gmysqlcc_gui_server.c:135 src/gmysqlcc_gui_text.c:149
+#: src/gmlc_gui_connexions.c:153
 msgid "Close window"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:176
-msgid "_Up"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:181
-msgid "_Down"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:194
+#: src/gmlc_gui_connexions.c:203
 msgid "Server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:209
+#: src/gmlc_gui_connexions.c:218
 msgid "Name :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:223
+#: src/gmlc_gui_connexions.c:232
 msgid "Host :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:237
+#: src/gmlc_gui_connexions.c:246
 msgid "Port :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:252
+#: src/gmlc_gui_connexions.c:261
 msgid "User name :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:266
+#: src/gmlc_gui_connexions.c:275
 msgid "Password :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:280
+#: src/gmlc_gui_connexions.c:289
 msgid "Local socket file :"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:294
+#: src/gmlc_gui_connexions.c:303
 msgid "Read only server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:303
+#: src/gmlc_gui_connexions.c:312
 msgid "Warning about write query on this server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:312
-msgid "_New"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:318
-msgid "_Add"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:324
-msgid "_Modify"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:330
-msgid "D_elete"
-msgstr ""
-
-#: src/gmysqlcc_gui_list_server.c:343
+#: src/gmlc_gui_connexions.c:356
 msgid "Server name"
 msgstr ""
 
 #. check if not empty
-#: src/gmysqlcc_gui_list_server.c:461 src/gmysqlcc_gui_list_server.c:527
+#: src/gmlc_gui_connexions.c:487 src/gmlc_gui_connexions.c:553
 #, c-format
 msgid "Field %s cannot be empty !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:468 src/gmysqlcc_gui_list_server.c:534
+#: src/gmlc_gui_connexions.c:494 src/gmlc_gui_connexions.c:560
 #, c-format
 msgid "Field %s can only contain digits !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:479 src/gmysqlcc_gui_list_server.c:546
+#: src/gmlc_gui_connexions.c:505 src/gmlc_gui_connexions.c:572
 msgid ""
 "Name already taken !\n"
 "Please set another one."
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:508 src/gmysqlcc_gui_list_server.c:578
-#: src/gmysqlcc_gui_list_server.c:688
-msgid "Please select a database"
+#: src/gmlc_gui_connexions.c:534 src/gmlc_gui_connexions.c:604
+#: src/gmlc_gui_connexions.c:715
+msgid "Please select a server"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:571
+#: src/gmlc_gui_connexions.c:597
 msgid "Can't delete this server !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:614
+#: src/gmlc_gui_connexions.c:640
 msgid "Can't move up more !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_list_server.c:650
+#: src/gmlc_gui_connexions.c:676
 msgid "Can't move down more !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:142
-#, c-format
-msgid "SQL Request - %s - %s"
+#: src/gmlc_gui_server_tab_help.c:177
+msgid "Search (keyword) :"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:161 src/gmysqlcc_gui_text.c:135
+#: src/gmlc_gui_server_tab_help.c:190
+msgid "Search"
+msgstr ""
+
+#. Databases columns
+#: src/gmlc_gui_server_tab_help.c:238
+msgid "Categories"
+msgstr ""
+
+#. Table columns
+#: src/gmlc_gui_server_tab_help.c:246
+msgid "Topic name"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_help.c:430
+#, c-format
+msgid ""
+"Name : %s\n"
+"\n"
+"Description :\n"
+"\n"
+"%s\n"
+"\n"
+"Sample :\n"
+"\n"
+"%s\n"
+"\n"
+"Url : %s\n"
+msgstr ""
+
+#: src/gmlc_gui_server.c:90 src/gmlc_gui_server.c:112
+#, c-format
+msgid "GMySQLcc - Server window : %s"
+msgstr ""
+
+#: src/gmlc_gui_server.c:163
+msgid "Servers list"
+msgstr ""
+
+#: src/gmlc_gui_server.c:193
+msgid "Help"
+msgstr ""
+
+#. Databases columns
+#: src/gmlc_gui_server.c:206 src/gmlc_gui_server_tab_data.c:543
+msgid "Databases"
+msgstr ""
+
+#: src/gmlc_gui_server.c:229
+#, c-format
+msgid "Query - db : '%s'"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_query.c:200
 msgid "Execute"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:166
-msgid "Execute SQL query"
-msgstr ""
-
-#: src/gmysqlcc_gui_query.c:176
-msgid "Select output charset"
-msgstr ""
-
-#: src/gmysqlcc_gui_query.c:180
+#: src/gmlc_gui_server_tab_query.c:209
 msgid "Duplicate"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:185
-msgid "Duplicate SQL Windows"
-msgstr ""
-
-#: src/gmysqlcc_gui_query.c:189
+#: src/gmlc_gui_server_tab_query.c:218
 msgid "Dump"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:194
-msgid "Dump with current query"
+#: src/gmlc_gui_server_tab_query.c:227
+msgid "Close tab"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:203 src/gmysqlcc_gui_server.c:125
-msgid "Open server list window"
-msgstr ""
-
-#: src/gmysqlcc_gui_query.c:266
+#: src/gmlc_gui_server_tab_query.c:334
 msgid "Write Warning !!!"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:266
+#: src/gmlc_gui_server_tab_query.c:334
 msgid ""
 "Warning !!! This server has been marked with Write Warning flags !!!\n"
 "It is dangerous for the data ... :)\n"
@@ -315,68 +214,148 @@ msgstr ""
 #. Query Not Ok
 #. It is really an error
 #. Query Not Ok
-#: src/gmysqlcc_gui_query.c:269 src/gmysqlcc_gui_query.c:281
+#: src/gmlc_gui_server_tab_query.c:337 src/gmlc_gui_server_tab_query.c:349
+#: src/gmlc_gui_server_tab_query.c:391
 #, c-format
 msgid "Error during the query : (%d) %s"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:294
+#: src/gmlc_gui_server_tab_query.c:431 src/gmlc_gui_server_tab_query.c:553
 #, c-format
-msgid "Affected row : %d\n"
+msgid "Result %d"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:397
+#: src/gmlc_gui_server_tab_query.c:574
 #, c-format
-msgid "Records : %d"
+msgid ""
+"Query ok.\n"
+"Affected row : %d"
 msgstr ""
 
-#: src/gmysqlcc_gui_query.c:480
-#, c-format
-msgid "Can't use the charset : '%s'"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:81
-#, c-format
-msgid "Server : %s"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:105
-msgid "Exec SQL Query"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:109
-msgid "SQL File"
-msgstr ""
-
-#: src/gmysqlcc_gui_server.c:115
-msgid "Exec SQL File"
-msgstr ""
-
-#: src/gmysqlcc_gui_text.c:52
-#, c-format
-msgid "Text Window - File name : %s"
-msgstr ""
-
-#: src/gmysqlcc_gui_text.c:102
-msgid "Text Window"
-msgstr ""
-
-#: src/gmysqlcc_gui_text.c:117
-msgid "Open"
-msgstr ""
-
-#: src/gmysqlcc_gui_text.c:122 src/gmysqlcc_gui_text.c:231
+#: src/gmlc_gui_server_tab_query.c:620
 msgid "Load sql file"
 msgstr ""
 
-#: src/gmysqlcc_gui_text.c:126
-msgid "Save"
-msgstr ""
-
-#: src/gmysqlcc_gui_text.c:131 src/gmysqlcc_gui_text.c:255
+#: src/gmlc_gui_server_tab_query.c:669
 msgid "Save sql file"
 msgstr ""
 
-#: src/gmysqlcc_gui_text.c:140
-msgid "Execute sql file"
+#: src/gmlc_gui_server_tab_data.c:196
+msgid "SQL"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:205
+msgid "SQL File"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:250 src/gmlc_gui_server_tab_data.c:315
+#: src/gmlc_gui_server_tab_data.c:376 src/gmlc_gui_server_tab_data.c:436
+#: src/gmlc_gui_server_tab_data.c:496
+msgid "Refresh"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:259
+msgid "Add a database"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:264
+msgid "Alter a database"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:269
+msgid "Remove a database"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:278
+msgid "Display all create structures"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:289
+msgid "Tables"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:324
+msgid "Add a table"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:329
+msgid "Alter a table"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:334
+msgid "Remove a table"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:343 src/gmlc_gui_server_tab_data.c:404
+#: src/gmlc_gui_server_tab_data.c:464 src/gmlc_gui_server_tab_data.c:524
+msgid "Display create structure"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:350
+msgid "Views"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:385
+msgid "Add a view"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:390
+msgid "Alter a view"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:395
+msgid "Remove a view"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:410
+msgid "Procedures"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:445
+msgid "Add a procedure"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:450
+msgid "Alter a procedure"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:455
+msgid "Remove a procedure"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:470
+msgid "Functions"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:505
+msgid "Add a function"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:510
+msgid "Alter a function"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:515
+msgid "Remove a function"
+msgstr ""
+
+#. Table columns
+#. View columns
+#. Procedure columns
+#. Function columns
+#: src/gmlc_gui_server_tab_data.c:551 src/gmlc_gui_server_tab_data.c:566
+#: src/gmlc_gui_server_tab_data.c:574 src/gmlc_gui_server_tab_data.c:582
+msgid "Name"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:553
+msgid "Rows"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:555
+msgid "Size"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:557
+msgid "Type"
 msgstr ""
