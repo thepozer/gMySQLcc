@@ -1,11 +1,3 @@
-/***************************************************************************
- *            gmlc_mysql_procedure.c
- *
- *  
- *  Copyright  2007  Didier "pozer" Prolhac
- *  pozer@thepozer.net
- ***************************************************************************/
-
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
