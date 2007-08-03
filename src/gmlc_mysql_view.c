@@ -134,11 +134,37 @@ static gchar * gmlc_mysql_view_structure_get_create (GmlcMysqlView * pGmlcMysqlV
 }
 
 static gchar * gmlc_mysql_view_structure_get_alter (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName) {
-	return NULL;
+	gchar * pcSqlCreate = NULL, * pcSqlQuery = NULL, * pcTmp = NULL;	
+	gint i = 0;
+	
+	pcSqlCreate = gmlc_mysql_view_structure_get_create(pGmlcMysqlVw, bMyself, pcOtherName);
+	
+	pcTmp = pcSqlCreate;
+	while (pcTmp[i] != ' ') { pcTmp ++; }
+	
+	pcSqlQuery = g_strdup_printf("ALTER%s", pcTmp);
+	
+	g_free(pcSqlCreate);
+	pcTmp = NULL;
+	
+	return pcSqlQuery;
 }
 
 static gchar * gmlc_mysql_view_structure_get_drop (GmlcMysqlView * pGmlcMysqlVw, gboolean bMyself, const gchar * pcOtherName) {
-	return NULL;
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (bMyself) {
+		pcName = pGmlcMysqlVw->pcName;
+	} else if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the view>";
+	}
+	
+	pcSqlQuery = g_strdup_printf("DROP VIEW `%s`;", pcName);
+	
+	return pcSqlQuery;
 }
 
 GmlcMysqlView * gmlc_mysql_view_new(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcName) {

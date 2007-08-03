@@ -132,11 +132,34 @@ static gchar * gmlc_mysql_procedure_structure_get_create (GmlcMysqlProcedure * p
 }
 
 static gchar * gmlc_mysql_procedure_structure_get_alter (GmlcMysqlProcedure * pGmlcMysqlPrc, gboolean bMyself, const gchar * pcOtherName) {
-	return NULL;
+	gchar * pcDrop = NULL, * pcCreate = NULL, * pcSqlQuery = NULL;
+	
+	pcDrop = gmlc_mysql_procedure_structure_get_drop(pGmlcMysqlPrc, bMyself, pcOtherName);
+	pcCreate = gmlc_mysql_procedure_structure_get_create(pGmlcMysqlPrc, bMyself, pcOtherName);
+	
+	pcSqlQuery = g_strdup_printf("%s\n%s\n", pcDrop, pcCreate);
+	
+	g_free(pcCreate);
+	g_free(pcDrop);
+	
+	return pcSqlQuery;
 }
 
 static gchar * gmlc_mysql_procedure_structure_get_drop (GmlcMysqlProcedure * pGmlcMysqlPrc, gboolean bMyself, const gchar * pcOtherName) {
-	return NULL;
+	const gchar * pcName = NULL;
+	gchar * pcSqlQuery = NULL;
+	
+	if (bMyself) {
+		pcName = pGmlcMysqlPrc->pcName;
+	} else if (pcOtherName != NULL) {
+		pcName = pcOtherName; 
+	} else {
+		pcName = "<Name of the view>";
+	}
+	
+	pcSqlQuery = g_strdup_printf("DROP PROCEDURE `%s`;", pcName);
+	
+	return pcSqlQuery;
 }
 
 GmlcMysqlProcedure * gmlc_mysql_procedure_new(GmlcMysqlDatabase * pGmlcMysqlDb, gchar * pcName) {

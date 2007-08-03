@@ -178,7 +178,7 @@ static gchar * gmlc_mysql_table_structure_get_alter (GmlcMysqlTable * pGmlcMysql
 	} else if (pcOtherName != NULL) {
 		pcName = pcOtherName; 
 	} else {
-		pcName = "<Name of the database>";
+		pcName = "<Name of the table>";
 	}
 	
 	pcSqlQuery = g_strdup_printf("ALTER TABLE `%s`\n <Add actions>;", pcName);
@@ -195,7 +195,7 @@ static gchar * gmlc_mysql_table_structure_get_drop (GmlcMysqlTable * pGmlcMysqlT
 	} else if (pcOtherName != NULL) {
 		pcName = pcOtherName; 
 	} else {
-		pcName = "<Name of the database>";
+		pcName = "<Name of the table>";
 	}
 	
 	pcSqlQuery = g_strdup_printf("DROP TABLE `%s`;", pcName);
