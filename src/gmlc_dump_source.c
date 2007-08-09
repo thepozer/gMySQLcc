@@ -64,3 +64,47 @@ GArray * gmlc_dump_source_get_data (GmlcDumpSource * self) {
 	return GMLC_DUMP_SOURCE_GET_INTERFACE(self)->get_data(self);
 }
 
+
+struct _GmlcDumpSourceData {
+	gchar * pcDatabaseName;
+	gchar * pcTableName;
+	GArray * arHeaders;
+	GArray * arDatas; /* GArray of GArray */
+};
+
+gboolean gmlc_dump_source_data_free (GArray * arSourceData) {
+	GmlcDumpSourceData * pGmlcDmpSrcData = NULL;
+	GArray * arTmp = NULL;
+	gchar * pcTmp = NULL;
+	gint i = 0, j = 0, k = 0;
+	
+	g_return_val_if_fail(arSourceData != NULL, TRUE);
+	
+	for (i = 0; i < arSourceData->len; i ++) {
+		pGmlcDmpSrcData = g_array_index(arSourceData, GmlcDumpSourceData *, i);
+		
+		g_free(pGmlcDmpSrcData->pcDatabaseName);
+		g_free(pGmlcDmpSrcData->pcTableName);
+		
+		for (j = 0; j < arSourceData->arHeaders; j ++) {
+			pcTmp = g_array_index(arSourceData->arHeaders, gchar *, j);
+			
+			g_free(pcTmp);
+		}
+		g_array_free(arSourceData->arHeaders, TRUE);
+		
+		for (j = 0; j < arSourceData->arDatas; j ++) {
+			arTmp = g_array_index(arSourceData->arDatas, GArray *, j);
+			
+			for (k = 0; k < arTmp->len; k ++) {
+				pcTmp = g_array_index(arTmp, gchar *, k);
+				
+				g_free(pcTmp);
+			}
+			g_array_free(arTmp, TRUE);
+		}
+		g_array_free(arSourceData->arDatas, TRUE);
+	}
+	
+	return TRUE;
+}

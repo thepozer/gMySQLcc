@@ -23,6 +23,8 @@ static void gmlc_dump_control_set_property (GObject * object, guint prop_id, con
 enum {
 	PROP_0,
 	PROP_SERVER,
+	PROP_SOURCE,
+	PROP_FORMAT,
 };
 
 
@@ -36,7 +38,11 @@ static void gmlc_dump_control_class_init(GmlcDumpControlClass *pClass) {
 	pObjClass->set_property = gmlc_dump_control_set_property;
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
-		g_param_spec_object("server", "Server object", "SERVER object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_SOURCE, 
+		g_param_spec_object("source", "Source object", "Source object", GMLC_DUMP_TYPE_SOURCE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	g_object_class_install_property(pObjClass, PROP_FORMAT, 
+		g_param_spec_object("format", "Format object", "Format object", GMLC_DUMP_TYPE_SOURCE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 /*
 	g_object_class_install_property(pObjClass, PROP_NAME, 
 		g_param_spec_string("name", "Table name", "Name of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -56,6 +62,8 @@ static void gmlc_dump_control_init(GmlcDumpControl * pGmlcDmpCtrl) {
 }
 
 static void gmlc_dump_control_finalize(GmlcDumpControl * pGmlcDmpCtrl) {
+	UNUSED_VAR(pGmlcDmpCtrl);
+	
 	/*G_OBJECT_CLASS(parent_class)->finalize(object);*/
 }
 
@@ -88,9 +96,29 @@ static void gmlc_dump_control_set_property (GObject * object, guint prop_id, con
 }
 
 GmlcDumpControl * gmlc_dump_control_new(GmlcMysqlServer * pGmlcMysqlSrv) {
-	GmlcDumpControl * pGmlcDmpCtrl;
+	GmlcDumpControl * pGmlcDmpCtrl = NULL;
 	
 	pGmlcDmpCtrl = GMLC_DUMP_CONTROL(g_object_new(GMLC_TYPE_DUMP_CONTROL, "server", pGmlcMysqlSrv, NULL));
 	
 	return pGmlcDmpCtrl;
+}
+
+gboolean gmlc_dump_control_dump (GmlcDumpControl * pGmlcDmpCtrl) {
+	UNUSED_VAR(pGmlcDmpCtrl);
+	
+	return TRUE;
+}
+
+
+gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, void * pGmlcDmpFrmt) {
+	GmlcDumpControl * pGmlcDmpCtrl = NULL;
+	gboolean bRetValue = FALSE;
+	
+	pGmlcDmpCtrl = GMLC_DUMP_CONTROL(g_object_new(GMLC_TYPE_DUMP_CONTROL, "server", pGmlcMysqlSrv, "source", pGmlcDmpSrc, "format", pGmlcDmpFrmt, NULL));
+	
+	bRetValue = gmlc_dump_control_dump(pGmlcDmpCtrl);
+	
+	g_object_unref(pGmlcDmpCtrl);
+	
+	return bRetValue;
 }

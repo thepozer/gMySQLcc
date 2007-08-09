@@ -1,0 +1,738 @@
+------------------------------------------------------------------------
+r147 | pozer | 2007-07-26 18:02:00 +0200 (Thu, 26 Jul 2007) | 5 lines
+
+
+Update version number of gmysqlcc (to 0.3.0)
+Remove ES language
+
+
+------------------------------------------------------------------------
+r146 | pozer | 2007-07-26 17:57:49 +0200 (Thu, 26 Jul 2007) | 4 lines
+
+
+Update GPL Licence tag
+
+
+------------------------------------------------------------------------
+r145 | pozer | 2007-07-26 17:56:57 +0200 (Thu, 26 Jul 2007) | 4 lines
+
+
+Update translations files (only UK & FR)
+
+
+------------------------------------------------------------------------
+r144 | pozer | 2007-06-26 17:53:37 +0200 (Tue, 26 Jun 2007) | 4 lines
+
+
+* Activate context menus for views/functions/procedures
+
+
+------------------------------------------------------------------------
+r143 | pozer | 2007-06-26 16:17:50 +0200 (Tue, 26 Jun 2007) | 4 lines
+
+
+* If some text is selected, use it as SQL to execute or to duplicate
+
+
+------------------------------------------------------------------------
+r142 | pozer | 2007-06-26 15:53:19 +0200 (Tue, 26 Jun 2007) | 4 lines
+
+
+* Update function that test if there is a write command in the list of query
+
+
+------------------------------------------------------------------------
+r141 | pozer | 2007-06-25 16:25:05 +0200 (Mon, 25 Jun 2007) | 4 lines
+
+
+* Update list of files for translations
+
+
+------------------------------------------------------------------------
+r140 | pozer | 2007-06-25 11:00:31 +0200 (Mon, 25 Jun 2007) | 7 lines
+
+
+* Result tabs are now scrollable
+* Tables actions is now working
+* Tables list refresh tables infos
+* Update table/view/procedure/function objects to return SQL to create/alter/drop 
+
+
+------------------------------------------------------------------------
+r139 | pozer | 2007-06-15 18:07:39 +0200 (Fri, 15 Jun 2007) | 4 lines
+
+
+* Prepare the dump feature and add action about database (add, alter,drop) by opening a tab with the sql order inside
+
+
+------------------------------------------------------------------------
+r138 | pozer | 2007-06-15 11:33:01 +0200 (Fri, 15 Jun 2007) | 5 lines
+
+
+* Replace toolbars of the server window by hboxes with buttons to control the position of the buttons
+* Bug corrected : When a sql error append in the 2nd (or after), it stop to work silently and not display any error message box
+
+
+------------------------------------------------------------------------
+r137 | pozer | 2007-06-15 08:45:46 +0200 (Fri, 15 Jun 2007) | 3 lines
+
+* Add Interface to generate create, alter and drop sql commands
+
+
+------------------------------------------------------------------------
+r136 | pozer | 2007-06-14 10:41:15 +0200 (Thu, 14 Jun 2007) | 4 lines
+
+
+* Remove references to gmlc_gui_query.h
+
+
+------------------------------------------------------------------------
+r135 | pozer | 2007-06-13 15:41:13 +0200 (Wed, 13 Jun 2007) | 1 line
+
+* Remove old source files
+------------------------------------------------------------------------
+r134 | pozer | 2007-06-13 15:38:41 +0200 (Wed, 13 Jun 2007) | 1 line
+
+* Remove query window (we use tabs now)
+------------------------------------------------------------------------
+r133 | pozer | 2007-06-13 15:36:33 +0200 (Wed, 13 Jun 2007) | 4 lines
+
+
+* 'Close tab' button into query toolbar
+
+
+------------------------------------------------------------------------
+r132 | pozer | 2007-06-13 08:37:02 +0200 (Wed, 13 Jun 2007) | 3 lines
+
+* tabs are scrollable and can be reorganized
+
+
+------------------------------------------------------------------------
+r131 | pozer | 2007-06-12 18:25:22 +0200 (Tue, 12 Jun 2007) | 5 lines
+
+
+* Now, we didn't open a new window for each query but we add a new tab in the server window
+* Next step, add a close button for query tabs and add reorderable and scrollable notebook
+
+
+------------------------------------------------------------------------
+r130 | pozer | 2007-06-12 08:39:28 +0200 (Tue, 12 Jun 2007) | 3 lines
+
+* Adding skeleton object for the query tab
+
+
+------------------------------------------------------------------------
+r129 | pozer | 2007-06-11 18:07:19 +0200 (Mon, 11 Jun 2007) | 7 lines
+
+
+* Create an interface gmlc_gui_server_tab to manage the common toolbar
+* Rewrite each tab as an object that implement the interface gmlc_gui_server_tab
+* Rewrite server window code to use new objects
+* Now toolbar buttons 'Sql' and 'Sql file' are displayed only when the tab 'Database' is selected
+
+
+------------------------------------------------------------------------
+r128 | pozer | 2007-06-06 18:21:02 +0200 (Wed, 06 Jun 2007) | 5 lines
+
+
+  * Hide connexion window when a server is choosed
+  * Show connexion window with toolbar buttons
+
+
+------------------------------------------------------------------------
+r127 | pozer | 2007-04-16 23:35:18 +0200 (Mon, 16 Apr 2007) | 3 lines
+
+Update project information
+
+
+------------------------------------------------------------------------
+r126 | pozer | 2007-04-16 23:33:18 +0200 (Mon, 16 Apr 2007) | 4 lines
+
+* Display Tables/Views/Procedures/Functions in separate lists if mysql version >= 5.0.1
+* For tables, call correctly query window
+
+
+------------------------------------------------------------------------
+r125 | pozer | 2007-02-02 08:50:49 +0100 (Fri, 02 Feb 2007) | 3 lines
+
+Query window work correctly
+
+
+------------------------------------------------------------------------
+r124 | pozer | 2007-01-21 11:37:08 +0100 (Sun, 21 Jan 2007) | 1 line
+
+Last step before display results into GUI part
+------------------------------------------------------------------------
+r123 | pozer | 2007-01-07 20:18:39 +0100 (Sun, 07 Jan 2007) | 4 lines
+
+Complete rewrite of gmysqlcc but not complete.
+For now only config read/write and server list work no query execution yet
+
+
+------------------------------------------------------------------------
+r122 | pozer | 2007-01-07 20:13:40 +0100 (Sun, 07 Jan 2007) | 3 lines
+
+Very minor fix :)
+
+
+------------------------------------------------------------------------
+r121 | pozer | 2007-01-07 20:12:09 +0100 (Sun, 07 Jan 2007) | 3 lines
+
+very minor fix :)
+
+
+------------------------------------------------------------------------
+r120 | pozer | 2006-09-24 22:07:45 +0200 (Sun, 24 Sep 2006) | 2 lines
+
+Update version value
+
+------------------------------------------------------------------------
+r119 | pozer | 2006-09-24 22:07:24 +0200 (Sun, 24 Sep 2006) | 2 lines
+
+Add managment of the font for help text view and query text views
+
+------------------------------------------------------------------------
+r118 | pozer | 2006-09-24 22:06:23 +0200 (Sun, 24 Sep 2006) | 2 lines
+
+Update calculation method of server version number
+
+------------------------------------------------------------------------
+r117 | pozer | 2006-09-24 22:02:08 +0200 (Sun, 24 Sep 2006) | 3 lines
+
+Updating language files
+
+
+------------------------------------------------------------------------
+r116 | pozer | 2006-03-01 14:35:34 +0100 (Wed, 01 Mar 2006) | 4 lines
+
+Hidding List server window when connecting to a server
+Adding a toolbar button to display the List server window in server window and in query window
+
+
+------------------------------------------------------------------------
+r115 | pozer | 2006-03-01 14:27:24 +0100 (Wed, 01 Mar 2006) | 3 lines
+
+Using glib gnu gettext library
+
+
+------------------------------------------------------------------------
+r114 | pozer | 2005-10-26 15:05:45 +0200 (Wed, 26 Oct 2005) | 3 lines
+
+Reorganize server window and add help tab for server > 4.1.0
+
+
+------------------------------------------------------------------------
+r113 | pozer | 2005-10-26 06:17:55 +0200 (Wed, 26 Oct 2005) | 3 lines
+
+Add icons and desktop files for gmysqlcc (Ok the icon is just a sample ... :))
+
+
+------------------------------------------------------------------------
+r112 | pozer | 2005-10-25 10:43:54 +0200 (Tue, 25 Oct 2005) | 3 lines
+
+Move glade files in a directory
+
+
+------------------------------------------------------------------------
+r111 | pozer | 2005-10-20 15:31:58 +0200 (Thu, 20 Oct 2005) | 3 lines
+
+Correct bug when you refresh database list
+
+
+------------------------------------------------------------------------
+r110 | pozer | 2005-09-06 14:41:10 +0200 (Tue, 06 Sep 2005) | 4 lines
+
+Remove intl directory
+I put an empty directory and an empty makefile to remove compilation errors
+
+
+------------------------------------------------------------------------
+r109 | pozer | 2005-09-06 14:39:36 +0200 (Tue, 06 Sep 2005) | 3 lines
+
+Remove 'fuzzy' tag on 2 spanish translations
+
+
+------------------------------------------------------------------------
+r108 | pozer | 2005-09-06 13:42:32 +0200 (Tue, 06 Sep 2005) | 3 lines
+
+Update spanish transaltion
+
+
+------------------------------------------------------------------------
+r107 | pozer | 2005-08-25 16:40:41 +0200 (Thu, 25 Aug 2005) | 4 lines
+
+Update list of translated strings
+UK and FR country updated
+
+
+------------------------------------------------------------------------
+r106 | pozer | 2005-08-25 15:50:39 +0200 (Thu, 25 Aug 2005) | 3 lines
+
+Remove last warnings
+
+
+------------------------------------------------------------------------
+r105 | pozer | 2005-08-25 15:23:00 +0200 (Thu, 25 Aug 2005) | 3 lines
+
+Remove IO_Channel warnings
+
+
+------------------------------------------------------------------------
+r104 | pozer | 2005-08-23 16:54:56 +0200 (Tue, 23 Aug 2005) | 3 lines
+
+Prepare new version
+
+
+------------------------------------------------------------------------
+r103 | pozer | 2005-08-23 16:54:25 +0200 (Tue, 23 Aug 2005) | 3 lines
+
+Add apply button for max_xx fields and ssl fields
+
+
+------------------------------------------------------------------------
+r102 | pozer | 2005-08-12 17:07:17 +0200 (Fri, 12 Aug 2005) | 4 lines
+
+Add es in linguas var to access to spanish translation
+Update selected value in ssl_type combo box in sll tab sll
+
+
+------------------------------------------------------------------------
+r101 | pozer | 2005-08-11 17:01:56 +0200 (Thu, 11 Aug 2005) | 5 lines
+
+
+Limit right edition to user and database (too complex not usable to edit table and column rights)
+Split user rights in two tabs (to easyly edit ssl/x509 fields)
+
+
+------------------------------------------------------------------------
+r100 | pozer | 2005-08-11 16:59:41 +0200 (Thu, 11 Aug 2005) | 4 lines
+
+
+Adding Spanish translation from mariodebian
+
+
+------------------------------------------------------------------------
+r99 | pozer | 2005-06-16 16:53:30 +0200 (Thu, 16 Jun 2005) | 3 lines
+
+Correct Delete database rights segfault
+Add Table rights features (Add, Update, Delete)
+
+------------------------------------------------------------------------
+r98 | pozer | 2005-06-10 17:19:43 +0200 (Fri, 10 Jun 2005) | 4 lines
+
+Create new database rights for a user
+Update database rigths
+Delete database rights (segfault)
+
+------------------------------------------------------------------------
+r97 | pozer | 2005-06-08 17:34:32 +0200 (Wed, 08 Jun 2005) | 4 lines
+
+Move mysql_user_list functions in mysql_user
+Add object to store all types of rights
+Display databases rights of a user
+
+------------------------------------------------------------------------
+r96 | pozer | 2005-06-07 15:36:36 +0200 (Tue, 07 Jun 2005) | 1 line
+
+Update GUI to manage all types of rights (user, database, table, column)
+------------------------------------------------------------------------
+r95 | pozer | 2005-06-03 10:22:20 +0200 (Fri, 03 Jun 2005) | 2 lines
+
+now you can update user rights
+
+------------------------------------------------------------------------
+r94 | pozer | 2005-06-02 17:17:27 +0200 (Thu, 02 Jun 2005) | 3 lines
+
+Add Basic update and delete for users
+
+
+------------------------------------------------------------------------
+r93 | pozer | 2005-06-02 00:26:51 +0200 (Thu, 02 Jun 2005) | 2 lines
+
+Basic add user work
+
+------------------------------------------------------------------------
+r92 | pozer | 2005-06-01 17:23:06 +0200 (Wed, 01 Jun 2005) | 3 lines
+
+Modifying list filling method ...
+NOT WORK : First version of basic add user features
+
+------------------------------------------------------------------------
+r91 | pozer | 2005-05-31 16:42:46 +0200 (Tue, 31 May 2005) | 1 line
+
+Rename data list files
+------------------------------------------------------------------------
+r90 | pozer | 2005-05-31 16:27:54 +0200 (Tue, 31 May 2005) | 1 line
+
+data_list structure should be ok now ...
+------------------------------------------------------------------------
+r89 | pozer | 2005-05-30 09:58:33 +0200 (Mon, 30 May 2005) | 2 lines
+
+Update ignored file and remove old CVS ignore file
+
+------------------------------------------------------------------------
+r88 | pozer | 2005-05-30 00:44:03 +0200 (Mon, 30 May 2005) | 3 lines
+
+add base system to manage MySQL users
+Just listing now ...
+
+------------------------------------------------------------------------
+r86 | pozer | 2005-05-22 22:46:37 +0200 (Sun, 22 May 2005) | 1 line
+
+Update version number
+------------------------------------------------------------------------
+r85 | pozer | 2005-05-22 22:41:37 +0200 (Sun, 22 May 2005) | 1 line
+
+seg fault bug - ticket:10
+------------------------------------------------------------------------
+r83 | pozer | 2005-05-09 14:22:22 +0200 (Mon, 09 May 2005) | 1 line
+
+Update doc for version 0.2.4
+------------------------------------------------------------------------
+r82 | pozer | 2005-05-06 23:24:11 +0200 (Fri, 06 May 2005) | 1 line
+
+Update translations
+------------------------------------------------------------------------
+r81 | pozer | 2005-05-06 14:18:47 +0200 (Fri, 06 May 2005) | 1 line
+
+Display bad infos in table list - ticket:9
+------------------------------------------------------------------------
+r80 | pozer | 2005-05-03 15:34:41 +0200 (Tue, 03 May 2005) | 1 line
+
+Force lists in bicolor mode - ticket:4
+------------------------------------------------------------------------
+r79 | pozer | 2005-04-18 13:42:31 +0200 (Mon, 18 Apr 2005) | 3 lines
+
+- correct exec from text bug
+- Remove thread code
+
+------------------------------------------------------------------------
+r78 | pozer | 2005-04-08 15:48:57 +0200 (Fri, 08 Apr 2005) | 2 lines
+
+Merge with 0.2.3 branch (bis)
+
+------------------------------------------------------------------------
+r77 | pozer | 2005-04-08 09:45:43 +0200 (Fri, 08 Apr 2005) | 2 lines
+
+Merge with 0.2.3 branch
+
+------------------------------------------------------------------------
+r70 | pozer | 2005-03-15 16:38:38 +0100 (Tue, 15 Mar 2005) | 2 lines
+
+Correct some bugs and try to use gthread
+
+------------------------------------------------------------------------
+r69 | pozer | 2005-03-09 08:21:01 +0100 (Wed, 09 Mar 2005) | 2 lines
+
+Rewrite all dump code and add system to execute SQL file
+
+------------------------------------------------------------------------
+r68 | pozer | 2005-02-08 00:54:23 +0100 (Tue, 08 Feb 2005) | 2 lines
+
+readd gtk_tooltips_new call - I dont know I remove this line :(
+
+------------------------------------------------------------------------
+r67 | pozer | 2005-02-07 14:43:18 +0100 (Mon, 07 Feb 2005) | 2 lines
+
+Correct bug about servers list refresh
+
+------------------------------------------------------------------------
+r66 | pozer | 2005-01-11 18:02:33 +0100 (Tue, 11 Jan 2005) | 2 lines
+
+reenable display structure features - WARNING Bug
+
+------------------------------------------------------------------------
+r65 | pozer | 2005-01-10 17:44:18 +0100 (Mon, 10 Jan 2005) | 2 lines
+
+Add toolbar button to show/hide the servers edition part
+
+------------------------------------------------------------------------
+r64 | pozer | 2005-01-07 11:21:09 +0100 (Fri, 07 Jan 2005) | 2 lines
+
+Manage completly read_only and write warning Flags
+
+------------------------------------------------------------------------
+r63 | pozer | 2005-01-05 17:48:17 +0100 (Wed, 05 Jan 2005) | 2 lines
+
+Add server read_only and write_warning flags in configuration
+
+------------------------------------------------------------------------
+r62 | pozer | 2005-01-05 12:05:04 +0100 (Wed, 05 Jan 2005) | 2 lines
+
+New path for config files : /home/xxx/.config/gmysqlcc/
+
+------------------------------------------------------------------------
+r61 | pozer | 2005-01-01 20:29:00 +0100 (Sat, 01 Jan 2005) | 2 lines
+
+Normalize functions and files names
+
+------------------------------------------------------------------------
+r60 | pozer | 2004-12-08 14:14:41 +0100 (Wed, 08 Dec 2004) | 2 lines
+
+Replace gmysqlcc.c by gmysqlcc_main.c
+
+------------------------------------------------------------------------
+r59 | pozer | 2004-12-06 17:40:00 +0100 (Mon, 06 Dec 2004) | 2 lines
+
+BROKEN - Use Dialog instead of a window for the dump
+
+------------------------------------------------------------------------
+r58 | pozer | 2004-12-03 16:53:57 +0100 (Fri, 03 Dec 2004) | 2 lines
+
+Rewrite all dump code
+
+------------------------------------------------------------------------
+r56 | pozer | 2004-12-03 16:38:17 +0100 (Fri, 03 Dec 2004) | 2 lines
+
+Update version number
+
+------------------------------------------------------------------------
+r55 | pozer | 2004-11-30 10:30:27 +0100 (Tue, 30 Nov 2004) | 2 lines
+
+use right parameters for mysql cflags
+
+------------------------------------------------------------------------
+r54 | pozer | 2004-11-29 17:25:49 +0100 (Mon, 29 Nov 2004) | 2 lines
+
+Add slackware package infos
+
+------------------------------------------------------------------------
+r53 | pozer | 2004-11-29 16:50:18 +0100 (Mon, 29 Nov 2004) | 2 lines
+
+Add debian package infos
+
+------------------------------------------------------------------------
+r52 | pozer | 2004-11-29 15:22:05 +0100 (Mon, 29 Nov 2004) | 2 lines
+
+Update lib mysql client detection - using mysql_config
+
+------------------------------------------------------------------------
+r51 | pozer | 2004-10-26 15:28:48 +0200 (Tue, 26 Oct 2004) | 2 lines
+
+Modify system to open query window from server window
+
+------------------------------------------------------------------------
+r49 | pozer | 2004-10-20 14:00:11 +0200 (Wed, 20 Oct 2004) | 2 lines
+
+Correct core dump (double g_free :)) and disable Dump in XML and CVS format (only dump in SQL)
+
+------------------------------------------------------------------------
+r48 | pozer | 2004-10-20 13:44:22 +0200 (Wed, 20 Oct 2004) | 2 lines
+
+Update locale files
+
+------------------------------------------------------------------------
+r47 | pozer | 2004-10-20 13:44:03 +0200 (Wed, 20 Oct 2004) | 2 lines
+
+locale work again
+
+------------------------------------------------------------------------
+r46 | pozer | 2004-10-12 17:37:23 +0200 (Tue, 12 Oct 2004) | 2 lines
+
+Add icon on buttons in server window
+
+------------------------------------------------------------------------
+r45 | pozer | 2004-10-08 14:28:23 +0200 (Fri, 08 Oct 2004) | 2 lines
+
+Correct segfault bug
+
+------------------------------------------------------------------------
+r44 | pozer | 2004-09-28 13:19:31 +0200 (Tue, 28 Sep 2004) | 2 lines
+
+Remove big memory leak
+
+------------------------------------------------------------------------
+r43 | pozer | 2004-09-21 17:46:01 +0200 (Tue, 21 Sep 2004) | 2 lines
+
+Display DB structure
+
+------------------------------------------------------------------------
+r42 | pozer | 2004-09-21 15:51:58 +0200 (Tue, 21 Sep 2004) | 2 lines
+
+Update version to 0.2.2
+
+------------------------------------------------------------------------
+r41 | pozer | 2004-09-21 15:05:21 +0200 (Tue, 21 Sep 2004) | 2 lines
+
+Add Dislpay database strucure function
+
+------------------------------------------------------------------------
+r40 | pozer | 2004-09-13 17:54:20 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+add user list function to the server object
+
+------------------------------------------------------------------------
+r39 | pozer | 2004-09-13 17:53:44 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+Correct bug about table dump
+
+------------------------------------------------------------------------
+r38 | pozer | 2004-09-13 17:53:22 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+Correct bug about iconv translation
+
+------------------------------------------------------------------------
+r37 | pozer | 2004-09-13 17:52:31 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+update call about xml dump
+
+------------------------------------------------------------------------
+r36 | pozer | 2004-09-13 17:52:07 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+update call about xml dump and add user list function to the server object
+
+------------------------------------------------------------------------
+r35 | pozer | 2004-09-13 17:49:44 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+Add GtkSourceView control
+
+------------------------------------------------------------------------
+r34 | pozer | 2004-09-13 17:48:33 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+use GTK+ 2.4 Save file dialog and update call about xml dump
+
+------------------------------------------------------------------------
+r33 | pozer | 2004-09-13 17:43:07 +0200 (Mon, 13 Sep 2004) | 2 lines
+
+Add GtkSourceView control
+
+------------------------------------------------------------------------
+r32 | pozer | 2004-08-05 14:54:39 +0200 (Thu, 05 Aug 2004) | 2 lines
+
+Update GUI glade file
+
+------------------------------------------------------------------------
+r31 | pozer | 2004-08-05 14:53:53 +0200 (Thu, 05 Aug 2004) | 2 lines
+
+Update file list
+
+------------------------------------------------------------------------
+r30 | pozer | 2004-08-05 14:52:43 +0200 (Thu, 05 Aug 2004) | 2 lines
+
+Add Text window to display SHOW CREATE TABLE content
+
+------------------------------------------------------------------------
+r29 | pozer | 2004-08-04 13:56:48 +0200 (Wed, 04 Aug 2004) | 2 lines
+
+Add context menu to display table structure
+
+------------------------------------------------------------------------
+r28 | pozer | 2004-08-03 16:38:50 +0200 (Tue, 03 Aug 2004) | 2 lines
+
+Update mysql_query_execute_query call and merge all GUI include into gmysql_gui.h
+
+------------------------------------------------------------------------
+r27 | pozer | 2004-08-03 16:37:25 +0200 (Tue, 03 Aug 2004) | 2 lines
+
+Add user object
+
+------------------------------------------------------------------------
+r25 | pozer | 2004-07-02 13:06:52 +0200 (Fri, 02 Jul 2004) | 2 lines
+
+Add Default Local socket
+
+------------------------------------------------------------------------
+r24 | pozer | 2004-07-02 13:05:56 +0200 (Fri, 02 Jul 2004) | 2 lines
+
+Remove compilation warning
+
+------------------------------------------------------------------------
+r23 | pozer | 2004-07-02 09:34:55 +0200 (Fri, 02 Jul 2004) | 2 lines
+
+add config.h.in
+
+------------------------------------------------------------------------
+r22 | pozer | 2004-06-28 17:58:48 +0200 (Mon, 28 Jun 2004) | 2 lines
+
+Update translations
+
+------------------------------------------------------------------------
+r21 | pozer | 2004-06-25 16:49:36 +0200 (Fri, 25 Jun 2004) | 2 lines
+
+Update toolbar code
+
+------------------------------------------------------------------------
+r20 | pozer | 2004-06-25 16:46:00 +0200 (Fri, 25 Jun 2004) | 2 lines
+
+Correct typo
+
+------------------------------------------------------------------------
+r19 | pozer | 2004-06-25 11:18:03 +0200 (Fri, 25 Jun 2004) | 2 lines
+
+set Gettext charset
+
+------------------------------------------------------------------------
+r18 | pozer | 2004-06-22 17:45:18 +0200 (Tue, 22 Jun 2004) | 2 lines
+
+Using anjuta to manage the project and use gettext
+
+------------------------------------------------------------------------
+r17 | pozer | 2004-06-22 17:44:33 +0200 (Tue, 22 Jun 2004) | 2 lines
+
+Add display charset for query window, add output charset for dump window, add _() for gettext
+
+------------------------------------------------------------------------
+r16 | pozer | 2004-06-09 17:56:50 +0200 (Wed, 09 Jun 2004) | 2 lines
+
+Choose dump output charset
+
+------------------------------------------------------------------------
+r15 | pozer | 2004-06-09 17:56:09 +0200 (Wed, 09 Jun 2004) | 2 lines
+
+Small bug about socket file name
+
+------------------------------------------------------------------------
+r14 | pozer | 2004-06-09 12:43:10 +0200 (Wed, 09 Jun 2004) | 2 lines
+
+Modify fileSelector title for Dump
+
+------------------------------------------------------------------------
+r13 | pozer | 2004-06-09 12:42:22 +0200 (Wed, 09 Jun 2004) | 2 lines
+
+Add basic localhost socket support (does not check in mysql config)
+
+------------------------------------------------------------------------
+r12 | pozer | 2004-06-09 12:41:31 +0200 (Wed, 09 Jun 2004) | 2 lines
+
+Move fieldTypeCapabilities functions into gmysql_utils files
+
+------------------------------------------------------------------------
+r11 | pozer | 2004-06-07 10:00:58 +0200 (Mon, 07 Jun 2004) | 2 lines
+
+include header files
+
+------------------------------------------------------------------------
+r9 | pozer | 2004-06-04 15:32:27 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+Scrolling follow selected server when you move up/down it in the list
+
+------------------------------------------------------------------------
+r8 | pozer | 2004-06-04 15:22:14 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+ignore autoconf/automake files
+
+------------------------------------------------------------------------
+r7 | pozer | 2004-06-04 13:55:51 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+Remove unneeded file
+
+------------------------------------------------------------------------
+r6 | pozer | 2004-06-04 13:53:45 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+Update documentations
+
+------------------------------------------------------------------------
+r5 | pozer | 2004-06-04 13:31:24 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+Update documentations
+
+------------------------------------------------------------------------
+r2 | pozer | 2004-06-04 13:05:35 +0200 (Fri, 04 Jun 2004) | 2 lines
+
+Initial revision
+
+------------------------------------------------------------------------
+r1 | (no author) | 2004-06-04 13:05:35 +0200 (Fri, 04 Jun 2004) | 1 line
+
+New repository initialized by cvs2svn.
+------------------------------------------------------------------------

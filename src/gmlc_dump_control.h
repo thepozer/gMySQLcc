@@ -21,6 +21,8 @@
 #include <glib-object.h>
 
 #include "gmlc_mysql_server.h"
+#include "gmlc_dump_source.h"
+#include "gmlc_dump_source.h"
 
 #define UNUSED_VAR(x) (x = x)
 
@@ -49,12 +51,11 @@ struct _GmlcDumpControlClass {
 
 GType gmlc_dump_control_get_type ();
 
-GmlcDumpControl * gmlc_dump_control_new (GmlcMysqlServer * pGmlcMysqlrv);
+GmlcDumpControl * gmlc_dump_control_new (GmlcMysqlServer * pGmlcMysqlSrv);
 
-gboolean gmlc_dump_control_server (GmlcDumpControl * pGmlcDmpCtrl);
-gboolean gmlc_dump_control_database (GmlcDumpControl * pGmlcDmpCtrl);
-gboolean gmlc_dump_control_table (GmlcDumpControl * pGmlcDmpCtrl);
-gboolean gmlc_dump_control_query (GmlcDumpControl * pGmlcDmpCtrl);
+gboolean gmlc_dump_control_dump (GmlcDumpControl * pGmlcDmpCtrl);
+
+gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, void * pGmlcDmpFrmt);
 
 G_END_DECLS
 

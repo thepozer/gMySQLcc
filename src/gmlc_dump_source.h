@@ -55,6 +55,8 @@ gchar * gmlc_dump_source_get_struct (GmlcDumpSource * self);
 gboolean gmlc_dump_source_can_get_data (GmlcDumpSource * self);
 GArray * gmlc_dump_source_get_data (GmlcDumpSource * self);
 
+gboolean gmlc_dump_source_data_free(GArray * arSourceData);
+
 G_END_DECLS
 
 #endif /* __GMLC_DUMP_SOURCE_H__ */

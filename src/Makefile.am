@@ -15,8 +15,14 @@ gmysqlcc_SOURCES = \
 	gmlc_dump_control.h\
 	gmlc_dump_source.c\
 	gmlc_dump_source.h\
+	gmlc_dump_source_query.c\
+	gmlc_dump_source_query.h\
 	gmlc_dump_source_table.c\
 	gmlc_dump_source_table.h\
+	gmlc_dump_source_database.c\
+	gmlc_dump_source_database.h\
+	gmlc_dump_source_server.c\
+	gmlc_dump_source_server.h\
 	gmlc_gui_helpers.c\
 	gmlc_gui_helpers.h\
 	gmlc_gui_connexions.c\

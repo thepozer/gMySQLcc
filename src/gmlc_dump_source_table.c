@@ -102,7 +102,12 @@ static gboolean gmlc_dump_source_table_can_get_struct (GmlcDumpSource * self) {
 }
 
 static gchar * gmlc_dump_source_table_get_struct (GmlcDumpSource * self) {
-	return NULL;
+	GmlcDumpSourceTable * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(self);
+	gchar * pcRetValue = NULL;
+	
+	pcRetValue = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcDmpSrcTbl->pGmlcMysqlTbl), TRUE, NULL);
+	
+	return pcRetValue;
 }
 
 static gboolean gmlc_dump_source_table_can_get_data (GmlcDumpSource * self) {
@@ -112,13 +117,28 @@ static gboolean gmlc_dump_source_table_can_get_data (GmlcDumpSource * self) {
 }
 
 static GArray * gmlc_dump_source_table_get_data (GmlcDumpSource * self) {
-	return NULL;
+	GmlcDumpSourceTable * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(self);
+	GmlcDumpSourceData * pGmlcDmpSrcData = NULL;
+	GArray * arRetValue = NULL;
+	gchar * pcDbName = NULL, * pcTblName = NULL;
+	
+	arRetValue = g_array_new(TRUE, TRUE, 1);
+	
+	pGmlcDmpSrcData = g_try_new0(GmlcDumpSourceData, 1);
+	g_array_append_val(arRetValue, pGmlcDmpSrcData);
+	
+	pcTblName = g_strdup(pGmlcDmpSrcTbl->pGmlcMysqlTbl->pcName);
+	pcDbName = g_strdup(pGmlcDmpSrcTbl->pGmlcMysqlTbl->pGmlcMysqlDb->pcDbName);
+	
+	
+	
+	return arRetValue;
 }
 
 GmlcDumpSourceTable * gmlc_dump_source_table_new (GmlcMysqlTable * pGmlcMysqlTbl) {
 	GmlcDumpSourceTable * pGmlcDmpSrcTbl = NULL;
 	
-	pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(g_object_new(GMLC_DUMP_TYPE_SOURCE_TABLE, NULL));
+	pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(g_object_new(GMLC_DUMP_TYPE_SOURCE_TABLE, "table", pGmlcMysqlTbl, NULL));
 	
 	return pGmlcDmpSrcTbl;
 }
