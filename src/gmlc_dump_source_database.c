@@ -17,7 +17,7 @@
 #include "gmlc_dump_source_database.h"
 #include "gmlc_dump_source.h"
 
-static void gmlc_dump_source_database_finalize (GmlcDumpSourceDatabase * pGmlcDmpSrcTbl);
+static void gmlc_dump_source_database_finalize (GmlcDumpSourceDatabase * pGmlcDmpSrcDb);
 static void gmlc_dump_source_database_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void gmlc_dump_source_database_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
@@ -30,7 +30,7 @@ static GArray * gmlc_dump_source_database_get_data (GmlcDumpSource * self);
 
 enum {
 	PROP_0,
-	PROP_TABLE,
+	PROP_DATABASE,
 };
 
 G_DEFINE_TYPE_WITH_CODE (GmlcDumpSourceDatabase, gmlc_dump_source_database, G_TYPE_OBJECT, 
@@ -53,16 +53,16 @@ static void gmlc_dump_source_database_class_init (GmlcDumpSourceDatabaseClass * 
 	pObjClass->get_property = gmlc_dump_source_database_get_property;
 	pObjClass->set_property = gmlc_dump_source_database_set_property;
 
-	g_object_class_install_property(pObjClass, PROP_TABLE, 
-		g_param_spec_object("table", "Table object", "Table object", GMLC_TYPE_MYSQL_TABLE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_DATABASE, 
+		g_param_spec_object("database", "Database object", "Database object", GMLC_MYSQL_TYPE_DATABASE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void gmlc_dump_source_database_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
-	GmlcDumpSourceDatabase * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_DATABASE(object);
+	GmlcDumpSourceDatabase * pGmlcDmpSrcDb = GMLC_DUMP_SOURCE_DATABASE(object);
 	
 	switch (prop_id) {
-		case PROP_TABLE :
-			g_value_set_object(value, pGmlcDmpSrcTbl->pGmlcMysqlTbl);
+		case PROP_DATABASE :
+			g_value_set_object(value, pGmlcDmpSrcDb->pGmlcMysqlDb);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -72,11 +72,11 @@ static void gmlc_dump_source_database_get_property (GObject * object, guint prop
 }
 
 static void gmlc_dump_source_database_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec) {
-	GmlcDumpSourceDatabase * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_DATABASE(object);
+	GmlcDumpSourceDatabase * pGmlcDmpSrcDb = GMLC_DUMP_SOURCE_DATABASE(object);
 	
 	switch (prop_id) {
-		case PROP_TABLE :
-			pGmlcDmpSrcTbl->pGmlcMysqlTbl = g_value_get_object(value);
+		case PROP_DATABASE :
+			pGmlcDmpSrcDb->pGmlcMysqlDb = g_value_get_object(value);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -85,13 +85,13 @@ static void gmlc_dump_source_database_set_property (GObject * object, guint prop
 	}
 }
 
-static void gmlc_dump_source_database_init (GmlcDumpSourceDatabase * pGmlcDmpSrcTbl) {
-	UNUSED_VAR(pGmlcDmpSrcTbl);
+static void gmlc_dump_source_database_init (GmlcDumpSourceDatabase * pGmlcDmpSrcDb) {
+	UNUSED_VAR(pGmlcDmpSrcDb);
 	
 }
 
-static void gmlc_dump_source_database_finalize (GmlcDumpSourceDatabase * pGmlcDmpSrcTbl) {
-	UNUSED_VAR(pGmlcDmpSrcTbl);
+static void gmlc_dump_source_database_finalize (GmlcDumpSourceDatabase * pGmlcDmpSrcDb) {
+	UNUSED_VAR(pGmlcDmpSrcDb);
 	
 }
 
@@ -115,10 +115,10 @@ static GArray * gmlc_dump_source_database_get_data (GmlcDumpSource * self) {
 	return NULL;
 }
 
-GmlcDumpSourceDatabase * gmlc_dump_source_database_new (GmlcMysqlTable * pGmlcMysqlTbl) {
-	GmlcDumpSourceDatabase * pGmlcDmpSrcTbl = NULL;
+GmlcDumpSourceDatabase * gmlc_dump_source_database_new (GmlcMysqlDatabase * pGmlcMysqlDb) {
+	GmlcDumpSourceDatabase * pGmlcDmpSrcDb = NULL;
 	
-	pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_DATABASE(g_object_new(GMLC_DUMP_TYPE_SOURCE_DATABASE, "table", pGmlcMysqlTbl, NULL));
+	pGmlcDmpSrcDb = GMLC_DUMP_SOURCE_DATABASE(g_object_new(GMLC_DUMP_TYPE_SOURCE_DATABASE, "database", pGmlcMysqlDb, NULL));
 	
-	return pGmlcDmpSrcTbl;
+	return pGmlcDmpSrcDb;
 }

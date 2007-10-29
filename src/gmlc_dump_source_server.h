@@ -18,7 +18,7 @@
 #define __GMLC_DUMP_SOURCE_SERVER_H__ 
 
 #include "gmlc_main.h"
-#include "gmlc_mysql_table.h"
+#include "gmlc_mysql_server.h"
 
 G_BEGIN_DECLS
 
@@ -36,7 +36,7 @@ struct _GmlcDumpSourceServer {
 	GObject parent;
 	
 	/* private members */
-	GmlcMysqlTable * pGmlcMysqlTbl;
+	GmlcMysqlServer * pGmlcMysqlSrv;
 };
 
 struct _GmlcDumpSourceServerClass {
@@ -47,8 +47,8 @@ struct _GmlcDumpSourceServerClass {
 
 GType gmlc_dump_source_server_get_type (void);
 
-GmlcDumpSourceServer * gmlc_dump_source_server_new (GmlcMysqlTable *pGmlcMysqlTbl);
+GmlcDumpSourceServer * gmlc_dump_source_server_new (GmlcMysqlServer *pGmlcMysqlSrv);
 
 G_END_DECLS
 
-#endif /* __GMLC_GUI_SERVER_TAB_DATA_H__ */
+#endif /* __GMLC_DUMP_SOURCE_SERVER_H__ */

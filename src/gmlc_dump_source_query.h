@@ -18,7 +18,8 @@
 #define __GMLC_DUMP_SOURCE_QUERY_H__ 
 
 #include "gmlc_main.h"
-#include "gmlc_mysql_table.h"
+#include "gmlc_mysql_database.h"
+#include "gmlc_mysql_query.h"
 
 G_BEGIN_DECLS
 
@@ -36,7 +37,8 @@ struct _GmlcDumpSourceQuery {
 	GObject parent;
 	
 	/* private members */
-	GmlcMysqlTable * pGmlcMysqlTbl;
+	GmlcMysqlDatabase * pGmlcMysqlDb;
+	gchar * pcQuery;
 };
 
 struct _GmlcDumpSourceQueryClass {
@@ -47,8 +49,8 @@ struct _GmlcDumpSourceQueryClass {
 
 GType gmlc_dump_source_query_get_type (void);
 
-GmlcDumpSourceQuery * gmlc_dump_source_query_new (GmlcMysqlTable *pGmlcMysqlTbl);
+GmlcDumpSourceQuery * gmlc_dump_source_query_new (GmlcMysqlDatabase * pGmlcMysqlDb, const gchar *pcQuery);
 
 G_END_DECLS
 
-#endif /* __GMLC_GUI_SERVER_TAB_DATA_H__ */
+#endif /* __GMLC_DUMP_SOURCE_QUERY_H__ */

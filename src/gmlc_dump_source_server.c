@@ -17,7 +17,7 @@
 #include "gmlc_dump_source_server.h"
 #include "gmlc_dump_source.h"
 
-static void gmlc_dump_source_server_finalize (GmlcDumpSourceServer * pGmlcDmpSrcTbl);
+static void gmlc_dump_source_server_finalize (GmlcDumpSourceServer * pGmlcDmpSrcSvr);
 static void gmlc_dump_source_server_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void gmlc_dump_source_server_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 
@@ -30,7 +30,7 @@ static GArray * gmlc_dump_source_server_get_data (GmlcDumpSource * self);
 
 enum {
 	PROP_0,
-	PROP_TABLE,
+	PROP_SERVER,
 };
 
 G_DEFINE_TYPE_WITH_CODE (GmlcDumpSourceServer, gmlc_dump_source_server, G_TYPE_OBJECT, 
@@ -53,16 +53,16 @@ static void gmlc_dump_source_server_class_init (GmlcDumpSourceServerClass * pCla
 	pObjClass->get_property = gmlc_dump_source_server_get_property;
 	pObjClass->set_property = gmlc_dump_source_server_set_property;
 
-	g_object_class_install_property(pObjClass, PROP_TABLE, 
-		g_param_spec_object("table", "Table object", "Table object", GMLC_TYPE_MYSQL_TABLE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(pObjClass, PROP_SERVER, 
+		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void gmlc_dump_source_server_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
-	GmlcDumpSourceServer * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_SERVER(object);
+	GmlcDumpSourceServer * pGmlcDmpSrcSvr = GMLC_DUMP_SOURCE_SERVER(object);
 	
 	switch (prop_id) {
-		case PROP_TABLE :
-			g_value_set_object(value, pGmlcDmpSrcTbl->pGmlcMysqlTbl);
+		case PROP_SERVER :
+			g_value_set_object(value, pGmlcDmpSrcSvr->pGmlcMysqlSrv);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -72,11 +72,11 @@ static void gmlc_dump_source_server_get_property (GObject * object, guint prop_i
 }
 
 static void gmlc_dump_source_server_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec) {
-	GmlcDumpSourceServer * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_SERVER(object);
+	GmlcDumpSourceServer * pGmlcDmpSrcSvr = GMLC_DUMP_SOURCE_SERVER(object);
 	
 	switch (prop_id) {
-		case PROP_TABLE :
-			pGmlcDmpSrcTbl->pGmlcMysqlTbl = g_value_get_object(value);
+		case PROP_SERVER :
+			pGmlcDmpSrcSvr->pGmlcMysqlSrv = g_value_get_object(value);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -85,13 +85,13 @@ static void gmlc_dump_source_server_set_property (GObject * object, guint prop_i
 	}
 }
 
-static void gmlc_dump_source_server_init (GmlcDumpSourceServer * pGmlcDmpSrcTbl) {
-	UNUSED_VAR(pGmlcDmpSrcTbl);
+static void gmlc_dump_source_server_init (GmlcDumpSourceServer * pGmlcDmpSrcSvr) {
+	UNUSED_VAR(pGmlcDmpSrcSvr);
 	
 }
 
-static void gmlc_dump_source_server_finalize (GmlcDumpSourceServer * pGmlcDmpSrcTbl) {
-	UNUSED_VAR(pGmlcDmpSrcTbl);
+static void gmlc_dump_source_server_finalize (GmlcDumpSourceServer * pGmlcDmpSrcSvr) {
+	UNUSED_VAR(pGmlcDmpSrcSvr);
 	
 }
 
@@ -115,10 +115,10 @@ static GArray * gmlc_dump_source_server_get_data (GmlcDumpSource * self) {
 	return NULL;
 }
 
-GmlcDumpSourceServer * gmlc_dump_source_server_new (GmlcMysqlTable * pGmlcMysqlTbl) {
-	GmlcDumpSourceServer * pGmlcDmpSrcTbl = NULL;
+GmlcDumpSourceServer * gmlc_dump_source_server_new (GmlcMysqlServer * pGmlcMysqlSvr) {
+	GmlcDumpSourceServer * pGmlcDmpSrcSvr = NULL;
 	
-	pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_SERVER(g_object_new(GMLC_DUMP_TYPE_SOURCE_SERVER, "table", pGmlcMysqlTbl, NULL));
+	pGmlcDmpSrcSvr = GMLC_DUMP_SOURCE_SERVER(g_object_new(GMLC_DUMP_TYPE_SOURCE_SERVER, "server", pGmlcMysqlSvr, NULL));
 	
-	return pGmlcDmpSrcTbl;
+	return pGmlcDmpSrcSvr;
 }

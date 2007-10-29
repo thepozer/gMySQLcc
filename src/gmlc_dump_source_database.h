@@ -18,7 +18,7 @@
 #define __GMLC_DUMP_SOURCE_DATABASE_H__ 
 
 #include "gmlc_main.h"
-#include "gmlc_mysql_table.h"
+#include "gmlc_mysql_database.h"
 
 G_BEGIN_DECLS
 
@@ -36,7 +36,7 @@ struct _GmlcDumpSourceDatabase {
 	GObject parent;
 	
 	/* private members */
-	GmlcMysqlTable * pGmlcMysqlTbl;
+	GmlcMysqlDatabase * pGmlcMysqlDb;
 };
 
 struct _GmlcDumpSourceDatabaseClass {
@@ -47,8 +47,8 @@ struct _GmlcDumpSourceDatabaseClass {
 
 GType gmlc_dump_source_database_get_type (void);
 
-GmlcDumpSourceDatabase * gmlc_dump_source_database_new (GmlcMysqlTable *pGmlcMysqlTbl);
+GmlcDumpSourceDatabase * gmlc_dump_source_database_new (GmlcMysqlDatabase *pGmlcMysqlDb);
 
 G_END_DECLS
 
-#endif /* __GMLC_GUI_SERVER_TAB_DATA_H__ */
+#endif /* __GMLC_DUMP_SOURCE_DATABASE_H__ */
