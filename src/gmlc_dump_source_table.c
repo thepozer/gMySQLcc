@@ -117,20 +117,48 @@ static gboolean gmlc_dump_source_table_can_get_data (GmlcDumpSource * self) {
 }
 
 static GArray * gmlc_dump_source_table_get_data (GmlcDumpSource * self) {
-	GmlcDumpSourceTable * pGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(self);
-	GmlcDumpSourceData * pGmlcDmpSrcData = NULL;
+	GmlcDumpSourceTable * poGmlcDmpSrcTbl = GMLC_DUMP_SOURCE_TABLE(self);
+	GmlcDumpSourceData * poGmlcDmpSrcData = NULL;
+	GmlcMysqlDatabase * poGmlcMysqlDb = NULL;
+	GmlcMysqlQuery * poGmlcMysqlQry = NULL;
 	GArray * arRetValue = NULL;
-	gchar * pcDbName = NULL, * pcTblName = NULL;
+	gchar * pcDbName = NULL, * pcTblName = NULL, * pcSql = NULL;
 	
 	arRetValue = g_array_new(TRUE, TRUE, 1);
 	
-	pGmlcDmpSrcData = g_try_new0(GmlcDumpSourceData, 1);
-	g_array_append_val(arRetValue, pGmlcDmpSrcData);
+	if (poGmlcDmpSrcTbl->pGmlcMysqlTbl == NULL) {
+		return NULL;
+	}
+	g_object_get(poGmlcDmpSrcTbl->pGmlcMysqlTbl, "database", &poGmlcMysqlDb, "name", &pcTblName, NULL);
 	
-	pcTblName = g_strdup(pGmlcDmpSrcTbl->pGmlcMysqlTbl->pcName);
-	pcDbName = g_strdup(pGmlcDmpSrcTbl->pGmlcMysqlTbl->pGmlcMysqlDb->pcDbName);
+	if (poGmlcMysqlDb == NULL) {
+		return NULL;
+	}
+	g_object_get(poGmlcMysqlDb, "db_name", &pcDbName, NULL);
+	
+	poGmlcMysqlQry = gmlc_mysql_database_get_query(poGmlcMysqlDb);
+	if (poGmlcMysqlQry == NULL) {
+		return NULL;
+	}
+	
+	poGmlcDmpSrcData = g_try_new0(GmlcDumpSourceData, 1);
+	g_array_append_val(arRetValue, poGmlcDmpSrcData);
+	
+	poGmlcDmpSrcData->pcDatabaseName = g_strdup(pcDbName);
+	poGmlcDmpSrcData->pcTableName = g_strdup(pcTblName);
 	
 	
+	pcSql = g_strdup_printf("SELECT * FROM `%s`.`%s`;", pcDbName, pcTblName);
+	
+	if (gmlc_mysql_query_execute(poGmlcMysqlQry, pcSql, strlen(pcSql), FALSE)) {
+		
+	} else {
+		poGmlcDmpSrcData->arHeaders = g_array_new(TRUE, TRUE, 0);
+		poGmlcDmpSrcData->arDatas = g_array_new(TRUE, TRUE, 0);
+	}
+	
+	g_free(pcTblName);
+	g_free(pcDbName);
 	
 	return arRetValue;
 }

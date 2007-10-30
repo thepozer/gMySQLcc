@@ -51,6 +51,8 @@ typedef struct _GmlcMysqlProcedure	GmlcMysqlProcedure;
 #include "gmlc_mysql_table.h"
 #include "gmlc_mysql_view.h"
 
+#include "gmlc_mysql_query.h"
+
 #define UNUSED_VAR(x) (x = x)
 
 G_BEGIN_DECLS
@@ -93,27 +95,29 @@ struct _GmlcMysqlDatabaseClass {
 GType gmlc_mysql_database_get_type (void);
 
 
-GmlcMysqlDatabase * gmlc_mysql_database_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName);
+GmlcMysqlDatabase * gmlc_mysql_database_new(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName);
 
-GArray * gmlc_mysql_database_tables_name_list(GmlcMysqlDatabase *pGmlcMysqlDb, gboolean bUpdateList);
+GmlcMysqlQuery * gmlc_mysql_database_get_query(GmlcMysqlDatabase * pGmlcMysqlDb);
+
+GArray * gmlc_mysql_database_tables_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList);
 GmlcMysqlTable * gmlc_mysql_database_get_table(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcName);
-gboolean gmlc_mysql_database_update_tables_list(GmlcMysqlDatabase *pGmlcMysqlDb);
-gchar * gmlc_mysql_database_create_new_table_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName);
+gboolean gmlc_mysql_database_update_tables_list(GmlcMysqlDatabase * pGmlcMysqlDb);
+gchar * gmlc_mysql_database_create_new_table_sql(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcOtherName);
 
-GArray * gmlc_mysql_database_views_name_list(GmlcMysqlDatabase *pGmlcMysqlDb, gboolean bUpdateList);
+GArray * gmlc_mysql_database_views_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList);
 GmlcMysqlView * gmlc_mysql_database_get_view(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcName);
-gboolean gmlc_mysql_database_update_views_list(GmlcMysqlDatabase *pGmlcMysqlDb);
-gchar * gmlc_mysql_database_create_new_view_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName);
+gboolean gmlc_mysql_database_update_views_list(GmlcMysqlDatabase * pGmlcMysqlDb);
+gchar * gmlc_mysql_database_create_new_view_sql(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcOtherName);
 
-GArray * gmlc_mysql_database_functions_name_list(GmlcMysqlDatabase *pGmlcMysqlDb, gboolean bUpdateList);
+GArray * gmlc_mysql_database_functions_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList);
 GmlcMysqlFunction * gmlc_mysql_database_get_function(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcName);
-gboolean gmlc_mysql_database_update_functions_list(GmlcMysqlDatabase *pGmlcMysqlDb);
-gchar * gmlc_mysql_database_create_new_function_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName);
+gboolean gmlc_mysql_database_update_functions_list(GmlcMysqlDatabase * pGmlcMysqlDb);
+gchar * gmlc_mysql_database_create_new_function_sql(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcOtherName);
 
-GArray * gmlc_mysql_database_procedures_name_list(GmlcMysqlDatabase *pGmlcMysqlDb, gboolean bUpdateList);
+GArray * gmlc_mysql_database_procedures_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList);
 GmlcMysqlProcedure * gmlc_mysql_database_get_procedure(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcName);
-gboolean gmlc_mysql_database_update_procedures_list(GmlcMysqlDatabase *pGmlcMysqlDb);
-gchar * gmlc_mysql_database_create_new_procedure_sql(GmlcMysqlDatabase *pGmlcMysqlDb, const gchar * pcOtherName);
+gboolean gmlc_mysql_database_update_procedures_list(GmlcMysqlDatabase * pGmlcMysqlDb);
+gchar * gmlc_mysql_database_create_new_procedure_sql(GmlcMysqlDatabase * pGmlcMysqlDb, const gchar * pcOtherName);
 
 
 G_END_DECLS

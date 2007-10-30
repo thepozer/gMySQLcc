@@ -177,6 +177,14 @@ GmlcMysqlDatabase * gmlc_mysql_database_new (GmlcMysqlServer * pGmlcMysqlSrv, co
 	return GMLC_MYSQL_DATABASE(g_object_new(GMLC_MYSQL_TYPE_DATABASE, "server", pGmlcMysqlSrv, "db_name", pcDbName, NULL));
 }
 
+GmlcMysqlQuery * gmlc_mysql_database_get_query(GmlcMysqlDatabase * pGmlcMysqlDb) {
+	GmlcMysqlQuery * poGmlcMysqlQry = NULL;
+	
+	poGmlcMysqlQry = gmlc_mysql_query_new(pGmlcMysqlDb->pGmlcMysqlSrv, pGmlcMysqlDb->pcDbName);
+	
+	return poGmlcMysqlQry;
+}
+
 GArray * gmlc_mysql_database_tables_name_list(GmlcMysqlDatabase * pGmlcMysqlDb, gboolean bUpdateList) {
 	GArray * arList = NULL;
 	
