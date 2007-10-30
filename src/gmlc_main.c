@@ -28,7 +28,7 @@ GtkWidget * GpGmlcGuiCnxns = NULL;
 /*p_gmysqlcc_gui_list_server gmysqlcc_gui_list_server;*/
 
 #ifdef USE_GTKSOURCEVIEW
-	GtkSourceLanguagesManager * LangManager;
+	GtkSourceLanguageManager * LangManager;
 #endif /* USE_GTKSOURCEVIEW */
 
 gboolean gmysqlcc_main_before_end(gpointer data);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 	
 #ifdef USE_GTKSOURCEVIEW
 	/* Get Language Manager to select sql type */
-	LangManager = gtk_source_languages_manager_new();
+	LangManager = gtk_source_language_manager_new();
 #endif /* USE_GTKSOURCEVIEW */
 	
 	/* Create server list windows */

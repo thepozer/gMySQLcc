@@ -34,13 +34,13 @@ AC_SUBST([MySQLc_LIBS])
 
 dnl Check Gtk+ Source view control
 AC_ARG_WITH(gtksourceview,
-	[  --with-gtksourceview       Activate Gtk+ Source View editor],
+	[  --with-gtksourceview       Activate Gtk+ Source View 2.0 editor],
 	USE_GTKSOURCEVIEW="1"
 )
  
 if test "x${USE_GTKSOURCEVIEW}" = "x1"; then
-	PKG_CHECK_MODULES(GTKSourceView, gtksourceview-1.0, , exit)
-	AC_DEFINE(USE_GTKSOURCEVIEW, "1", [Activate Gtk+ Source View editor])
+	PKG_CHECK_MODULES(GTKSourceView, gtksourceview-2.0, , exit)
+	AC_DEFINE(USE_GTKSOURCEVIEW, "1", [Activate Gtk+ Source View 2.0 editor])
 	AC_SUBST(GTKSourceView_LIBS)
 	AC_SUBST(GTKSourceView_CFLAGS)
 fi

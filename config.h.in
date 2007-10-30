@@ -75,7 +75,7 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Activate Gtk+ Source View editor */
+/* Activate Gtk+ Source View 2.0 editor */
 #undef USE_GTKSOURCEVIEW
 
 /* Version number of package */

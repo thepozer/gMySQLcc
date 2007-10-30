@@ -65,13 +65,6 @@ GArray * gmlc_dump_source_get_data (GmlcDumpSource * self) {
 }
 
 
-struct _GmlcDumpSourceData {
-	gchar * pcDatabaseName;
-	gchar * pcTableName;
-	GArray * arHeaders;
-	GArray * arDatas; /* GArray of GArray */
-};
-
 gboolean gmlc_dump_source_data_free (GArray * arSourceData) {
 	GmlcDumpSourceData * pGmlcDmpSrcData = NULL;
 	GArray * arTmp = NULL;
@@ -86,15 +79,15 @@ gboolean gmlc_dump_source_data_free (GArray * arSourceData) {
 		g_free(pGmlcDmpSrcData->pcDatabaseName);
 		g_free(pGmlcDmpSrcData->pcTableName);
 		
-		for (j = 0; j < arSourceData->arHeaders; j ++) {
-			pcTmp = g_array_index(arSourceData->arHeaders, gchar *, j);
+		for (j = 0; j < pGmlcDmpSrcData->arHeaders->len; j ++) {
+			pcTmp = g_array_index(pGmlcDmpSrcData->arHeaders, gchar *, j);
 			
 			g_free(pcTmp);
 		}
-		g_array_free(arSourceData->arHeaders, TRUE);
+		g_array_free(pGmlcDmpSrcData->arHeaders, TRUE);
 		
-		for (j = 0; j < arSourceData->arDatas; j ++) {
-			arTmp = g_array_index(arSourceData->arDatas, GArray *, j);
+		for (j = 0; j < pGmlcDmpSrcData->arDatas->len; j ++) {
+			arTmp = g_array_index(pGmlcDmpSrcData->arDatas, GArray *, j);
 			
 			for (k = 0; k < arTmp->len; k ++) {
 				pcTmp = g_array_index(arTmp, gchar *, k);
@@ -103,7 +96,7 @@ gboolean gmlc_dump_source_data_free (GArray * arSourceData) {
 			}
 			g_array_free(arTmp, TRUE);
 		}
-		g_array_free(arSourceData->arDatas, TRUE);
+		g_array_free(pGmlcDmpSrcData->arDatas, TRUE);
 	}
 	
 	return TRUE;

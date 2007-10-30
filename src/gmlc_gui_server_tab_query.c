@@ -260,11 +260,11 @@ void gmlc_gui_server_tab_query_create_widgets (GmlcGuiServerTabQuery * pGmlcGuiS
 #ifdef USE_GTKSOURCEVIEW
 	pGmlcGuiSrvTabQuery->txtSQLRequest = gtk_source_view_new ();
 	gtk_source_view_set_show_line_numbers (GTK_SOURCE_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest), TRUE);
-	gtk_source_view_set_tabs_width (GTK_SOURCE_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest), 2);
+	gtk_source_view_set_indent_width (GTK_SOURCE_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest), 2);
 	txtBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGmlcGuiSrvTabQuery->txtSQLRequest));
-	gtk_source_buffer_set_highlight (GTK_SOURCE_BUFFER(txtBuffer), TRUE);
+	gtk_source_buffer_set_highlight_syntax (GTK_SOURCE_BUFFER(txtBuffer), TRUE);
 	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(txtBuffer), 
-			gtk_source_languages_manager_get_language_from_mime_type(LangManager, "text/x-sql"));
+			gtk_source_language_manager_get_language(LangManager, "sql"));
 #else /* USE_GTKSOURCEVIEW */
 	pGmlcGuiSrvTabQuery->txtSQLRequest = gtk_text_view_new ();
 #endif /* USE_GTKSOURCEVIEW */

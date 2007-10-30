@@ -31,7 +31,7 @@
 	#include <gtksourceview/gtksourceview.h>
 	#include <gtksourceview/gtksourcebuffer.h>
 	#include <gtksourceview/gtksourcelanguage.h>
-	#include <gtksourceview/gtksourcelanguagesmanager.h>
+	#include <gtksourceview/gtksourcelanguagemanager.h>
 #endif /* USE_GTKSOURCEVIEW */
 
 #ifndef __GMYSQLCC_MAIN_PART__
@@ -43,7 +43,7 @@
 	extern GtkWidget * GpGmlcGuiCnxns;
 	
 	#ifdef USE_GTKSOURCEVIEW
-		extern GtkSourceLanguagesManager * LangManager;
+		extern GtkSourceLanguageManager * LangManager;
 	#endif /* USE_GTKSOURCEVIEW */
 
 #endif /* __GMYSQLCC_MAIN_PART__ */
