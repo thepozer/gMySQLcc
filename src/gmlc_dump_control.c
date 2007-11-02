@@ -42,23 +42,13 @@ static void gmlc_dump_control_class_init(GmlcDumpControlClass *pClass) {
 	g_object_class_install_property(pObjClass, PROP_SOURCE, 
 		g_param_spec_object("source", "Source object", "Source object", GMLC_DUMP_TYPE_SOURCE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(pObjClass, PROP_FORMAT, 
-		g_param_spec_object("format", "Format object", "Format object", GMLC_DUMP_TYPE_SOURCE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-/*
-	g_object_class_install_property(pObjClass, PROP_NAME, 
-		g_param_spec_string("name", "Table name", "Name of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-	g_object_class_install_property(pObjClass, PROP_ROWS, 
-		g_param_spec_string("rows", "Table rows", "Rows' number of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_SIZE, 
-		g_param_spec_string("size", "Table size", "Size of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_ENGINE, 
-		g_param_spec_string("engine", "Table type", "Type of the table", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_FLAGGED, 
-		g_param_spec_boolean("flagged", "Object Flagged", "Object Flagged", FALSE, G_PARAM_READWRITE));
-*/
+		g_param_spec_object("format", "Format object", "Format object", GMLC_DUMP_TYPE_FORMAT, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void gmlc_dump_control_init(GmlcDumpControl * pGmlcDmpCtrl) {
 	pGmlcDmpCtrl->pGmlcMysqlSrv = NULL;
+	pGmlcDmpCtrl->pSource = NULL;
+	pGmlcDmpCtrl->pFormat = NULL;
 }
 
 static void gmlc_dump_control_finalize(GmlcDumpControl * pGmlcDmpCtrl) {
@@ -74,6 +64,12 @@ static void gmlc_dump_control_get_property (GObject * object, guint prop_id, GVa
 		case PROP_SERVER :
 			g_value_set_object(value, pGmlcDmpCtrl->pGmlcMysqlSrv);
 			break;
+		case PROP_SOURCE :
+			g_value_set_object(value, pGmlcDmpCtrl->pSource);
+			break;
+		case PROP_FORMAT :
+			g_value_set_object(value, pGmlcDmpCtrl->pFormat);
+			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 			break;
@@ -87,6 +83,12 @@ static void gmlc_dump_control_set_property (GObject * object, guint prop_id, con
 	switch (prop_id) {
 		case PROP_SERVER :
 			pGmlcDmpCtrl->pGmlcMysqlSrv = g_value_get_object(value);
+			break;
+		case PROP_SOURCE :
+			pGmlcDmpCtrl->pSource = g_value_get_object(value);
+			break;
+		case PROP_FORMAT :
+			pGmlcDmpCtrl->pFormat = g_value_get_object(value);
 			break;
 		default: {
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -104,13 +106,28 @@ GmlcDumpControl * gmlc_dump_control_new(GmlcMysqlServer * pGmlcMysqlSrv) {
 }
 
 gboolean gmlc_dump_control_dump (GmlcDumpControl * pGmlcDmpCtrl) {
-	UNUSED_VAR(pGmlcDmpCtrl);
+	GArray * arDatas = NULL;
+	gchar * pcStruct = NULL, * pcResult = NULL;
+	
+	if (gmlc_dump_source_can_get_struct(pGmlcDmpCtrl->pSource)) {
+		pcStruct = gmlc_dump_source_get_struct(pGmlcDmpCtrl->pSource);
+		gmlc_dump_format_set_struct(pGmlcDmpCtrl->pFormat, pcStruct);
+	}
+	
+	if (gmlc_dump_source_can_get_data(pGmlcDmpCtrl->pSource)) {
+		arDatas = gmlc_dump_source_get_data(pGmlcDmpCtrl->pSource);
+		gmlc_dump_format_set_data(pGmlcDmpCtrl->pFormat, arDatas);
+	}
+	
+	if (pcStruct != NULL || arDatas != NULL) {
+		pcResult = gmlc_dump_format_run(pGmlcDmpCtrl->pFormat);
+	}
 	
 	return TRUE;
 }
 
 
-gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, void * pGmlcDmpFrmt) {
+gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, GmlcDumpFormat * pGmlcDmpFrmt) {
 	GmlcDumpControl * pGmlcDmpCtrl = NULL;
 	gboolean bRetValue = FALSE;
 	

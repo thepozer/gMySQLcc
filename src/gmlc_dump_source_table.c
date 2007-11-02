@@ -121,7 +121,7 @@ static GArray * gmlc_dump_source_table_get_data (GmlcDumpSource * self) {
 	GmlcDumpSourceData * poGmlcDmpSrcData = NULL;
 	GmlcMysqlDatabase * poGmlcMysqlDb = NULL;
 	GmlcMysqlQuery * poGmlcMysqlQry = NULL;
-	GArray * arRetValue = NULL;
+	GArray * arRetValue = NULL, * arAllRecords = NULL, * arRecord = NULL;
 	gchar * pcDbName = NULL, * pcTblName = NULL, * pcSql = NULL;
 	
 	arRetValue = g_array_new(TRUE, TRUE, 1);
@@ -150,8 +150,16 @@ static GArray * gmlc_dump_source_table_get_data (GmlcDumpSource * self) {
 	
 	pcSql = g_strdup_printf("SELECT * FROM `%s`.`%s`;", pcDbName, pcTblName);
 	
-	if (gmlc_mysql_query_execute(poGmlcMysqlQry, pcSql, strlen(pcSql), FALSE)) {
+	if (gmlc_mysql_query_execute(poGmlcMysqlQry, pcSql, strlen(pcSql), FALSE) && gmlc_mysql_query_have_record(poGmlcMysqlQry)) {
+		arAllRecords = g_array_new(TRUE, TRUE, 10);
 		
+		while ((arRecord = gmlc_mysql_query_next_record(poGmlcMysqlQry)) != NULL) {
+			g_array_append_val(arAllRecords, arRecord);
+			arRecord = NULL;
+		}
+		
+		poGmlcDmpSrcData->arDatas = arAllRecords;
+		poGmlcDmpSrcData->arHeaders = gmlc_mysql_query_get_headers(poGmlcMysqlQry);
 	} else {
 		poGmlcDmpSrcData->arHeaders = g_array_new(TRUE, TRUE, 0);
 		poGmlcDmpSrcData->arDatas = g_array_new(TRUE, TRUE, 0);

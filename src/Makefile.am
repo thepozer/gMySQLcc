@@ -13,6 +13,8 @@ bin_PROGRAMS = gmysqlcc
 gmysqlcc_SOURCES = \
 	gmlc_dump_control.c\
 	gmlc_dump_control.h\
+	gmlc_dump_format.c\
+	gmlc_dump_format.h\
 	gmlc_dump_source.c\
 	gmlc_dump_source.h\
 	gmlc_dump_source_query.c\

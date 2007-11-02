@@ -22,7 +22,7 @@
 
 #include "gmlc_mysql_server.h"
 #include "gmlc_dump_source.h"
-#include "gmlc_dump_source.h"
+#include "gmlc_dump_format.h"
 
 #define UNUSED_VAR(x) (x = x)
 
@@ -42,6 +42,8 @@ struct _GmlcDumpControl {
 	GObject parent;
 	
 	GmlcMysqlServer * pGmlcMysqlSrv;
+	GmlcDumpSource * pSource;
+	GmlcDumpFormat * pFormat;
 };
 
 struct _GmlcDumpControlClass {
@@ -55,7 +57,7 @@ GmlcDumpControl * gmlc_dump_control_new (GmlcMysqlServer * pGmlcMysqlSrv);
 
 gboolean gmlc_dump_control_dump (GmlcDumpControl * pGmlcDmpCtrl);
 
-gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, void * pGmlcDmpFrmt);
+gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDumpSource * pGmlcDmpSrc, GmlcDumpFormat * pGmlcDmpFrmt);
 
 G_END_DECLS
 

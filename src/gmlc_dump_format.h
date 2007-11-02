@@ -32,28 +32,17 @@ typedef struct _GmlcDumpFormatInterface GmlcDumpFormatInterface;
 struct _GmlcDumpFormatInterface {
 	GTypeInterface parent;
 	
-	gboolean (* can_get_struct) (GmlcDumpFormat * self);
-	gchar * (* get_struct) (GmlcDumpFormat * self);
-	gboolean (* can_get_data) (GmlcDumpFormat * self);
-	GArray * (* get_data) (GmlcDumpFormat * self);
+	gboolean (* set_struct) (GmlcDumpFormat * self, const gchar * pcStruct);
+	gboolean (* set_data) (GmlcDumpFormat * self, const GArray * arDatas);
+	gchar * (* run) (GmlcDumpFormat * self);
 };
-
-/* Exported data */
-struct _GmlcDumpFormatData {
-	gchar * pcDatabaseName;
-	gchar * pcTableName;
-	GArray * arHeaders;
-	GArray * arDatas; /* GArray of GArray */
-};
-typedef struct _GmlcDumpFormatData GmlcDumpFormatData;
 
 GType gmlc_dump_format_get_type (void);
 
-gboolean gmlc_dump_format_can_get_struct (GmlcDumpFormat * self);
-gchar * gmlc_dump_format_get_struct (GmlcDumpFormat * self);
+gboolean gmlc_dump_format_set_struct (GmlcDumpFormat * self, const gchar * pcStruct);
+gboolean gmlc_dump_format_set_data (GmlcDumpFormat * self, const GArray * arDatas);
 
-gboolean gmlc_dump_format_can_get_data (GmlcDumpFormat * self);
-GArray * gmlc_dump_format_get_data (GmlcDumpFormat * self);
+gchar * gmlc_dump_format_run (GmlcDumpFormat * self);
 
 G_END_DECLS
 

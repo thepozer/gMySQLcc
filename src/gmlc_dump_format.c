@@ -48,19 +48,16 @@ GType gmlc_dump_format_get_type (void) {
   return type;
 }
 
-gboolean gmlc_dump_format_can_get_struct (GmlcDumpFormat * self) {
-	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->can_get_struct(self);
+gboolean gmlc_dump_format_set_struct (GmlcDumpFormat * self, const gchar * pcStruct) {
+	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->set_struct(self, pcStruct);
 }
 
-gchar * gmlc_dump_format_get_struct (GmlcDumpFormat * self) {
-	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->get_struct(self);
+gboolean gmlc_dump_format_set_data (GmlcDumpFormat * self, const GArray * arDatas) {
+	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->set_data(self, arDatas);
 }
 
-gboolean gmlc_dump_format_can_get_data (GmlcDumpFormat * self) {
-	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->can_get_data(self);
+gchar * gmlc_dump_format_run (GmlcDumpFormat * self) {
+	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->run(self);
 }
 
-GArray * gmlc_dump_format_get_data (GmlcDumpFormat * self) {
-	return GMLC_DUMP_FORMAT_GET_INTERFACE(self)->get_data(self);
-}
 
