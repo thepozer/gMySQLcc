@@ -1,0 +1,596 @@
+# French translations for gmysqlcc package.
+# Copyright (C) 2004 THE gmysqlcc'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gmysqlcc package.
+# Debian User <gmysqlcc@thepozer.net>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gmysqlcc 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-07-26 10:05+0200\n"
+"PO-Revision-Date: 2007-07-26 10:36+0100\n"
+"Last-Translator: Didier Prolhac <dev@thepozer.net>\n"
+"Language-Team: French <dev@thepozer.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: src/gmlc_gui_connexions.c:58
+msgid "GMySQLcc - Connections list"
+msgstr "GMySQLcc - Liste des connexions"
+
+#: src/gmlc_gui_connexions.c:117
+msgid "Connection"
+msgstr "Connexion"
+
+#: src/gmlc_gui_connexions.c:123
+msgid "Connect to a server"
+msgstr "Connexion a un serveur"
+
+#: src/gmlc_gui_connexions.c:127
+msgid "Edit Server"
+msgstr "Edite Serveur"
+
+#: src/gmlc_gui_connexions.c:133
+msgid "Display edit server part"
+msgstr "Affiche la partie d'édition des serveurs"
+
+#: src/gmlc_gui_connexions.c:137
+msgid "Execute SQL file"
+msgstr "Exécute un fichier SQL"
+
+#: src/gmlc_gui_connexions.c:143
+msgid "Execute an SQL file on a MySQL server"
+msgstr "Exécute un fichier SQL dans un serveur MySQL"
+
+#: src/gmlc_gui_connexions.c:147
+msgid "Close"
+msgstr "Fermer"
+
+#: src/gmlc_gui_connexions.c:153
+msgid "Close window"
+msgstr "Fermer la fenêtre"
+
+#: src/gmlc_gui_connexions.c:203
+msgid "Server"
+msgstr "Serveur"
+
+#: src/gmlc_gui_connexions.c:218
+msgid "Name :"
+msgstr "Nom :"
+
+#: src/gmlc_gui_connexions.c:232
+msgid "Host :"
+msgstr "Nom de la machine :"
+
+#: src/gmlc_gui_connexions.c:246
+msgid "Port :"
+msgstr "Port :"
+
+#: src/gmlc_gui_connexions.c:261
+msgid "User name :"
+msgstr "Nom de l'utilisateur :"
+
+#: src/gmlc_gui_connexions.c:275
+msgid "Password :"
+msgstr "Mot de passe :"
+
+#: src/gmlc_gui_connexions.c:289
+msgid "Local socket file :"
+msgstr "Fichier socket local :"
+
+#: src/gmlc_gui_connexions.c:303
+msgid "Read only server"
+msgstr "Serveur en lecture seule"
+
+#: src/gmlc_gui_connexions.c:312
+msgid "Warning about write query on this server"
+msgstr "Préviens en cas de requète modifiant des données sur le serveur"
+
+#: src/gmlc_gui_connexions.c:356
+msgid "Server name"
+msgstr "Nom du serveur"
+
+#. check if not empty
+#: src/gmlc_gui_connexions.c:487 src/gmlc_gui_connexions.c:553
+#, c-format
+msgid "Field %s cannot be empty !!!"
+msgstr "Le champ %s ne peut pas être vide !!!"
+
+#: src/gmlc_gui_connexions.c:494 src/gmlc_gui_connexions.c:560
+#, c-format
+msgid "Field %s can only contain digits !!!"
+msgstr "Le champ %s ne peut contenir que des chiffres !!!"
+
+#: src/gmlc_gui_connexions.c:505 src/gmlc_gui_connexions.c:572
+msgid ""
+"Name already taken !\n"
+"Please set another one."
+msgstr ""
+"Ce nom est déjà pris !\n"
+"Choisissez en un autre."
+
+#: src/gmlc_gui_connexions.c:534 src/gmlc_gui_connexions.c:604
+#: src/gmlc_gui_connexions.c:715
+msgid "Please select a server"
+msgstr "Sélectionnez un serveur de base de donnée"
+
+#: src/gmlc_gui_connexions.c:597
+msgid "Can't delete this server !!!"
+msgstr "Impossible de supprimer ce serveur !!!"
+
+#: src/gmlc_gui_connexions.c:640
+msgid "Can't move up more !!!"
+msgstr "Impossible d'aller plus haut !!!"
+
+#: src/gmlc_gui_connexions.c:676
+msgid "Can't move down more !!!"
+msgstr "Impossible d'aller plus bas !!!"
+
+#: src/gmlc_gui_server_tab_help.c:177
+msgid "Search (keyword) :"
+msgstr "Recherche (Mots clés) :"
+
+#: src/gmlc_gui_server_tab_help.c:190
+msgid "Search"
+msgstr "Recherche"
+
+#. Databases columns
+#: src/gmlc_gui_server_tab_help.c:238
+msgid "Categories"
+msgstr "Catégories"
+
+#. Table columns
+#: src/gmlc_gui_server_tab_help.c:246
+msgid "Topic name"
+msgstr "Noms des sujets"
+
+#: src/gmlc_gui_server_tab_help.c:430
+#, c-format
+msgid ""
+"Name : %s\n"
+"\n"
+"Description :\n"
+"\n"
+"%s\n"
+"\n"
+"Sample :\n"
+"\n"
+"%s\n"
+"\n"
+"Url : %s\n"
+msgstr ""
+"Nom : %s\n"
+"\n"
+"Description :\n"
+"\n"
+"%s\n"
+"\n"
+"Exemple :\n"
+"\n"
+"%s\n"
+"\n"
+"Url : %s\n"
+
+#: src/gmlc_gui_server.c:90 src/gmlc_gui_server.c:112
+#, c-format
+msgid "GMySQLcc - Server window : %s"
+msgstr "GMySQLcc - Fenêtre du serveur : %s"
+
+#: src/gmlc_gui_server.c:163
+msgid "Servers list"
+msgstr "Liste des serveurs"
+
+#: src/gmlc_gui_server.c:193
+msgid "Help"
+msgstr "Aide"
+
+#. Databases columns
+#: src/gmlc_gui_server.c:206 src/gmlc_gui_server_tab_data.c:543
+msgid "Databases"
+msgstr "Bases de données"
+
+#: src/gmlc_gui_server.c:229
+#, c-format
+msgid "Query - db : '%s'"
+msgstr "Requête - base : '%s'"
+
+#: src/gmlc_gui_server_tab_query.c:200
+msgid "Execute"
+msgstr "Exécuter"
+
+#: src/gmlc_gui_server_tab_query.c:209
+msgid "Duplicate"
+msgstr "Dupliquer"
+
+#: src/gmlc_gui_server_tab_query.c:218
+msgid "Dump"
+msgstr "Dump"
+
+#: src/gmlc_gui_server_tab_query.c:227
+msgid "Close tab"
+msgstr "Fermer Onglet"
+
+#: src/gmlc_gui_server_tab_query.c:334
+msgid "Write Warning !!!"
+msgstr "Protection contre la modofication !!!"
+
+#: src/gmlc_gui_server_tab_query.c:334
+msgid ""
+"Warning !!! This server has been marked with Write Warning flags !!!\n"
+"It is dangerous for the data ... :)\n"
+"\n"
+"Do you want force the execution of the query ?"
+msgstr ""
+"Attention !!! Ce serveur a été marqué avec comme étant à ne pas "
+"modifier !!!\n"
+"Ce serait dangereux pour les données ... :)\n"
+"\n"
+"Voulez-vous forcer l'exécution de cette requête ?"
+
+#. Query Not Ok
+#. It is really an error
+#. Query Not Ok
+#: src/gmlc_gui_server_tab_query.c:337 src/gmlc_gui_server_tab_query.c:349
+#: src/gmlc_gui_server_tab_query.c:391
+#, c-format
+msgid "Error during the query : (%d) %s"
+msgstr "Erreur durant l'exécution de la requête : (%d) %s"
+
+#: src/gmlc_gui_server_tab_query.c:431 src/gmlc_gui_server_tab_query.c:553
+#, c-format
+msgid "Result %d"
+msgstr "Résultat %d"
+
+#: src/gmlc_gui_server_tab_query.c:574
+#, c-format
+msgid ""
+"Query ok.\n"
+"Affected row : %d"
+msgstr ""
+"Requête ok.\n"
+"Lignes modifiées : %d"
+
+#: src/gmlc_gui_server_tab_query.c:620
+msgid "Load sql file"
+msgstr "Lire le fichier SQL"
+
+#: src/gmlc_gui_server_tab_query.c:669
+msgid "Save sql file"
+msgstr "Enregistrer le fichier SQL"
+
+#: src/gmlc_gui_server_tab_data.c:196
+msgid "SQL"
+msgstr "SQL"
+
+#: src/gmlc_gui_server_tab_data.c:205
+msgid "SQL File"
+msgstr "Fichier SQL"
+
+#: src/gmlc_gui_server_tab_data.c:250 src/gmlc_gui_server_tab_data.c:315
+#: src/gmlc_gui_server_tab_data.c:376 src/gmlc_gui_server_tab_data.c:436
+#: src/gmlc_gui_server_tab_data.c:496
+msgid "Refresh"
+msgstr "Rafraichir"
+
+#: src/gmlc_gui_server_tab_data.c:259
+msgid "Add a database"
+msgstr "Ajouter une base de donnée"
+
+#: src/gmlc_gui_server_tab_data.c:264
+msgid "Alter a database"
+msgstr "Modifier une  base de donnée"
+
+#: src/gmlc_gui_server_tab_data.c:269
+msgid "Remove a database"
+msgstr "Supprimer une base de donnée"
+
+#: src/gmlc_gui_server_tab_data.c:278
+msgid "Display all create structures"
+msgstr "Afficher la structure de la base de données"
+
+#: src/gmlc_gui_server_tab_data.c:289
+msgid "Tables"
+msgstr "Tables"
+
+#: src/gmlc_gui_server_tab_data.c:324
+msgid "Add a table"
+msgstr "Ajouter une table"
+
+#: src/gmlc_gui_server_tab_data.c:329
+msgid "Alter a table"
+msgstr "Modifie une table"
+
+#: src/gmlc_gui_server_tab_data.c:334
+msgid "Remove a table"
+msgstr "Supprimer une table"
+
+#: src/gmlc_gui_server_tab_data.c:343 src/gmlc_gui_server_tab_data.c:404
+#: src/gmlc_gui_server_tab_data.c:464 src/gmlc_gui_server_tab_data.c:524
+msgid "Display create structure"
+msgstr "Afficher la structure de la table"
+
+#: src/gmlc_gui_server_tab_data.c:350
+msgid "Views"
+msgstr "Vues"
+
+#: src/gmlc_gui_server_tab_data.c:385
+msgid "Add a view"
+msgstr "Ajouter une vue"
+
+#: src/gmlc_gui_server_tab_data.c:390
+msgid "Alter a view"
+msgstr "Modifier une vue"
+
+#: src/gmlc_gui_server_tab_data.c:395
+msgid "Remove a view"
+msgstr "Supprimer une vue"
+
+#: src/gmlc_gui_server_tab_data.c:410
+msgid "Procedures"
+msgstr "Procédures"
+
+#: src/gmlc_gui_server_tab_data.c:445
+msgid "Add a procedure"
+msgstr "Ajouter une procédure"
+
+#: src/gmlc_gui_server_tab_data.c:450
+msgid "Alter a procedure"
+msgstr "Modifier une procédure"
+
+#: src/gmlc_gui_server_tab_data.c:455
+msgid "Remove a procedure"
+msgstr "Supprimer une procédure"
+
+#: src/gmlc_gui_server_tab_data.c:470
+msgid "Functions"
+msgstr "Fonctions"
+
+#: src/gmlc_gui_server_tab_data.c:505
+msgid "Add a function"
+msgstr "Ajouter une fonction"
+
+#: src/gmlc_gui_server_tab_data.c:510
+msgid "Alter a function"
+msgstr "Modifier une fonction"
+
+#: src/gmlc_gui_server_tab_data.c:515
+msgid "Remove a function"
+msgstr "Supprimer une fonction"
+
+#. Table columns
+#. View columns
+#. Procedure columns
+#. Function columns
+#: src/gmlc_gui_server_tab_data.c:551 src/gmlc_gui_server_tab_data.c:566
+#: src/gmlc_gui_server_tab_data.c:574 src/gmlc_gui_server_tab_data.c:582
+msgid "Name"
+msgstr "Nom"
+
+#: src/gmlc_gui_server_tab_data.c:553
+msgid "Rows"
+msgstr "Nbr Lignes"
+
+#: src/gmlc_gui_server_tab_data.c:555
+msgid "Size"
+msgstr "Taille"
+
+#: src/gmlc_gui_server_tab_data.c:557
+msgid "Type"
+msgstr "Type"
+
+#~ msgid "Dump Query"
+#~ msgstr "Export SQL"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Server name :"
+#~ msgstr "Nom du serveur :"
+
+#~ msgid "Database name :"
+#~ msgstr "Nom de la base de donnée :"
+
+#~ msgid "Table name :"
+#~ msgstr "Nom de la table :"
+
+#~ msgid "SQL query :"
+#~ msgstr "Requête SQL :"
+
+#~ msgid "Selection :"
+#~ msgstr "Selection :"
+
+#~ msgid "One file per database"
+#~ msgstr "Un fichier par base de donnée"
+
+#~ msgid "All files in a directory"
+#~ msgstr "Tous les fichiers dans un répertoire"
+
+#~ msgid "Drop database if exist"
+#~ msgstr "Effacer la base de donnée si elle existe"
+
+#~ msgid "Drop table if exist"
+#~ msgstr "Effacer la table si elle existe"
+
+#~ msgid "Complete inserts"
+#~ msgstr "Insertions complètes"
+
+#~ msgid "Structure"
+#~ msgstr "Structure"
+
+#~ msgid "Structure and data"
+#~ msgstr "Structure et données"
+
+#~ msgid "Data only"
+#~ msgstr "Données seulement"
+
+#~ msgid "Options :"
+#~ msgstr "Options :"
+
+#~ msgid "File name :"
+#~ msgstr "Nom du fichier :"
+
+#~ msgid "..."
+#~ msgstr "..."
+
+#~ msgid "Format :"
+#~ msgstr "Format :"
+
+#~ msgid "Charset :"
+#~ msgstr "Charset de sortie :"
+
+#~ msgid "Output :"
+#~ msgstr "Export :"
+
+#~ msgid "CSV"
+#~ msgstr "CSV"
+
+#~ msgid "XML"
+#~ msgstr "XML"
+
+#~ msgid "Dump file name"
+#~ msgstr "Nom du fichier de sauvegarde"
+
+#~ msgid "_Up"
+#~ msgstr "Haut"
+
+#~ msgid "_Down"
+#~ msgstr "Bas"
+
+#~ msgid "_New"
+#~ msgstr "Nouveau"
+
+#~ msgid "_Add"
+#~ msgstr "Ajouter"
+
+#~ msgid "_Modify"
+#~ msgstr "Modifier"
+
+#~ msgid "D_elete"
+#~ msgstr "Supprimer"
+
+#~ msgid "SQL Request - %s - %s"
+#~ msgstr "Requête SQL - %s - %s"
+
+#~ msgid "Execute SQL query"
+#~ msgstr "Exécute une requete SQL"
+
+#~ msgid "Select output charset"
+#~ msgstr "Charset de sortie :"
+
+#~ msgid "Duplicate SQL Windows"
+#~ msgstr "Duplique la fenêtre courante"
+
+#~ msgid "Dump with current query"
+#~ msgstr "Sauvegarde en utilisant la requête courante"
+
+#~ msgid "Records : %d"
+#~ msgstr "Enregistrements : %d"
+
+#~ msgid "Can't use the charset : '%s'"
+#~ msgstr "Impossible d'utiliser ce charset : '%s'"
+
+#~ msgid "Server : %s"
+#~ msgstr "Serveur : %s"
+
+#~ msgid "Exec SQL Query"
+#~ msgstr "Exécute une requête SQL"
+
+#~ msgid "Exec SQL File"
+#~ msgstr "Exécute un fichier SQL"
+
+#~ msgid "Text Window - File name : %s"
+#~ msgstr "Fenêtre de texte - Nom du fichier : %s"
+
+#~ msgid "Text Window"
+#~ msgstr "Fenêtre de texte"
+
+#~ msgid "Open"
+#~ msgstr "Ouvrir"
+
+#~ msgid "Save"
+#~ msgstr "Enregistrer"
+
+#~ msgid "Execute sql file"
+#~ msgstr "Exécute un fichier sql"
+
+#~ msgid "Add"
+#~ msgstr "Ajouter"
+
+#~ msgid "Delete"
+#~ msgstr "Supprimer"
+
+#~ msgid "Modify"
+#~ msgstr "Modifier"
+
+#~ msgid "User informations :"
+#~ msgstr "Informations sur l'utilisateur :"
+
+#~ msgid "Login :"
+#~ msgstr "Login :"
+
+#~ msgid "Already encrypted password"
+#~ msgstr "Mot de passe déjà crypté"
+
+#~ msgid "Max"
+#~ msgstr "Max"
+
+#~ msgid "Queries :"
+#~ msgstr "Requête SQL :"
+
+#~ msgid "Updates :"
+#~ msgstr "Mise à jour :"
+
+#~ msgid "User"
+#~ msgstr "Utilisateur"
+
+#~ msgid "SSL type :"
+#~ msgstr "Type de connexions sécurisés :"
+
+#~ msgid "SSL cypher :"
+#~ msgstr "SSL cypher :"
+
+#~ msgid "x509 issuer :"
+#~ msgstr "x509 issuer :"
+
+#~ msgid "x509 subject :"
+#~ msgstr "x509 subject :"
+
+#~ msgid "Ssl"
+#~ msgstr "Ssl"
+
+#~ msgid "Database rights :"
+#~ msgstr "Droits pour les bases de données"
+
+#~ msgid "Database"
+#~ msgstr "Base de données"
+
+#~ msgid "Rights :"
+#~ msgstr "Droits :"
+
+#~ msgid "Users"
+#~ msgstr "Utilisateurs"
+
+#~ msgid "In construction"
+#~ msgstr "En construction"
+
+#~ msgid "Value"
+#~ msgstr "Valeur"
+
+#~ msgid "Database '%s' created !"
+#~ msgstr "Base de données '%s' crée !"
+
+#~ msgid "Can't create database '%s' !"
+#~ msgstr "Impossible de créer la base de donnée : '%s'"
+
+#~ msgid "Database '%s' deleted !"
+#~ msgstr "Base de données '%s' supprimée !"
+
+#~ msgid "Are you sure ?"
+#~ msgstr "Etes-vous sur ?"
+
+#~ msgid "Table '%s'.'%s' deleted !"
+#~ msgstr "Table '%s'.'%s' supprimée !"

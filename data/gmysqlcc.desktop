@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=GMySQLcc
+Comment=Gtk+ MySQL Control Center
+Icon=gmysqlcc-32.png
+Exec=gmysqlcc
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=GTK;Development;Database

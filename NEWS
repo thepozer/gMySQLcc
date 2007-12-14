@@ -1,0 +1,52 @@
+# 2005-05-06
+   First news, I use subversion now and the address of tyhe server is now : http://gmysqlcc.thepozer.org/svn. Look on EnInstall to see how to get source with subversion.
+   I will stop the cvs server in few days.
+   Second news, I have changed of domain, now it's http://gmysqlcc.thepozer.org/ ... And I have changed of site : I use Trac to give you a subversion source browser and a simple bug tracker with the ticket system.
+   New version (Version : 0.2.4) 
+   I have added a system to execute SQL file directly and corrected some small problems.
+
+# 2005-03-25
+   New version (Version : 0.2.3) 
+   I have rewrote all internal dump code ... Now you can really dump in SQL/CSV/XML from a Server/Database/Table/Query.
+   I have ortogonalized GUI code, add a button to show and hide edit part in the server list window and some few other modifications ...
+   I have added 2 flags in in the server management : read only and warning. With these flags, you can deny any data update on a server or simply warn you when try to update datas.
+   Last point, I have changed the hostname of the cvs server ... now it's cvs.thepozer.org ... look to the install part.
+
+# 2004-12-01
+   New version (Version : 0.2.2a) 
+   Small update to compile on Fedora Core ... Thx to Nuno :)
+
+# 2004-10-26
+   New version (Version : 0.2.2) 
+   I have integrated the GNOME widget GtkSourceView to have a better syntax highlight (but it's facultative ...).
+   I have corrected a some bugs (and a big one about memory ... :) ).
+   I have disable XML and CSV dump format (I rewriting all code code about dump ...).
+
+# 2004-07-02
+   New version again (And I don't stop now ;)) (Version : 0.2.1) 
+   I have added internationalisation (Now French and English). Send your translations to me.
+   You can choose the charset used to display data queries and to do the dump.
+   You can set the path of the local socket file to access to your local server.
+
+# 2004-06-07
+   Oups ... I have forgotten something in the tar.gz ... (score : configure : 1 - Me : 0) :(
+   I have updated that (version : 0.2.0a) ... Thx to Chris :)
+   And a good news for Mandrake user, you have now a packaged version (src & i586). Thx to Zdenko Podobný
+
+# 2004-06-04
+   Less than 1 month between 2 versions, it's great ... :) (Version : 0.2.0) 
+   Gmysqlcc use configure now, so the compilation method has changed. I have modified dump system, Now it write datas directly to the disk, not store them in memory ...
+   I have also corrected a small bug in the structure dump (bad tables name).
+   You can dump data in SQL or CVS, XML format will come soon.
+   Another corrected bug, you can see and edit values with accents or other things. I do a convertion into server charset for each query ...
+
+# 2004-05-09
+   Yes a new version ... 4 month after (I try to reduce the tim between 2 version next time ... ;)) (Version : 0.1.0) 
+   I have rewrited completly access to mysql database, add dump to file function, and now you can edit value directly in the reslut table.
+
+# 2004-01-14
+   Yes a new version ... 3 month after :( (Version : 0.0.2) 
+   Now you can execute a SQL file but not manage it yet ... (next version :) )
+
+# 2003-09-03
+   First public version (Version : 0.0.1 :) )

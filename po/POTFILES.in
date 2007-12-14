@@ -1,0 +1,44 @@
+# List of source files containing translatable strings.
+
+## Created by Anjuta - will be overwritten
+## If you don't want it to overwrite it,
+## 	Please disable it in the Anjuta project configuration
+
+# Source files
+./src/gmlc_mysql_structure.h
+./src/gmlc_mysql_structure.c
+./src/gmlc_mysql_query.c
+./src/gmlc_mysql_server.h
+./src/gmlc_mysql_database.h
+./src/gmlc_mysql_database.c
+./src/gmlc_mysql_server.c
+./src/gmlc_mysql_query.h
+./src/gmlc_misc_config.c
+./src/gmlc_main.h
+./src/gmlc_misc_config.h
+./src/gmlc_main.c
+./src/gmlc_gui_connexions.c
+./src/gmlc_gui_connexions.h
+./src/gmlc_test_main.c
+./src/gmlc_gui_helpers.h
+./src/gmlc_gui_helpers.c
+./src/gmlc_misc_hashtable.h
+./src/gmlc_misc_hashtable.c
+./src/gmlc_mysql_procedure.h
+./src/gmlc_mysql_view.h
+./src/gmlc_mysql_view.c
+./src/gmlc_mysql_function.c
+./src/gmlc_mysql_procedure.c
+./src/gmlc_mysql_table.h
+./src/gmlc_mysql_table.c
+./src/gmlc_gui_server_tab_data.h
+./src/gmlc_mysql_function.h
+./src/gmlc_gui_server_tab_help.c
+./src/gmlc_gui_server.c
+./src/gmlc_gui_server_tab_help.h
+./src/gmlc_gui_server_tab_query.c
+./src/gmlc_gui_server.h
+./src/gmlc_gui_server_tab_query.h
+./src/gmlc_gui_server_tab_data.c
+./src/gmlc_gui_server_tab.c
+./src/gmlc_gui_server_tab.h
