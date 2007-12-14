@@ -213,14 +213,16 @@ void gmlc_gui_server_tab_query_create_toolbar_items (GmlcGuiServerTabQuery * pGm
 	gtk_widget_show(poBtn);
 	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
+/*
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
 	poBtn = gtk_button_new_with_label(_("Dump"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
 	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
-/*	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery);*/
+/ *	g_signal_connect(poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnDumpSql_clicked), pGmlcGuiSrvTabQuery); * /
 	gtk_widget_show(poBtn);
 	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
+*/
 	
 	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
@@ -581,10 +583,14 @@ void gmlc_gui_server_tab_query_display_one_info(GmlcGuiServerTabQuery * pGmlcGui
 
 gboolean gmlc_gui_server_tab_query_evt_window_keyrelease (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	
-	if ((event->state & GDK_CONTROL_MASK && (event->keyval == GDK_e || event->keyval == GDK_E)) 
+	if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_e) 
 		|| (event->keyval == GDK_F5)) {
 		gmlc_gui_server_tab_query_evt_btnExecSql_clicked (widget, user_data);
 		return TRUE;
+	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_w)) {
+		gmlc_gui_server_tab_query_evt_btnClose_clicked (widget, user_data);
+	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_d)) {
+		gmlc_gui_server_tab_query_evt_btnDuplicateSql_clicked (widget, user_data);
 	}
 	
 	return FALSE;
