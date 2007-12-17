@@ -53,6 +53,7 @@ static void gmlc_gui_server_tab_data_evt_menu_db_show_create_activate (GtkWidget
 
 static gboolean gmlc_gui_server_tab_data_evt_lst_tbl_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lst_tbl_selected (GtkTreeSelection *selection, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_tbl_display_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_tbl_add_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_tbl_alter_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_tbl_remove_activate (GtkWidget *widget, gpointer user_data);
@@ -61,6 +62,7 @@ static void gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate (GtkWidge
 
 static gboolean gmlc_gui_server_tab_data_evt_lst_vw_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lst_vw_selected (GtkTreeSelection *selection, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_vw_display_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_vw_add_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_vw_alter_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_vw_remove_activate (GtkWidget *widget, gpointer user_data);
@@ -69,6 +71,7 @@ static void gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate (GtkWidget
 
 static gboolean gmlc_gui_server_tab_data_evt_lst_proc_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lst_proc_selected (GtkTreeSelection *selection, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_proc_display_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_proc_add_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_proc_alter_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_proc_remove_activate (GtkWidget *widget, gpointer user_data);
@@ -77,6 +80,7 @@ static void gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate (GtkWidg
 
 static gboolean gmlc_gui_server_tab_data_evt_lst_func_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_lst_func_selected (GtkTreeSelection *selection, gpointer user_data);
+static void gmlc_gui_server_tab_data_evt_menu_func_display_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_func_add_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_func_alter_activate (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_tab_data_evt_menu_func_remove_activate (GtkWidget *widget, gpointer user_data);
@@ -321,6 +325,15 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	gtk_widget_show (poMenuOpsItem);
 	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display table data"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_display_activate), pGmlcGuiSrvTabData);
+	
+	poMenuOpsItem = gtk_separator_menu_item_new();
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a table"));
 	gtk_widget_show (poMenuOpsItem);
 	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
@@ -378,6 +391,15 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_refresh_activate), pGmlcGuiSrvTabData);
 
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display view data"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_display_activate), pGmlcGuiSrvTabData);
+		
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
 		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
@@ -442,6 +464,15 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_widget_show (poMenuOpsItem);
 		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Execute a procedure"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_display_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a procedure"));
 		gtk_widget_show (poMenuOpsItem);
 		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
@@ -497,6 +528,15 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_widget_show (poMenuOpsItem);
 		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_refresh_activate), pGmlcGuiSrvTabData);
+
+		poMenuOpsItem = gtk_separator_menu_item_new();
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		
+		poMenuOpsItem = gtk_menu_item_new_with_label(_("Execute a function"));
+		gtk_widget_show (poMenuOpsItem);
+		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_display_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
@@ -929,7 +969,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_tbl_btnpress (GtkWidget *widget
 	switch (event->button) {
 		case 1 : /* Left button */
 			if (event->type == GDK_2BUTTON_PRESS) {
-				gmlc_gui_server_tab_data_open_query_select (pGmlcGuiSrvTabData, TRUE);
+				gmlc_gui_server_tab_data_evt_menu_tbl_display_activate (widget, user_data);
 			}
 			break;
 		case 3 : /* Right button */
@@ -948,6 +988,24 @@ static void gmlc_gui_server_tab_data_evt_lst_tbl_selected (GtkTreeSelection *sel
 	
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 4, &pGmlcGuiSrvTabData->pGmlcMysqlTbl, -1);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_tbl_display_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL, * pcDbName = NULL, * pcTblName = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlTbl), "name", &pcTblName, NULL);
+		
+		pcQuery = g_strdup_printf("SELECT * \nFROM `%s`.`%s`\nWHERE 1\nLIMIT 1000", pcDbName, pcTblName);
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	
+		g_free(pcQuery);
+		g_free(pcTblName);
+		g_free(pcDbName);
 	}
 }
 
@@ -1025,7 +1083,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_vw_btnpress (GtkWidget *widget,
 	switch (event->button) {
 		case 1 : /* Left button */
 			if (event->type == GDK_2BUTTON_PRESS) {
-				/*gmlc_gui_server_tab_data_open_query_select (pGmlcGuiSrvTabData, TRUE);*/
+				gmlc_gui_server_tab_data_evt_menu_vw_display_activate(widget, user_data);
 			}
 			break;
 		case 3 : /* Right button */
@@ -1044,6 +1102,24 @@ static void gmlc_gui_server_tab_data_evt_lst_vw_selected (GtkTreeSelection *sele
 	
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 1, &pGmlcGuiSrvTabData->pGmlcMysqlVw, -1);
+	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_vw_display_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL, * pcDbName = NULL, * pcVwName = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlVw != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlVw), "name", &pcVwName, NULL);
+		
+		pcQuery = g_strdup_printf("SELECT * \nFROM `%s`.`%s`\nWHERE 1\nLIMIT 1000", pcDbName, pcVwName);
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	
+		g_free(pcQuery);
+		g_free(pcVwName);
+		g_free(pcDbName);
 	}
 }
 
@@ -1124,6 +1200,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_proc_btnpress (GtkWidget *widge
 		case 1 : /* Left button */
 			if (event->type == GDK_2BUTTON_PRESS) {
 				/*gmlc_gui_server_tab_data_open_query_select (pGmlcGuiSrvTabData, TRUE);*/
+				gmlc_gui_server_tab_data_evt_menu_proc_display_activate (widget, user_data);
 			}
 			break;
 		case 3 : /* Right button */
@@ -1143,6 +1220,25 @@ static void gmlc_gui_server_tab_data_evt_lst_proc_selected (GtkTreeSelection *se
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 1, &pGmlcGuiSrvTabData->pGmlcMysqlProc, -1);
 	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_proc_display_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL, * pcDbName = NULL, * pcProcName = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlProc), "name", &pcProcName, NULL);
+		
+		pcQuery = g_strdup_printf("CALL `%s`.`%s`();\n", pcDbName, pcProcName);
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	
+		g_free(pcQuery);
+		g_free(pcProcName);
+		g_free(pcDbName);
+	}
+	
 }
 
 static void gmlc_gui_server_tab_data_evt_menu_proc_add_activate (GtkWidget *widget, gpointer user_data) {
@@ -1242,6 +1338,25 @@ static void gmlc_gui_server_tab_data_evt_lst_func_selected (GtkTreeSelection *se
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, 1, &pGmlcGuiSrvTabData->pGmlcMysqlFunc, -1);
 	}
+}
+
+static void gmlc_gui_server_tab_data_evt_menu_func_display_activate (GtkWidget *widget, gpointer user_data) {
+	GmlcGuiServerTabData * pGmlcGuiSrvTabData = GMLC_GUI_SERVER_TAB_DATA(user_data);
+	gchar * pcQuery = NULL, * pcDbName = NULL, * pcFuncName = NULL;
+	UNUSED_VAR(widget);
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlFunc), "name", &pcFuncName, NULL);
+		
+		pcQuery = g_strdup_printf("SELECT `%s`();\n", pcFuncName);
+		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	
+		g_free(pcQuery);
+		g_free(pcFuncName);
+		g_free(pcDbName);
+	}
+	
 }
 
 static void gmlc_gui_server_tab_data_evt_menu_func_add_activate (GtkWidget *widget, gpointer user_data) {
