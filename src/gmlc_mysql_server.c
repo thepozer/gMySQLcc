@@ -83,11 +83,13 @@ static void gmlc_mysql_server_init (GmlcMysqlServer * pGmlcMysqlSrv) {
 	pGmlcMysqlSrv->bReadOnly = FALSE;
 	pGmlcMysqlSrv->bWriteWarning = FALSE;
 	pGmlcMysqlSrv->lVersion = 0;
+	pGmlcMysqlSrv->arCharsets = NULL;
 	pGmlcMysqlSrv->htbDatabases = g_hash_table_new_full(&g_str_hash, &g_str_equal, &g_free, &g_object_unref);
 }
 
 static void gmlc_mysql_server_finalize (GmlcMysqlServer * pGmlcMysqlSrv) {
 	g_hash_table_destroy(pGmlcMysqlSrv->htbDatabases);
+	g_array_free(pGmlcMysqlSrv->arCharsets, TRUE);
 	g_free(pGmlcMysqlSrv->pcName);
 	g_free(pGmlcMysqlSrv->pcHost);
 	g_free(pGmlcMysqlSrv->pcLogin);

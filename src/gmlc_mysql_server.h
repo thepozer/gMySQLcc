@@ -60,7 +60,7 @@ struct _GmlcMysqlServer {
 
 /* Server datas */
 	gulong		lVersion;
-	
+	GArray *	arCharsets;
 	GHashTable * htbDatabases;
 };
 

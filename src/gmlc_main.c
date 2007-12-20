@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	/* Init gettext library */
 	bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
 	textdomain (PACKAGE);
-	bind_textdomain_codeset(PACKAGE, "UTF-8");
+	bind_textdomain_codeset(PACKAGE, "utf8");
 	
 	/* Init types list */
 	/*gmysqlcc_helpers_field_capability_init_array();*/
