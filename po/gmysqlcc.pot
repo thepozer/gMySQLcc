@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-26 10:05+0200\n"
+"POT-Creation-Date: 2007-12-21 13:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,7 +174,7 @@ msgid "Help"
 msgstr ""
 
 #. Databases columns
-#: src/gmlc_gui_server.c:206 src/gmlc_gui_server_tab_data.c:543
+#: src/gmlc_gui_server.c:206 src/gmlc_gui_server_tab_data.c:583
 msgid "Databases"
 msgstr ""
 
@@ -191,19 +191,15 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:218
-msgid "Dump"
-msgstr ""
-
-#: src/gmlc_gui_server_tab_query.c:227
+#: src/gmlc_gui_server_tab_query.c:229
 msgid "Close tab"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:334
+#: src/gmlc_gui_server_tab_query.c:336
 msgid "Write Warning !!!"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:334
+#: src/gmlc_gui_server_tab_query.c:336
 msgid ""
 "Warning !!! This server has been marked with Write Warning flags !!!\n"
 "It is dangerous for the data ... :)\n"
@@ -214,128 +210,144 @@ msgstr ""
 #. Query Not Ok
 #. It is really an error
 #. Query Not Ok
-#: src/gmlc_gui_server_tab_query.c:337 src/gmlc_gui_server_tab_query.c:349
-#: src/gmlc_gui_server_tab_query.c:391
+#: src/gmlc_gui_server_tab_query.c:339 src/gmlc_gui_server_tab_query.c:351
+#: src/gmlc_gui_server_tab_query.c:393
 #, c-format
 msgid "Error during the query : (%d) %s"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:431 src/gmlc_gui_server_tab_query.c:553
+#: src/gmlc_gui_server_tab_query.c:433 src/gmlc_gui_server_tab_query.c:555
 #, c-format
 msgid "Result %d"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:574
+#: src/gmlc_gui_server_tab_query.c:576
 #, c-format
 msgid ""
 "Query ok.\n"
 "Affected row : %d"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:620
+#: src/gmlc_gui_server_tab_query.c:626
 msgid "Load sql file"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_query.c:669
+#: src/gmlc_gui_server_tab_query.c:675
 msgid "Save sql file"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:196
+#: src/gmlc_gui_server_tab_data.c:200
 msgid "SQL"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:205
+#: src/gmlc_gui_server_tab_data.c:209
 msgid "SQL File"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:250 src/gmlc_gui_server_tab_data.c:315
-#: src/gmlc_gui_server_tab_data.c:376 src/gmlc_gui_server_tab_data.c:436
-#: src/gmlc_gui_server_tab_data.c:496
+#: src/gmlc_gui_server_tab_data.c:254 src/gmlc_gui_server_tab_data.c:319
+#: src/gmlc_gui_server_tab_data.c:389 src/gmlc_gui_server_tab_data.c:458
+#: src/gmlc_gui_server_tab_data.c:527
 msgid "Refresh"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:259
+#: src/gmlc_gui_server_tab_data.c:263
 msgid "Add a database"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:264
+#: src/gmlc_gui_server_tab_data.c:268
 msgid "Alter a database"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:269
+#: src/gmlc_gui_server_tab_data.c:273
 msgid "Remove a database"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:278
+#: src/gmlc_gui_server_tab_data.c:282
 msgid "Display all create structures"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:289
+#: src/gmlc_gui_server_tab_data.c:293
 msgid "Tables"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:324
+#: src/gmlc_gui_server_tab_data.c:328
+msgid "Display table data"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:337
 msgid "Add a table"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:329
+#: src/gmlc_gui_server_tab_data.c:342
 msgid "Alter a table"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:334
+#: src/gmlc_gui_server_tab_data.c:347
 msgid "Remove a table"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:343 src/gmlc_gui_server_tab_data.c:404
-#: src/gmlc_gui_server_tab_data.c:464 src/gmlc_gui_server_tab_data.c:524
+#: src/gmlc_gui_server_tab_data.c:356 src/gmlc_gui_server_tab_data.c:426
+#: src/gmlc_gui_server_tab_data.c:495 src/gmlc_gui_server_tab_data.c:564
 msgid "Display create structure"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:350
+#: src/gmlc_gui_server_tab_data.c:363
 msgid "Views"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:385
+#: src/gmlc_gui_server_tab_data.c:398
+msgid "Display view data"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:407
 msgid "Add a view"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:390
+#: src/gmlc_gui_server_tab_data.c:412
 msgid "Alter a view"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:395
+#: src/gmlc_gui_server_tab_data.c:417
 msgid "Remove a view"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:410
+#: src/gmlc_gui_server_tab_data.c:432
 msgid "Procedures"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:445
+#: src/gmlc_gui_server_tab_data.c:467
+msgid "Execute a procedure"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:476
 msgid "Add a procedure"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:450
+#: src/gmlc_gui_server_tab_data.c:481
 msgid "Alter a procedure"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:455
+#: src/gmlc_gui_server_tab_data.c:486
 msgid "Remove a procedure"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:470
+#: src/gmlc_gui_server_tab_data.c:501
 msgid "Functions"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:505
+#: src/gmlc_gui_server_tab_data.c:536
+msgid "Execute a function"
+msgstr ""
+
+#: src/gmlc_gui_server_tab_data.c:545
 msgid "Add a function"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:510
+#: src/gmlc_gui_server_tab_data.c:550
 msgid "Alter a function"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:515
+#: src/gmlc_gui_server_tab_data.c:555
 msgid "Remove a function"
 msgstr ""
 
@@ -343,19 +355,19 @@ msgstr ""
 #. View columns
 #. Procedure columns
 #. Function columns
-#: src/gmlc_gui_server_tab_data.c:551 src/gmlc_gui_server_tab_data.c:566
-#: src/gmlc_gui_server_tab_data.c:574 src/gmlc_gui_server_tab_data.c:582
+#: src/gmlc_gui_server_tab_data.c:591 src/gmlc_gui_server_tab_data.c:606
+#: src/gmlc_gui_server_tab_data.c:614 src/gmlc_gui_server_tab_data.c:622
 msgid "Name"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:553
+#: src/gmlc_gui_server_tab_data.c:593
 msgid "Rows"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:555
+#: src/gmlc_gui_server_tab_data.c:595
 msgid "Size"
 msgstr ""
 
-#: src/gmlc_gui_server_tab_data.c:557
+#: src/gmlc_gui_server_tab_data.c:597
 msgid "Type"
 msgstr ""
