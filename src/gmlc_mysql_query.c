@@ -346,12 +346,11 @@ static gboolean gmlc_mysql_query_connect(GmlcMysqlQuery * pGmlcMysqlQry) {
 	if (iRet != 0) {
 		g_printerr("Failed to set the connection's caracter set to 'utf8' - '%d'\n", iRet);
 		gmlc_mysql_query_get_current_charset(pGmlcMysqlQry);
-	}
-	
-	if (!iRet) {
+	} else {
 		MY_CHARSET_INFO cs;
 		mysql_get_character_set_info(pGmlcMysqlQry->pMysqlLink, &cs);
 		g_print("collation name: %s\n", cs.csname);
+		pGmlcMysqlQry->pcSrvCharset = g_strdup(cs.csname);
 	}
 	
 	g_print("Charset : '%s'\n", pGmlcMysqlQry->pcSrvCharset);
