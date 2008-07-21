@@ -62,6 +62,10 @@ static gboolean ggstqe_btnSaveResult_foreach (GtkTreeModel *model, GtkTreePath *
 
 void gmlc_gui_server_tab_query_evt_resultRow_edited (GtkCellRendererText *cellrenderertext, gchar *path_string, gchar *new_value, gpointer user_data);
 
+static gboolean gmlc_gui_server_tab_query_evt_resultRow_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+static void gmlc_gui_server_tab_query_evt_resultRow_menu_copy_activate (GtkWidget *widget, gpointer user_data);
+static void gmlc_gui_server_tab_query_evt_resultRow_menu_delete_activate (GtkWidget *widget, gpointer user_data);
+
 enum {
 	PROP_0,
 	PROP_SERVER,
@@ -416,6 +420,7 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 	GtkWidget * btnTabSave = NULL;
 	GtkWidget * icnTabSaveIcon = NULL;
 	GtkWidget * hbxTabTitle = NULL;
+	GtkWidget * poMenuOps = NULL, * poMenuOpsItem = NULL;
 	GmlcMysqlRow * poRow = NULL;
 	GArray * arHeaders = NULL;
 	gchar * pcTitle = NULL;
@@ -472,6 +477,20 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 	gtk_container_add(GTK_CONTAINER (sclSQLResult), lstSQLResult);
 
 	g_signal_connect (btnTabSave, "clicked", G_CALLBACK (gmlc_gui_server_tab_query_evt_btnSaveResult_clicked), lstSQLResult);
+
+	poMenuOps = gtk_menu_new();
+	gtk_widget_show (poMenuOps);
+
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Copy row text"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
+	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_query_evt_resultRow_menu_copy_activate), lstSQLResult);
+
+	poMenuOpsItem = gtk_menu_item_new_with_label(_("Delete row"));
+	gtk_widget_show (poMenuOpsItem);
+	gtk_menu_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
+	
+	g_signal_connect (lstSQLResult, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_query_evt_resultRow_btnpress), poMenuOps);
 	
 
 	/*
@@ -485,10 +504,16 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 	poRow = gmlc_mysql_row_new_next_record(pGmlcGuiSrvTabQuery->pGmlcMysqlQry); /* To get back fields headers */
 	arHeaders = gmlc_mysql_query_get_headers(pGmlcGuiSrvTabQuery->pGmlcMysqlQry, FALSE);
 	
+	if (gmlc_mysql_query_is_editable(pGmlcGuiSrvTabQuery->pGmlcMysqlQry)) {
+		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_query_evt_resultRow_menu_delete_activate), lstSQLResult);
+	} else {
+		gtk_widget_set_sensitive(poMenuOpsItem, FALSE);
+	}
+	
 	if (arHeaders != NULL) {
 		
 		ppoRenderer = (GtkCellRenderer * *)g_try_malloc(arHeaders->len * sizeof(GtkCellRenderer *));
-
+		
 		if (gmlc_mysql_query_is_editable(pGmlcGuiSrvTabQuery->pGmlcMysqlQry)) {
 			psColInfo = (sColInfo *)g_try_malloc(arHeaders->len * sizeof(sColInfo));
 			
@@ -535,7 +560,6 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 		
 		poLstStore = gtk_list_store_newv(iNbrCol, poTypes);
 		
-		
 		iCount = 0;
 		g_value_init(&poGVal, G_TYPE_STRING);
 		g_value_init(&poGValPtr, G_TYPE_POINTER);
@@ -546,7 +570,7 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 				iCount ++;
 				
 				gtk_list_store_append(poLstStore, &iter);
-			
+				
 				for(i = 0; i < arHeaders->len; i++) {
 					g_value_set_string(&poGVal, gmlc_mysql_row_get_field_value(poRow, i));
 					gtk_list_store_set_value(poLstStore, &iter, i, &poGVal);
@@ -561,7 +585,6 @@ void gmlc_gui_server_tab_query_display_one_result(GmlcGuiServerTabQuery * pGmlcG
 		gtk_tree_view_set_model(GTK_TREE_VIEW(lstSQLResult), GTK_TREE_MODEL(poLstStore));
 		g_object_unref (G_OBJECT (poLstStore));
 	}
-	
 }
 
 void gmlc_gui_server_tab_query_display_one_info(GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
@@ -862,16 +885,16 @@ void gmlc_gui_server_tab_query_evt_resultRow_edited (GtkCellRendererText *cellre
 	GtkTreeIter iter;
 	GtkTreeModel * tree_model = NULL;
 	GmlcMysqlRow * poRow = NULL;
-	GValue poGValPtr = {0, };
+	GValue sGValPtr = {0, };
 	sColInfo * psColInfo = (sColInfo *)user_data;
 	gchar * new_str = NULL;
 	
 	tree_model = gtk_tree_view_get_model(GTK_TREE_VIEW(psColInfo->lstSQLResult));
 	if (tree_model != (GtkTreeModel *)NULL) {
 		if (gtk_tree_model_get_iter_from_string (tree_model, &iter, path_string)) {
-			gtk_tree_model_get_value(GTK_TREE_MODEL(tree_model), &iter, psColInfo->iRowCol, &poGValPtr);
-			poRow = g_value_get_pointer(&poGValPtr);
-			g_value_unset(&poGValPtr);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(tree_model), &iter, psColInfo->iRowCol, &sGValPtr);
+			poRow = g_value_get_pointer(&sGValPtr);
+			g_value_unset(&sGValPtr);
 			if (GMLC_MYSQL_IS_ROW(poRow)) {
 				new_str = gmlc_mysql_row_set_field_value(poRow, psColInfo->iNumCol, new_value);
 				if (new_str != (gchar *)NULL) {
@@ -882,3 +905,93 @@ void gmlc_gui_server_tab_query_evt_resultRow_edited (GtkCellRendererText *cellre
 	}
 }
 
+static gboolean gmlc_gui_server_tab_query_evt_resultRow_btnpress (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+	GtkMenu * poOpsMenu = GTK_MENU(user_data);
+	
+	switch (event->button) {
+		case 3 : /* Right button */
+			if (event->type == GDK_BUTTON_PRESS) {
+				gtk_menu_popup(poOpsMenu, NULL, NULL, NULL, widget, event->button, event->time);
+			}
+			break;
+	}
+	return FALSE;
+	
+}
+
+static void gmlc_gui_server_tab_query_evt_resultRow_menu_copy_activate (GtkWidget *widget, gpointer user_data) {
+	GtkWidget * lstSQLResult = GTK_WIDGET(user_data);
+	GtkTreeModel * poTreeModel = NULL;
+	GtkTreePath * poTreePath = NULL;
+	GtkTreeViewColumn * poTreeColumn = NULL;
+	GtkClipboard * poClipboard = NULL;
+	GmlcMysqlRow * poRow = NULL;
+	GdkAtom oAtom;
+	GValue sGValPtr = {0, };
+	GtkTreeIter sIter;
+	gint iRowCol = 0;
+	UNUSED_VAR(widget);
+	
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(lstSQLResult), &poTreePath, &poTreeColumn);
+	
+	poTreeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(lstSQLResult));
+	if (poTreeModel != (GtkTreeModel *)NULL) {
+		iRowCol = gtk_tree_model_get_n_columns(poTreeModel) - 1;
+		if (poTreePath != NULL) {
+			if (gtk_tree_model_get_iter(poTreeModel, &sIter, poTreePath)) {
+				gtk_tree_model_get_value(GTK_TREE_MODEL(poTreeModel), &sIter, iRowCol, &sGValPtr);
+				poRow = g_value_get_pointer(&sGValPtr);
+				g_value_unset(&sGValPtr);
+				
+				if (GMLC_MYSQL_IS_ROW(poRow)) {
+					oAtom = gdk_atom_intern("PRIMARY", TRUE);
+					poClipboard = gtk_clipboard_get(oAtom);
+					gtk_clipboard_set_text(poClipboard, gmlc_mysql_row_get_row_text(poRow), -1);
+					g_print("Current line : %s\n", gmlc_mysql_row_get_row_text(poRow));
+				}
+			}
+		}
+	}
+	
+}
+
+static void gmlc_gui_server_tab_query_evt_resultRow_menu_delete_activate (GtkWidget *widget, gpointer user_data) {
+	GtkWidget * lstSQLResult = GTK_WIDGET(user_data);
+	GtkWidget * poMessageBox = NULL;
+	GtkTreeModel * poTreeModel = NULL;
+	GtkTreePath * poTreePath = NULL;
+	GtkTreeViewColumn * poTreeColumn = NULL;
+	GmlcMysqlRow * poRow = NULL;
+	GValue sGValPtr = {0, };
+	GtkTreeIter sIter;
+	gint iRowCol = 0, iRetMessageBox = 0;
+	UNUSED_VAR(widget);
+	
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(lstSQLResult), &poTreePath, &poTreeColumn);
+	
+	poTreeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(lstSQLResult));
+	if (poTreeModel != (GtkTreeModel *)NULL) {
+		iRowCol = gtk_tree_model_get_n_columns(poTreeModel) - 1;
+		if (poTreePath != NULL) {
+			if (gtk_tree_model_get_iter(poTreeModel, &sIter, poTreePath)) {
+				gtk_tree_model_get_value(GTK_TREE_MODEL(poTreeModel), &sIter, iRowCol, &sGValPtr);
+				poRow = g_value_get_pointer(&sGValPtr);
+				g_value_unset(&sGValPtr);
+				
+				if (GMLC_MYSQL_IS_ROW(poRow)) {
+					poMessageBox = gtk_message_dialog_new (NULL,
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_WARNING, GTK_BUTTONS_OK_CANCEL,
+						_("Do you want delete this line ?"));
+					iRetMessageBox = gtk_dialog_run(GTK_DIALOG (poMessageBox));
+					if (iRetMessageBox == GTK_RESPONSE_OK) {
+						gmlc_mysql_row_delete(poRow);
+						g_print("Delete line : %s\n", gmlc_mysql_row_get_field_value(poRow, 0));
+					}
+					gtk_widget_destroy(poMessageBox);
+				}
+			}
+		}
+	}
+	
+}

@@ -66,6 +66,10 @@ GmlcMysqlRow * gmlc_mysql_row_new_next_record (GmlcMysqlQuery * pGmlcMysqlQry);
 gchar * gmlc_mysql_row_get_field_value(GmlcMysqlRow * pGmlcMysqlRow, gint idx);
 gchar * gmlc_mysql_row_set_field_value(GmlcMysqlRow * pGmlcMysqlRow, gint idx, const gchar * new_value);
 
+gchar * gmlc_mysql_row_get_row_text(GmlcMysqlRow * pGmlcMysqlRow);
+
+gboolean gmlc_mysql_row_delete(GmlcMysqlRow * pGmlcMysqlRow);
+
 G_END_DECLS
 
 #endif /* __GMLC_MYSQL_ROW_H__ */

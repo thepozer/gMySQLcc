@@ -145,23 +145,43 @@ gchar * gmlc_mysql_row_set_field_value(GmlcMysqlRow * pGmlcMysqlRow, gint idx, c
 		return (gchar *)NULL;
 	}
 }
-/*
-gboolean mysql_row_delete(GmlcMysqlRow * pGmlcMysqlRow) {
-	GmlcMysqlQuery * poGmlcMysqlQry;
-	GString * strSql;
-	gboolean ret;
+
+gchar * gmlc_mysql_row_get_row_text(GmlcMysqlRow * pGmlcMysqlRow) {
+	GString * strTextRow = NULL;
+	gchar * pcRet = NULL, * pcValue = NULL;
+	gint iIdx = 0;
 	
-	mysql_qry = mysql_query_duplicate(pGmlcMysqlRow->mysql_qry);
+	strTextRow = g_string_new("");
 	
-	strSql = g_string_new ("");
-	g_string_printf(strSql, "DELETE FROM %s WHERE %s", pGmlcMysqlRow->abs_tbl_name, pGmlcMysqlRow->primary_where_part);
-	g_print("Delete SQL : '%s'\n", strSql->str);
+	for (iIdx = 0; iIdx < pGmlcMysqlRow->arResults->len; iIdx++) {
+		pcValue = g_array_index(pGmlcMysqlRow->arResults, gchar *, iIdx);
+		if (iIdx != 0) {
+			g_string_append_c(strTextRow, '\t');
+		}
+		g_string_append(strTextRow, pcValue);
+	}
 	
-	ret = mysql_query_execute_query(mysql_qry, strSql->str, FALSE);
-	mysql_query_delete(mysql_qry);
+	pcRet = g_strdup(strTextRow->str);
+	g_string_free(strTextRow, TRUE);
 	
-	g_string_free(strSql, TRUE);
-	
-	return mysql_row_free(pGmlcMysqlRow);
+	return pcRet;
 }
-*/
+
+gboolean gmlc_mysql_row_delete(GmlcMysqlRow * pGmlcMysqlRow) {
+	GmlcMysqlQuery * poGmlcMysqlQry = NULL;
+	gchar * pcSql = NULL;
+	gboolean bRet = FALSE;
+	
+	poGmlcMysqlQry = gmlc_mysql_query_new_duplicate(pGmlcMysqlRow->pGmlcMysqlQry);
+	
+	pcSql = g_strdup_printf("DELETE FROM %s WHERE %s LIMIT 1", pGmlcMysqlRow->pcAbsTableName, pGmlcMysqlRow->pcPrimaryWherePart);
+	g_print("Delete SQL : '%s'\n", pcSql);
+	
+	bRet = gmlc_mysql_query_execute(poGmlcMysqlQry, pcSql, -1, FALSE);
+	
+	g_object_unref(poGmlcMysqlQry);
+	g_object_unref(pGmlcMysqlRow);
+	
+	return bRet;
+}
+
