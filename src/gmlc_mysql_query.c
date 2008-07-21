@@ -203,7 +203,7 @@ static void gmlc_mysql_query_class_init (GmlcMysqlQueryClass * pClass) {
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
 		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(pObjClass, PROP_QUERY, 
-		g_param_spec_string("query", "Query string", "Sql Query string", "", G_PARAM_READABLE));
+		g_param_spec_string("query", "Query string", "Sql Query string", "", G_PARAM_READWRITE));
 	g_object_class_install_property(pObjClass, PROP_SRV_CHARSET, 
 		g_param_spec_string("srv_charset", "Server charset", "Charset used on server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(pObjClass, PROP_DB_NAME, 
@@ -229,6 +229,7 @@ static void gmlc_mysql_query_init (GmlcMysqlQuery * pGmlcMysqlQry) {
 	pGmlcMysqlQry->pcSrvCharset = g_strdup("ISO-8859-1");	/* r-c */
 	pGmlcMysqlQry->pMysqlHeaders = NULL; /* --- */
 	pGmlcMysqlQry->arMysqlHeaders = NULL;
+	pGmlcMysqlQry->pcAbsTableName = NULL;
 }
 
 static void gmlc_mysql_query_finalize (GmlcMysqlQuery * pGmlcMysqlQry) {
@@ -244,6 +245,8 @@ static void gmlc_mysql_query_finalize (GmlcMysqlQuery * pGmlcMysqlQry) {
 	g_free(pGmlcMysqlQry->pcDbName);
 	g_free(pGmlcMysqlQry->pcSrvCharset);
 	g_free(pGmlcMysqlQry->pcQuery);
+	g_free(pGmlcMysqlQry->pcAbsTableName);
+	pGmlcMysqlQry->pcAbsTableName = NULL;
 }
 
 static void gmlc_mysql_query_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec) {
@@ -252,6 +255,11 @@ static void gmlc_mysql_query_set_property (GObject * object, guint prop_id, cons
 	switch (prop_id) {
 		case PROP_SERVER :
 			pGmlcMysqlQry->pGmlcMysqlSrv = g_value_get_object(value);
+			break;
+		case PROP_QUERY:
+			g_free(pGmlcMysqlQry->pcQuery);
+			
+			pGmlcMysqlQry->pcQuery = g_value_dup_string(value);
 			break;
 		case PROP_SRV_CHARSET:
 			g_free(pGmlcMysqlQry->pcSrvCharset);
@@ -274,7 +282,25 @@ static void gmlc_mysql_query_get_property (GObject * object, guint prop_id, GVal
 	UNUSED_VAR(pGmlcMysqlQry);
 	
 	switch (prop_id) {
-	default:
+		case PROP_SERVER:
+			g_value_set_object(value, pGmlcMysqlQry->pGmlcMysqlSrv);
+			break;
+		case PROP_QUERY:
+			g_value_set_string(value, pGmlcMysqlQry->pcQuery);
+			break;
+		case PROP_SRV_CHARSET:
+			g_value_set_string(value, pGmlcMysqlQry->pcSrvCharset);
+			break;
+		case PROP_DB_NAME:
+			g_value_set_string(value, pGmlcMysqlQry->pcDbName);
+			break;
+		case PROP_ERR_MSG:
+			g_value_set_string(value, pGmlcMysqlQry->pcErrMsg);
+			break;
+		case PROP_ERR_CODE:
+			g_value_set_int(value, pGmlcMysqlQry->iErrCode);
+			break;
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 			break;
 	}
@@ -287,6 +313,23 @@ GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gc
 	
 	gmlc_mysql_query_get_version(pGmlcMysqlQry);
 	gmlc_mysql_query_get_current_charset(pGmlcMysqlQry);
+	
+	return pGmlcMysqlQry;
+}
+
+GmlcMysqlQuery * gmlc_mysql_query_new_duplicate (GmlcMysqlQuery * pGmlcMysqlBaseQry) {
+	GmlcMysqlQuery * pGmlcMysqlQry = NULL;
+	GmlcMysqlServer * pGmlcMysqlSrv = NULL;
+	gchar * pcDbName = NULL, *pcSqlQuery = NULL;
+	
+	g_object_get(pGmlcMysqlBaseQry, "server", &pGmlcMysqlSrv, "db_name", &pcDbName, "query", &pcSqlQuery, NULL);
+	
+	pGmlcMysqlQry = gmlc_mysql_query_new(pGmlcMysqlSrv, pcDbName);
+	
+	//g_object_set(pGmlcMysqlQry, "query", pcSqlQuery, NULL);
+	
+	g_free(pcSqlQuery);
+	g_free(pcDbName);
 	
 	return pGmlcMysqlQry;
 }
@@ -496,7 +539,7 @@ void gmlc_mysql_query_free_record_content(GArray * arRow) {
 	g_array_free(arRow, TRUE);
 }
 
-GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry) {
+GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry, gboolean bDuplicate) {
 	MYSQL_FIELD * pField = NULL;
 	GArray * arHeaders = NULL;
 	GError * oErr = NULL;
@@ -529,14 +572,18 @@ GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry) {
 		}
 	}
 	
-	arHeaders = g_array_sized_new (FALSE, TRUE, sizeof (char *), pGmlcMysqlQry->iNbField);
-	
-	for(i = 0; i < pGmlcMysqlQry->arMysqlHeaders->len; i++) {
-		pcTmp = g_array_index(pGmlcMysqlQry->arMysqlHeaders, gchar *, i);
-		g_array_append_val (arHeaders, pcTmp);
+	if (bDuplicate) {
+		arHeaders = g_array_sized_new (FALSE, TRUE, sizeof (char *), pGmlcMysqlQry->iNbField);
+		
+		for(i = 0; i < pGmlcMysqlQry->arMysqlHeaders->len; i++) {
+			pcTmp = g_strdup(g_array_index(pGmlcMysqlQry->arMysqlHeaders, gchar *, i));
+			g_array_append_val (arHeaders, pcTmp);
+		}
+		
+		return arHeaders;
+	} else {
+		return pGmlcMysqlQry->arMysqlHeaders;
 	}
-	
-	return arHeaders;
 }
 
 gboolean gmlc_mysql_query_have_more_result(GmlcMysqlQuery * pGmlcMysqlQry) {
@@ -607,6 +654,8 @@ gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry) {
 		pGmlcMysqlQry->iNbField = 0;
 		pGmlcMysqlQry->bNoRecord = FALSE;
 		pGmlcMysqlQry->iEditResult = 0;
+		g_free(pGmlcMysqlQry->pcAbsTableName);
+		pGmlcMysqlQry->pcAbsTableName = NULL;
 		gmlc_mysql_query_read_error(pGmlcMysqlQry, TRUE);
 	}
 	
@@ -673,4 +722,91 @@ void gmlc_mysql_query_read_error(GmlcMysqlQuery * pGmlcMysqlQry, gboolean bClear
 		pGmlcMysqlQry->pcErrMsg = (gchar *)mysql_error(pGmlcMysqlQry->pMysqlLink);
 	}
 
+}
+
+gchar * gmlc_mysql_query_get_absolute_table_name (GmlcMysqlQuery * pGmlcMysqlQry, gboolean bOnlyTableName) {
+	MYSQL_FIELD * field = NULL;
+	gchar * pcTblName = NULL, * pcAbsTblName = NULL, * pcAbsTblNameOld = NULL;
+	int i = 0;
+	
+	if (pGmlcMysqlQry->pcAbsTableName != NULL && !bOnlyTableName) {
+		return g_strdup(pGmlcMysqlQry->pcAbsTableName);
+	}
+
+	if (pGmlcMysqlQry->pMysqlHeaders == NULL) {
+		return NULL;
+	}
+
+	pcAbsTblName = NULL;
+	pcAbsTblNameOld = NULL;
+	
+	for(i = 0; i < pGmlcMysqlQry->iNbField; i++) {
+		g_free(pcAbsTblName);
+		
+		field = &pGmlcMysqlQry->pMysqlHeaders[i];
+		if (bOnlyTableName) {
+			pcAbsTblName = g_strdup_printf("%s", field->table);
+		} else {
+			pcAbsTblName = g_strdup_printf("`%s`.`%s`", pGmlcMysqlQry->pcDbName, field->table);
+		}
+		
+		if (pcAbsTblNameOld != NULL) {
+			
+			if (g_ascii_strcasecmp(pcAbsTblName, pcAbsTblNameOld) != 0) {
+				g_free(pGmlcMysqlQry->pcAbsTableName);
+				pGmlcMysqlQry->pcAbsTableName = NULL;
+				g_free(pcAbsTblName);
+				g_free(pcAbsTblNameOld);
+				return NULL;
+			}
+			
+		} else {
+			pcAbsTblNameOld = g_strdup(pcAbsTblName);
+		}
+	}
+	
+	pcTblName = pcAbsTblName;
+	g_free(pcAbsTblNameOld);
+	
+	if (!bOnlyTableName) {
+		pGmlcMysqlQry->pcAbsTableName = g_strdup(pcTblName);
+	}
+	
+	return pcTblName;
+}
+
+gchar * gmlc_mysql_query_get_primary_where (GmlcMysqlQuery * pGmlcMysqlQry, GArray * arDatas) {
+	MYSQL_FIELD * field = NULL;
+	GString * strWhere = NULL;
+	GArray * arHeaders = NULL;
+	gchar * pcRetStr = NULL;
+	int i = 0;
+	
+	if ((arHeaders = gmlc_mysql_query_get_headers(pGmlcMysqlQry, FALSE)) == NULL) {
+		return NULL;
+	}
+	
+	strWhere = g_string_new("");
+	
+	for(i = 0; i < pGmlcMysqlQry->iNbField; i++) {
+		
+		field = &pGmlcMysqlQry->pMysqlHeaders[i];
+		if (field->flags & PRI_KEY_FLAG) {
+			if (strWhere->len == 0) {
+				g_string_append_printf(strWhere, "`%s` = '%s'", field->name, g_array_index(arDatas, gchar *, i));
+			} else {
+				g_string_append_printf(strWhere, " AND `%s` = '%s'", field->name, g_array_index(arDatas, gchar *, i));
+			}
+		}
+	}
+	
+	pcRetStr = strWhere->str;
+	g_string_free(strWhere, FALSE);
+	return pcRetStr;
+}
+
+gboolean gmlc_mysql_query_is_editable (GmlcMysqlQuery * pGmlcMysqlQry) {
+	g_free(gmlc_mysql_query_get_absolute_table_name(pGmlcMysqlQry, FALSE));
+	
+	return pGmlcMysqlQry->pcAbsTableName != NULL && !pGmlcMysqlQry->pGmlcMysqlSrv->bReadOnly && !pGmlcMysqlQry->pGmlcMysqlSrv->bWriteWarning ;
 }

@@ -131,11 +131,14 @@ gboolean gmlc_dump_control_direct_dump (GmlcMysqlServer * pGmlcMysqlSrv, GmlcDum
 	GmlcDumpControl * pGmlcDmpCtrl = NULL;
 	gboolean bRetValue = FALSE;
 	
-	pGmlcDmpCtrl = GMLC_DUMP_CONTROL(g_object_new(GMLC_TYPE_DUMP_CONTROL, "server", pGmlcMysqlSrv, "source", pGmlcDmpSrc, "format", pGmlcDmpFrmt, NULL));
+	pGmlcDmpCtrl = gmlc_dump_control_new(pGmlcMysqlSrv);
+	if (pGmlcDmpCtrl !=  NULL) {
+		g_object_set(pGmlcDmpCtrl, "source", pGmlcDmpSrc, "format", pGmlcDmpFrmt, NULL);
+		
+		bRetValue = gmlc_dump_control_dump(pGmlcDmpCtrl);
 	
-	bRetValue = gmlc_dump_control_dump(pGmlcDmpCtrl);
-	
-	g_object_unref(pGmlcDmpCtrl);
+		g_object_unref(pGmlcDmpCtrl);
+	}
 	
 	return bRetValue;
 }

@@ -18,9 +18,7 @@
 #define __GMLC_GUI_SERVER_TAB_QUERY_H__ 
 
 #include "gmlc_main.h"
-
 #include "gmlc_gui_server.h"
-
 #include "gmlc_mysql_server.h"
 
 G_BEGIN_DECLS
@@ -50,17 +48,10 @@ struct _GmlcGuiServerTabQuery {
 	/* Query Part */
 	GtkWidget * txtSQLRequest;
 	GtkWidget * tabSQLResult;
-	GtkWidget * lstSQLResult;
 	GtkWidget * statusbarSQL;
 	
-/*
-	p_mysql_database mysql_db;
-*/
 	GmlcMysqlQuery * pGmlcMysqlQry;
 	guint iNumResult;
-	
-/*	gint currCharset;*/
-/*	GSList * lstRows;*/
 };
 
 struct _GmlcGuiServerTabQueryClass {

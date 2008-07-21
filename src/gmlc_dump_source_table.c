@@ -159,7 +159,7 @@ static GArray * gmlc_dump_source_table_get_data (GmlcDumpSource * self) {
 		}
 		
 		poGmlcDmpSrcData->arDatas = arAllRecords;
-		poGmlcDmpSrcData->arHeaders = gmlc_mysql_query_get_headers(poGmlcMysqlQry);
+		poGmlcDmpSrcData->arHeaders = gmlc_mysql_query_get_headers(poGmlcMysqlQry, TRUE);
 	} else {
 		poGmlcDmpSrcData->arHeaders = g_array_new(TRUE, TRUE, 0);
 		poGmlcDmpSrcData->arDatas = g_array_new(TRUE, TRUE, 0);

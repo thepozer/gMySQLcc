@@ -39,23 +39,24 @@ typedef struct _GmlcMysqlQuery            GmlcMysqlQuery;
 typedef struct _GmlcMysqlQueryClass       GmlcMysqlQueryClass;
 
 struct _GmlcMysqlQuery {
-	GObject		parent;
+	GObject			parent;
 	
 	/* private */
 /* Query Infos */
-	gchar *		pcQuery;
-	gsize		szQuery;
+	gchar *			pcQuery;
+	gsize			szQuery;
 	
 /* Result Infos */
-	gint		iErrCode;
-	gchar *		pcErrMsg;
-	gint		iEditResult;
-	gint		iNbField;
-	gboolean	bNoRecord;
+	gint			iErrCode;
+	gchar *			pcErrMsg;
+	gint			iEditResult;
+	gint			iNbField;
+	gboolean		bNoRecord;
+	gchar * 		pcAbsTableName;
 	
 /* Connection Infos */
 	GmlcMysqlServer *	pGmlcMysqlSrv;
-	gchar *		pcDbName;
+	gchar *			pcDbName;
 	
 /* Mysql Infos */
 	MYSQL *			pMysqlLink;
@@ -81,6 +82,7 @@ void gmlc_mysql_query_free_record_content(GArray * arRow);
 gchar * gmlc_mysql_query_static_get_one_result(GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName, const gchar * pcQuery, const gint iIdxField);
 
 GmlcMysqlQuery * gmlc_mysql_query_new (GmlcMysqlServer * pGmlcMysqlSrv, const gchar * pcDbName);
+GmlcMysqlQuery * gmlc_mysql_query_new_duplicate (GmlcMysqlQuery * pGmlcMysqlBaseQry);
 
 gulong gmlc_mysql_query_get_version(GmlcMysqlQuery * pGmlcMysqlQry);
 gchar * gmlc_mysql_query_get_current_charset(GmlcMysqlQuery * pGmlcMysqlQry);
@@ -92,7 +94,11 @@ gboolean gmlc_mysql_query_have_more_result(GmlcMysqlQuery * pGmlcMysqlQry);
 gboolean gmlc_mysql_query_goto_next_result(GmlcMysqlQuery * pGmlcMysqlQry);
 gboolean gmlc_mysql_query_free_result (GmlcMysqlQuery * pGmlcMysqlQry);
 
-GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry);
+GArray * gmlc_mysql_query_get_headers(GmlcMysqlQuery * pGmlcMysqlQry, gboolean bDuplicate);
+
+gchar * gmlc_mysql_query_get_absolute_table_name (GmlcMysqlQuery * pGmlcMysqlQry, gboolean bOnlyTableName);
+gchar * gmlc_mysql_query_get_primary_where (GmlcMysqlQuery * pGmlcMysqlQry, GArray * arDatas);
+gboolean gmlc_mysql_query_is_editable (GmlcMysqlQuery * pGmlcMysqlQry);
 
 G_END_DECLS
 
