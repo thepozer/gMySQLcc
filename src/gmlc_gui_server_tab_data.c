@@ -31,6 +31,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 void gmlc_gui_server_tab_data_init_widgets (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
 
 void gmlc_gui_server_tab_data_open_query (GmlcGuiServerTabData * pGmlcGuiSrvTabData, const gchar * pcQuery, gboolean bExecNow);
+void gmlc_gui_server_tab_data_open_editor (GmlcGuiServerTabData * pGmlcGuiSrvTabData, const gchar * pcQuery);
 void gmlc_gui_server_tab_data_open_file (GmlcGuiServerTabData * pGmlcGuiSrvTabData);
 void gmlc_gui_server_tab_data_open_query_select (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bUseTable);
 
@@ -655,6 +656,17 @@ void gmlc_gui_server_tab_data_open_query (GmlcGuiServerTabData * pGmlcGuiSrvTabD
 	}
 }
 
+void gmlc_gui_server_tab_data_open_editor (GmlcGuiServerTabData * pGmlcGuiSrvTabData, const gchar * pcQuery) {
+	gchar * pcDbName = NULL;
+	
+	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
+		g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlDb), "db_name", &pcDbName, NULL);
+		gmlc_gui_server_add_edit_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, pcDbName, pcQuery);
+	} else {
+		gmlc_gui_server_add_edit_tab(pGmlcGuiSrvTabData->pGmlcGuiSrv, NULL, pcQuery);
+	}
+}
+
 void gmlc_gui_server_tab_data_open_query_select (GmlcGuiServerTabData * pGmlcGuiSrvTabData, gboolean bUseTable) {
 	gchar * pcSql = NULL, * pcDbName = NULL, * pcTblName = NULL;
 	
@@ -955,7 +967,7 @@ static void gmlc_gui_server_tab_data_evt_menu_db_show_create_activate (GtkWidget
 	if (pGmlcGuiSrvTabData->pGmlcMysqlDb != NULL) {
 		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlDb), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1069,7 +1081,7 @@ static void gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate (GtkWidge
 	if (pGmlcGuiSrvTabData->pGmlcMysqlTbl != NULL) {
 		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlTbl), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1185,7 +1197,7 @@ static void gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate (GtkWidget
 	if (pGmlcGuiSrvTabData->pGmlcMysqlVw != NULL) {
 		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlVw), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1251,7 +1263,7 @@ static void gmlc_gui_server_tab_data_evt_menu_proc_add_activate (GtkWidget *widg
 	} else {
 		pcQuery = gmlc_mysql_database_create_new_procedure_sql(pGmlcGuiSrvTabData->pGmlcMysqlDb, NULL);
 	}
-	gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 	
 	g_free(pcQuery);
 	
@@ -1265,7 +1277,7 @@ static void gmlc_gui_server_tab_data_evt_menu_proc_alter_activate (GtkWidget *wi
 	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_alter(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlProc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1280,7 +1292,7 @@ static void gmlc_gui_server_tab_data_evt_menu_proc_remove_activate (GtkWidget *w
 	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_drop(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlProc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1304,7 +1316,7 @@ static void gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate (GtkWidg
 	if (pGmlcGuiSrvTabData->pGmlcMysqlProc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlProc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1369,7 +1381,7 @@ static void gmlc_gui_server_tab_data_evt_menu_func_add_activate (GtkWidget *widg
 	} else {
 		pcQuery = gmlc_mysql_database_create_new_function_sql(pGmlcGuiSrvTabData->pGmlcMysqlDb, NULL);
 	}
-	gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+	gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 	
 	g_free(pcQuery);
 }
@@ -1382,7 +1394,7 @@ static void gmlc_gui_server_tab_data_evt_menu_func_alter_activate (GtkWidget *wi
 	if (pGmlcGuiSrvTabData->pGmlcMysqlFunc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_alter(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlFunc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1396,7 +1408,7 @@ static void gmlc_gui_server_tab_data_evt_menu_func_remove_activate (GtkWidget *w
 	if (pGmlcGuiSrvTabData->pGmlcMysqlFunc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_drop(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlFunc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}
@@ -1419,7 +1431,7 @@ static void gmlc_gui_server_tab_data_evt_menu_func_show_create_activate (GtkWidg
 	if (pGmlcGuiSrvTabData->pGmlcMysqlFunc != NULL) {
 		pcQuery = gmlc_mysql_structure_get_create(GMLC_MYSQL_STRUCTURE(pGmlcGuiSrvTabData->pGmlcMysqlFunc), TRUE, NULL);
 		
-		gmlc_gui_server_tab_data_open_query(pGmlcGuiSrvTabData, pcQuery, FALSE);
+		gmlc_gui_server_tab_data_open_editor(pGmlcGuiSrvTabData, pcQuery);
 		
 		g_free(pcQuery);
 	}

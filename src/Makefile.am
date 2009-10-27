@@ -78,6 +78,8 @@ gmysqlcc_SOURCES = \
 	gmlc_gui_server_tab_data.h\
 	gmlc_gui_server_tab_help.c\
 	gmlc_gui_server_tab_help.h\
+	gmlc_gui_server_tab_edit.c\
+	gmlc_gui_server_tab_edit.h\
 	gmlc_gui_server_tab_query.c\
 	gmlc_gui_server_tab_query.h\
 	gmlc_main.h\

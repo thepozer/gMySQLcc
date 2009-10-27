@@ -19,6 +19,7 @@
 #include "gmlc_gui_server_tab.h"
 #include "gmlc_gui_server_tab_data.h"
 #include "gmlc_gui_server_tab_help.h"
+#include "gmlc_gui_server_tab_edit.h"
 #include "gmlc_gui_server_tab_query.h"
 
 static void gmlc_gui_server_finalize (GmlcGuiServer * pGmlcGuiSrv);
@@ -241,6 +242,34 @@ GtkWidget * gmlc_gui_server_add_query_tab(GmlcGuiServer * pGmlcGuiSrv, const gch
 	
 	if (pcQuery != NULL) {
 		gmlc_gui_server_tab_query_set_query(GMLC_GUI_SERVER_TAB_QUERY(poTab), pcQuery, bExecNow);
+	}
+	
+	g_free(pcText);
+	
+	return poTab;
+}
+
+GtkWidget * gmlc_gui_server_add_edit_tab(GmlcGuiServer * pGmlcGuiSrv, const gchar * pcDbName, const gchar * pcQuery) {
+	GtkWidget * poLabel = NULL;
+	GtkWidget * poTab = NULL;
+	gchar * pcText = NULL;
+	gint iNewPage = 0;
+	
+	pcText = g_strdup_printf(_("Editor - db : '%s'"), pcDbName);
+	
+	poLabel = gtk_label_new(pcText);
+	gtk_widget_show (poLabel);
+	gtk_label_set_justify (GTK_LABEL (poLabel), GTK_JUSTIFY_LEFT);
+	
+	poTab = GTK_WIDGET(gmlc_gui_server_tab_edit_new(pGmlcGuiSrv, pcDbName));
+	gtk_widget_show (poTab);
+	
+	iNewPage = gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, poLabel);
+	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), poTab, TRUE);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(pGmlcGuiSrv->nbkGeneral), iNewPage);
+	
+	if (pcQuery != NULL) {
+		gmlc_gui_server_tab_edit_set_query(GMLC_GUI_SERVER_TAB_EDIT(poTab), pcQuery, FALSE);
 	}
 	
 	g_free(pcText);
