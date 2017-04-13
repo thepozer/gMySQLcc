@@ -1,3 +1,19 @@
+=About=
+
+It is a GUI client for mysql databases. It use only GTK+.
+You don't need GNOME to use it.
+
+With gmysqlcc, you can :
+
+    * manage your server list
+    * Execute all SQL queries you want
+    * dump queries, tables, databases and servers ...
+    * ... Look to the features in TODO file
+
+To simplify, do do all what you want on your mysql database server.
+
+=Installation=
+
 Installation of gmysqlcc from source
 
  * Download from site
@@ -30,4 +46,6 @@ $ make
 
 To install gmysqlcc, you need to be root. Just type : 
 $ make install
+
+
 

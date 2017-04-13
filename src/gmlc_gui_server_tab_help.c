@@ -46,7 +46,7 @@ enum {
 	PROP_SERVER_WINDOW,
 };
 
-G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabHelp, gmlc_gui_server_tab_help, GTK_TYPE_VBOX, 
+G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabHelp, gmlc_gui_server_tab_help, GTK_TYPE_BOX, 
 	G_IMPLEMENT_INTERFACE (GMLC_GUI_TYPE_SERVER_TAB, gmlc_gui_server_tab_help_interface_init));
 
 static void gmlc_gui_server_tab_help_interface_init (gpointer g_iface, gpointer iface_data) {
@@ -143,7 +143,7 @@ void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrv
 	PangoFontDescription * pCourierFontDesc = NULL;
 	
 	
-	hpaned = gtk_hpaned_new ();
+	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show (hpaned);
 	gtk_paned_set_position (GTK_PANED (hpaned), 200);
 	/*gtk_container_add(GTK_CONTAINER(pGmlcGuiSrvTabHelp), hpaned);*/
@@ -162,44 +162,36 @@ void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrv
 	g_signal_connect (G_OBJECT (select), "changed", 
 						G_CALLBACK (gmlc_gui_server_tab_help_evt_trvHelpCategories_selected), pGmlcGuiSrvTabHelp);
 
-	vpaned = gtk_vpaned_new ();
+	vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (vpaned);
 	gtk_paned_pack2 (GTK_PANED (hpaned), vpaned, TRUE, TRUE);
 	gtk_paned_set_position (GTK_PANED (vpaned), 200);
 	
-	table = gtk_table_new (2, 3, FALSE);
+	table = gtk_grid_new ();
 	gtk_widget_show (table);
 	gtk_paned_pack1 (GTK_PANED (vpaned), table, FALSE, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (table), 3);
-	gtk_table_set_row_spacings (GTK_TABLE (table), 3);
-	gtk_table_set_col_spacings (GTK_TABLE (table), 3);
+	gtk_grid_set_row_spacing (GTK_GRID (table), 3);
+	gtk_grid_set_column_spacing (GTK_GRID (table), 3);
 	
 	label = gtk_label_new (_("Search (keyword) :"));
 	gtk_widget_show (label);
-	gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
-					(GtkAttachOptions) (GTK_FILL),
-					(GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+	gtk_grid_attach (GTK_GRID (table), label, 0, 0, 1, 1);
+	//gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 	
 	pGmlcGuiSrvTabHelp->txtHelpSearchKeyword = gtk_entry_new ();
 	gtk_widget_show (pGmlcGuiSrvTabHelp->txtHelpSearchKeyword);
-	gtk_table_attach (GTK_TABLE (table), pGmlcGuiSrvTabHelp->txtHelpSearchKeyword, 1, 2, 0, 1,
-					(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach (GTK_GRID (table), pGmlcGuiSrvTabHelp->txtHelpSearchKeyword, 1, 0, 1, 1);
 	
 	btnHelpSearch = gtk_button_new_with_mnemonic (_("Search"));
 	gtk_widget_show (btnHelpSearch);
-	gtk_table_attach (GTK_TABLE (table), btnHelpSearch, 2, 3, 0, 1,
-					(GtkAttachOptions) (GTK_FILL),
-					(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach (GTK_GRID (table), btnHelpSearch, 2, 0, 1, 1);
 	g_signal_connect (G_OBJECT (btnHelpSearch), "clicked", 
 						G_CALLBACK (gmlc_gui_server_tab_help_evt_btnHelpSearch_clicked), pGmlcGuiSrvTabHelp);
 	
 	scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
 	gtk_widget_show (scrolledwindow);
-	gtk_table_attach (GTK_TABLE (table), scrolledwindow, 0, 3, 1, 2,
-					(GtkAttachOptions) (GTK_FILL),
-					(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
+	gtk_grid_attach (GTK_GRID (table), scrolledwindow, 0, 1, 3, 1);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
 	
 	pGmlcGuiSrvTabHelp->trvHelpTopics = gtk_tree_view_new ();
@@ -218,7 +210,7 @@ void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrv
 	
 	pGmlcGuiSrvTabHelp->txvHelpTopic = gtk_text_view_new ();
 	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcHelpFontName);
-	gtk_widget_modify_font(pGmlcGuiSrvTabHelp->txvHelpTopic, pCourierFontDesc);
+	gtk_widget_override_font(pGmlcGuiSrvTabHelp->txvHelpTopic, pCourierFontDesc);
 	gtk_widget_show (pGmlcGuiSrvTabHelp->txvHelpTopic);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabHelp->txvHelpTopic);
 	gtk_text_view_set_editable (GTK_TEXT_VIEW (pGmlcGuiSrvTabHelp->txvHelpTopic), FALSE);

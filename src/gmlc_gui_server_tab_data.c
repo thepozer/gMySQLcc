@@ -94,7 +94,7 @@ enum {
 	PROP_SERVER_WINDOW,
 };
 
-G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabData, gmlc_gui_server_tab_data, GTK_TYPE_VBOX, 
+G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabData, gmlc_gui_server_tab_data, GTK_TYPE_BOX, 
 	G_IMPLEMENT_INTERFACE (GMLC_GUI_TYPE_SERVER_TAB, gmlc_gui_server_tab_data_interface_init));
 
 static void gmlc_gui_server_tab_data_interface_init (gpointer g_iface, gpointer iface_data) {
@@ -192,11 +192,11 @@ void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlc
 	
 	g_object_get(pGmlcGuiSrvTabData->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
-	pGmlcGuiSrvTabData->poDataToolbar = gtk_hbox_new (FALSE, 2);
+	pGmlcGuiSrvTabData->poDataToolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 	gtk_widget_show (pGmlcGuiSrvTabData->poDataToolbar);
 	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabData->poDataToolbar, TRUE, TRUE, 0);
 	
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("system-run", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
 	poBtnSql = gtk_button_new_with_label (_("SQL"));
 	gtk_button_set_image(GTK_BUTTON(poBtnSql), poImgBtn);
@@ -205,7 +205,7 @@ void gmlc_gui_server_tab_data_create_toolbar_items (GmlcGuiServerTabData * pGmlc
 	gtk_widget_show(poBtnSql);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData->poDataToolbar), poBtnSql, FALSE, FALSE, 0);
 	
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("system-run", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(poImgBtn);
 	poBtnSqlFile = gtk_button_new_with_label (_("SQL File"));
 	gtk_button_set_image(GTK_BUTTON(poBtnSqlFile), poImgBtn);
@@ -225,12 +225,12 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrvTabData->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
-	hpaned = gtk_hpaned_new ();
+	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show (hpaned);
 	gtk_paned_set_position (GTK_PANED (hpaned), 200);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabData), hpaned, TRUE, TRUE, 0);
 
-	vbox = gtk_vbox_new (FALSE, 0);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
 	gtk_paned_pack1 (GTK_PANED (hpaned), vbox, FALSE, TRUE);
 
@@ -241,7 +241,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 	pGmlcGuiSrvTabData->lstBase = gtk_tree_view_new ();
 	gtk_widget_show (pGmlcGuiSrvTabData->lstBase);
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstBase), TRUE);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabData->lstBase);
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstBase));
 	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
@@ -254,35 +253,35 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_refresh_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_separator_menu_item_new();
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a database"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_add_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a database"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_alter_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a database"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_remove_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_separator_menu_item_new();
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display all create structures"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuBdOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_db_show_create_activate), pGmlcGuiSrvTabData);
 
 	
@@ -295,7 +294,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	gtk_widget_show (label);
 	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 	
-	vbox = gtk_vbox_new (FALSE, 0);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
 	
 	gtk_notebook_append_page(GTK_NOTEBOOK(nbkDatas), vbox, label);
@@ -308,7 +307,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 	pGmlcGuiSrvTabData->lstTables = gtk_tree_view_new ();
 	gtk_widget_show (pGmlcGuiSrvTabData->lstTables);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabData->lstTables);
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstTables), TRUE);
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstTables));
 	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 	g_signal_connect(pGmlcGuiSrvTabData->lstTables, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_data_evt_lst_tbl_btnpress), pGmlcGuiSrvTabData);
@@ -319,44 +317,44 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_refresh_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_separator_menu_item_new();
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display table data"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_display_activate), pGmlcGuiSrvTabData);
 	
 	poMenuOpsItem = gtk_separator_menu_item_new();
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a table"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_add_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a table"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_alter_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a table"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_remove_activate), pGmlcGuiSrvTabData);
 
 	poMenuOpsItem = gtk_separator_menu_item_new();
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuTblOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_tbl_show_create_activate), pGmlcGuiSrvTabData);
 
 	if (lServerVersion >= 50001) {
@@ -365,7 +363,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_widget_show (label);
 		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 		
-		vbox = gtk_vbox_new (FALSE, 0);
+		vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 		gtk_widget_show (vbox);
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(nbkDatas), vbox, label);
@@ -378,7 +376,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		pGmlcGuiSrvTabData->lstViews = gtk_tree_view_new ();
 		gtk_widget_show (pGmlcGuiSrvTabData->lstViews);
 		gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabData->lstViews);
-		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstViews), TRUE);
 		select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstViews));
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 		g_signal_connect(pGmlcGuiSrvTabData->lstViews, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_data_evt_lst_vw_btnpress), pGmlcGuiSrvTabData);
@@ -389,44 +386,44 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_refresh_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display view data"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_display_activate), pGmlcGuiSrvTabData);
 		
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a view"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_add_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a view"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_alter_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a view"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_remove_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuVwOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_vw_show_create_activate), pGmlcGuiSrvTabData);
 
 
@@ -434,7 +431,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_widget_show (label);
 		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 		
-		vbox = gtk_vbox_new (FALSE, 0);
+		vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 		gtk_widget_show (vbox);
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(nbkDatas), vbox, label);
@@ -447,7 +444,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		pGmlcGuiSrvTabData->lstProcedures = gtk_tree_view_new ();
 		gtk_widget_show (pGmlcGuiSrvTabData->lstProcedures);
 		gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabData->lstProcedures);
-		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstProcedures), TRUE);
 		select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstProcedures));
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 		g_signal_connect(pGmlcGuiSrvTabData->lstProcedures, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_data_evt_lst_proc_btnpress), pGmlcGuiSrvTabData);
@@ -458,44 +454,44 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_refresh_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Execute a procedure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_display_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a procedure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_add_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a procedure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_alter_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a procedure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_remove_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuProcOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_proc_show_create_activate), pGmlcGuiSrvTabData);
 		
 				
@@ -503,7 +499,7 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		gtk_widget_show (label);
 		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 		
-		vbox = gtk_vbox_new (FALSE, 0);
+		vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 		gtk_widget_show (vbox);
 		
 		gtk_notebook_append_page(GTK_NOTEBOOK(nbkDatas), vbox, label);
@@ -516,7 +512,6 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 		pGmlcGuiSrvTabData->lstFunctions = gtk_tree_view_new ();
 		gtk_widget_show (pGmlcGuiSrvTabData->lstFunctions);
 		gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabData->lstFunctions);
-		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstFunctions), TRUE);
 		select = gtk_tree_view_get_selection (GTK_TREE_VIEW (pGmlcGuiSrvTabData->lstFunctions));
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 		g_signal_connect(pGmlcGuiSrvTabData->lstFunctions, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_data_evt_lst_func_btnpress), pGmlcGuiSrvTabData);
@@ -527,44 +522,44 @@ void gmlc_gui_server_tab_data_create_widgets (GmlcGuiServerTabData * pGmlcGuiSrv
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Refresh"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_refresh_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Execute a function"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_display_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Add a function"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_add_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Alter a function"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_alter_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Remove a function"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_remove_activate), pGmlcGuiSrvTabData);
 
 		poMenuOpsItem = gtk_separator_menu_item_new();
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		
 		poMenuOpsItem = gtk_menu_item_new_with_label(_("Display create structure"));
 		gtk_widget_show (poMenuOpsItem);
-		gtk_menu_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
+		gtk_menu_shell_append (GTK_MENU_SHELL(pGmlcGuiSrvTabData->mnuFuncOps), poMenuOpsItem);
 		g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_data_evt_menu_func_show_create_activate), pGmlcGuiSrvTabData);
 	}
 }
@@ -880,7 +875,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_db_btnpress (GtkWidget *widget,
 			break;
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(pGmlcGuiSrvTabData->mnuBdOps), NULL, NULL, NULL, user_data, event->button, event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(pGmlcGuiSrvTabData->mnuBdOps), NULL);
 			}
 			break;
 	}
@@ -986,7 +981,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_tbl_btnpress (GtkWidget *widget
 			break;
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(pGmlcGuiSrvTabData->mnuTblOps), NULL, NULL, NULL, user_data, event->button, event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(pGmlcGuiSrvTabData->mnuTblOps), NULL);
 			}
 			break;
 	}
@@ -1100,7 +1095,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_vw_btnpress (GtkWidget *widget,
 			break;
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(pGmlcGuiSrvTabData->mnuVwOps), NULL, NULL, NULL, user_data, event->button, event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(pGmlcGuiSrvTabData->mnuVwOps), NULL);
 			}
 			break;
 	}
@@ -1217,7 +1212,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_proc_btnpress (GtkWidget *widge
 			break;
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(pGmlcGuiSrvTabData->mnuProcOps), NULL, NULL, NULL, user_data, event->button, event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(pGmlcGuiSrvTabData->mnuProcOps), NULL);
 			}
 			break;
 	}
@@ -1335,7 +1330,7 @@ static gboolean gmlc_gui_server_tab_data_evt_lst_func_btnpress (GtkWidget *widge
 			break;
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(GTK_MENU(pGmlcGuiSrvTabData->mnuFuncOps), NULL, NULL, NULL, user_data, event->button, event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(pGmlcGuiSrvTabData->mnuFuncOps), NULL);
 			}
 			break;
 	}

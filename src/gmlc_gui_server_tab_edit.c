@@ -74,7 +74,7 @@ enum {
 	PROP_FILENAME,
 };
 
-G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabEdit, gmlc_gui_server_tab_edit, GTK_TYPE_VBOX, 
+G_DEFINE_TYPE_WITH_CODE (GmlcGuiServerTabEdit, gmlc_gui_server_tab_edit, GTK_TYPE_BOX, 
 	G_IMPLEMENT_INTERFACE (GMLC_GUI_TYPE_SERVER_TAB, gmlc_gui_server_tab_edit_interface_init));
 
 static void gmlc_gui_server_tab_edit_interface_init (gpointer g_iface, gpointer iface_data) {
@@ -195,24 +195,24 @@ void gmlc_gui_server_tab_edit_create_toolbar_items (GmlcGuiServerTabEdit * pGmlc
 	
 	g_object_get(pGmlcGuiSrvTabQuery->pGmlcGuiSrv, "toolbar-hbox", &poHBoxToolbar, NULL);
 	
-	pGmlcGuiSrvTabQuery->poQueryToolbar = gtk_hbox_new (FALSE, 2);
+	pGmlcGuiSrvTabQuery->poQueryToolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
 	gtk_widget_show (pGmlcGuiSrvTabQuery->poQueryToolbar);
 	gtk_box_pack_start (GTK_BOX (poHBoxToolbar), pGmlcGuiSrvTabQuery->poQueryToolbar, TRUE, TRUE, 0);
 	
 	
-	poBtn = gtk_button_new_from_stock(GTK_STOCK_OPEN);
+	poBtn = gtk_button_new_from_icon_name("document-open", GTK_ICON_SIZE_BUTTON);
 	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
 	g_signal_connect (poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_edit_evt_btn_load_clicked), pGmlcGuiSrvTabQuery);
 	gtk_widget_show(GTK_WIDGET(poBtn));
 	gtk_box_pack_start(GTK_BOX (pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
-	poBtn = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	poBtn = gtk_button_new_from_icon_name("document-save", GTK_ICON_SIZE_BUTTON);
 	gtk_button_set_relief(GTK_BUTTON(poBtn), GTK_RELIEF_NONE);
 	g_signal_connect (poBtn, "clicked", G_CALLBACK (gmlc_gui_server_tab_edit_evt_btn_save_clicked), pGmlcGuiSrvTabQuery);
 	gtk_widget_show(GTK_WIDGET(poBtn));
 	gtk_box_pack_start(GTK_BOX (pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("system-run", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show(poImgBtn);
 	poBtn = gtk_button_new_with_label(_("Execute"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
@@ -221,7 +221,7 @@ void gmlc_gui_server_tab_edit_create_toolbar_items (GmlcGuiServerTabEdit * pGmlc
 	gtk_widget_show(poBtn);
 	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("edit-copy", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show(poImgBtn);
 	poBtn = gtk_button_new_with_label(_("Duplicate"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
@@ -231,7 +231,7 @@ void gmlc_gui_server_tab_edit_create_toolbar_items (GmlcGuiServerTabEdit * pGmlc
 	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 	
 /*
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show(poImgBtn);
 	poBtn = gtk_button_new_with_label(_("Dump"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
@@ -241,7 +241,7 @@ void gmlc_gui_server_tab_edit_create_toolbar_items (GmlcGuiServerTabEdit * pGmlc
 	gtk_box_pack_start(GTK_BOX(pGmlcGuiSrvTabQuery->poQueryToolbar), poBtn, FALSE, FALSE, 0);
 */
 	
-	poImgBtn = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	poImgBtn = gtk_image_new_from_icon_name("window-close", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show(poImgBtn);
 	poBtn = gtk_button_new_with_label(_("Close tab"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), poImgBtn);
@@ -255,7 +255,6 @@ void gmlc_gui_server_tab_edit_create_toolbar_items (GmlcGuiServerTabEdit * pGmlc
 void gmlc_gui_server_tab_edit_create_widgets (GmlcGuiServerTabEdit * pGmlcGuiSrvTabQuery) {
 	GtkWidget * vpanedSQL;
 	GtkWidget * scrlwndSQLRequest;
-	GtkTooltips * tooltips;
 	PangoFontDescription * pCourierFontDesc = NULL;
 	glong lServerVersion = 0;
 	
@@ -266,9 +265,7 @@ void gmlc_gui_server_tab_edit_create_widgets (GmlcGuiServerTabEdit * pGmlcGuiSrv
 	
 	g_object_get(G_OBJECT(pGmlcGuiSrvTabQuery->pGmlcMysqlSrv), "version", &lServerVersion, NULL);
 	
-	tooltips = gtk_tooltips_new();
-	
-	vpanedSQL = gtk_vpaned_new ();
+	vpanedSQL = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (vpanedSQL);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiSrvTabQuery), vpanedSQL, TRUE, TRUE, 0);
 	gtk_paned_set_position (GTK_PANED (vpanedSQL), -1);
@@ -292,7 +289,7 @@ void gmlc_gui_server_tab_edit_create_widgets (GmlcGuiServerTabEdit * pGmlcGuiSrv
 	gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), pGmlcGuiSrvTabQuery->txtSQLRequest);
 	
 	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcQueryFontName);
-	gtk_widget_modify_font(pGmlcGuiSrvTabQuery->txtSQLRequest, pCourierFontDesc);
+	gtk_widget_override_font(pGmlcGuiSrvTabQuery->txtSQLRequest, pCourierFontDesc);
 	pango_font_description_free(pCourierFontDesc);
 	
 	pGmlcGuiSrvTabQuery->tabSQLResult = gtk_notebook_new ();
@@ -449,10 +446,10 @@ void gmlc_gui_server_tab_edit_display_one_result(GmlcGuiServerTabEdit * pGmlcGui
 	
 	/* Create widgets */
 	
-	hbxTabTitle = gtk_hbox_new(FALSE, 0);
+	hbxTabTitle = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show(hbxTabTitle);
 	
-	icnTabSaveIcon = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
+	icnTabSaveIcon = gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_MENU);
 	gtk_widget_show(icnTabSaveIcon);
 	
 	btnTabSave = gtk_button_new();
@@ -474,7 +471,6 @@ void gmlc_gui_server_tab_edit_display_one_result(GmlcGuiServerTabEdit * pGmlcGui
 	
 	lstSQLResult = gtk_tree_view_new();
 	gtk_widget_show(lstSQLResult);
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (lstSQLResult), TRUE);
 	gtk_container_add(GTK_CONTAINER (sclSQLResult), lstSQLResult);
 
 	g_signal_connect (btnTabSave, "clicked", G_CALLBACK (gmlc_gui_server_tab_edit_evt_btnSaveResult_clicked), lstSQLResult);
@@ -484,12 +480,12 @@ void gmlc_gui_server_tab_edit_display_one_result(GmlcGuiServerTabEdit * pGmlcGui
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Copy row text"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
 	g_signal_connect (poMenuOpsItem, "activate", G_CALLBACK (gmlc_gui_server_tab_edit_evt_resultRow_menu_copy_activate), lstSQLResult);
 
 	poMenuOpsItem = gtk_menu_item_new_with_label(_("Delete row"));
 	gtk_widget_show (poMenuOpsItem);
-	gtk_menu_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
+	gtk_menu_shell_append (GTK_MENU_SHELL(poMenuOps), poMenuOpsItem);
 	
 	g_signal_connect (lstSQLResult, "button-press-event", G_CALLBACK (gmlc_gui_server_tab_edit_evt_resultRow_btnpress), poMenuOps);
 	
@@ -616,7 +612,7 @@ void gmlc_gui_server_tab_edit_display_one_info(GmlcGuiServerTabEdit * pGmlcGuiSr
 	
 	txtSQLInfo = gtk_text_view_new ();
 	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcQueryFontName);
-	gtk_widget_modify_font(txtSQLInfo, pCourierFontDesc);
+	gtk_widget_override_font(txtSQLInfo, pCourierFontDesc);
 	pango_font_description_free(pCourierFontDesc);
 	gtk_widget_show (txtSQLInfo);
 	gtk_container_add (GTK_CONTAINER (sclSQLResult), txtSQLInfo);
@@ -633,13 +629,13 @@ void gmlc_gui_server_tab_edit_display_one_info(GmlcGuiServerTabEdit * pGmlcGuiSr
 
 gboolean gmlc_gui_server_tab_edit_evt_window_keyrelease (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	
-	if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_e) 
-		|| (event->keyval == GDK_F5)) {
+	if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_KEY_e) 
+		|| (event->keyval == GDK_KEY_F5)) {
 		gmlc_gui_server_tab_edit_evt_btnExecSql_clicked (widget, user_data);
 		return TRUE;
-	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_w)) {
+	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_KEY_w)) {
 		gmlc_gui_server_tab_edit_evt_btnClose_clicked (widget, user_data);
-	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_d)) {
+	} else if ((event->state & GDK_CONTROL_MASK && event->keyval == GDK_KEY_d)) {
 		gmlc_gui_server_tab_edit_evt_btnDuplicateSql_clicked (widget, user_data);
 	}
 	
@@ -674,7 +670,7 @@ void gmlc_gui_server_tab_edit_evt_btn_load_clicked(GtkWidget *widget, gpointer u
 	gint response;
 	
 	poChooser = gtk_file_chooser_dialog_new (_("Load sql file"), GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_FILE_CHOOSER_ACTION_OPEN,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+		_("_Cancel"), GTK_RESPONSE_CANCEL, _("_Open"), GTK_RESPONSE_OK, NULL);
 	
 	if (pGmlcGuiSrvTabQuery->pcFileName != NULL) {
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (poChooser), pGmlcGuiSrvTabQuery->pcFileName);
@@ -723,7 +719,7 @@ void gmlc_gui_server_tab_edit_evt_btn_save_clicked(GtkWidget *widget, gpointer u
 	gint response;
 	
 	poChooser = gtk_file_chooser_dialog_new (_("Save sql file"), GTK_WINDOW(pGmlcGuiSrvTabQuery->pGmlcGuiSrv), GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+		_("_Cancel"), GTK_RESPONSE_CANCEL, _("_Save"), GTK_RESPONSE_OK, NULL);
 	
 	if (pGmlcGuiSrvTabQuery->pcFileName != NULL) {
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (poChooser), pGmlcGuiSrvTabQuery->pcFileName);
@@ -807,7 +803,7 @@ void gmlc_gui_server_tab_edit_evt_btnSaveResult_clicked(GtkWidget *widget, gpoin
 	
 	/* Get file name */
 	poChooser = gtk_file_chooser_dialog_new (_("Save result file"), NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+		_("_Cancel"), GTK_RESPONSE_CANCEL, _("_Save"), GTK_RESPONSE_OK, NULL);
 	
 	response = gtk_dialog_run (GTK_DIALOG (poChooser));
 	if (response == GTK_RESPONSE_OK) {
@@ -912,7 +908,7 @@ static gboolean gmlc_gui_server_tab_edit_evt_resultRow_btnpress (GtkWidget *widg
 	switch (event->button) {
 		case 3 : /* Right button */
 			if (event->type == GDK_BUTTON_PRESS) {
-				gtk_menu_popup(poOpsMenu, NULL, NULL, NULL, widget, event->button, event->time);
+				gtk_menu_popup_at_pointer(poOpsMenu, NULL);
 			}
 			break;
 	}

@@ -99,11 +99,8 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	GtkToolItem * btnTlbrConnect, * btnTlbrEdit, * btnTlbrClose, * btnTlbrLoad;
 
 	GtkTreeSelection *select;
-	GtkTooltips * tooltips;
 	
-	tooltips = gtk_tooltips_new();
-	
-	vbxMain = gtk_vbox_new (FALSE, 0);
+	vbxMain = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbxMain);
 	gtk_container_add (GTK_CONTAINER (pGmlcGuiCnxns), vbxMain);
 
@@ -112,7 +109,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_box_pack_start (GTK_BOX (vbxMain), toolbar, FALSE, FALSE, 0);
 	gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	imgToolbar = gtk_image_new_from_icon_name("window-new", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnTlbrConnect = gtk_tool_button_new (imgToolbar, _("Connection"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrConnect), TRUE);
@@ -120,9 +117,9 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 			G_CALLBACK (gmlc_gui_connexions_evt_btnTlbrConnect_clicked), pGmlcGuiCnxns);
 	gtk_widget_show(GTK_WIDGET(btnTlbrConnect));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrConnect), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrConnect), tooltips, _("Connect to a server"), NULL);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(btnTlbrConnect), _("Connect to a server"));
 	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	imgToolbar = gtk_image_new_from_icon_name("document-properties", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnTlbrEdit = gtk_tool_button_new (imgToolbar, _("Edit Server"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrEdit), TRUE);
@@ -130,9 +127,9 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 			G_CALLBACK (gmlc_gui_connexions_evt_btnTlbrEdit_clicked), pGmlcGuiCnxns);
 	gtk_widget_show(GTK_WIDGET(btnTlbrEdit));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrEdit), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrEdit), tooltips, _("Display edit server part"), NULL);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(btnTlbrEdit), _("Display edit server part"));
 	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	imgToolbar = gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnTlbrLoad = gtk_tool_button_new (imgToolbar, _("Execute SQL file"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrLoad), TRUE);
@@ -140,9 +137,9 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 			G_CALLBACK (gmlc_gui_connexions_evt_btnTlbrLoad_clicked), pGmlcGuiCnxns);
 	gtk_widget_show(GTK_WIDGET(btnTlbrLoad));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrLoad), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrLoad), tooltips, _("Execute an SQL file on a MySQL server"), NULL);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(btnTlbrLoad), _("Execute an SQL file on a MySQL server"));
 	
-	imgToolbar = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	imgToolbar = gtk_image_new_from_icon_name("window-close", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgToolbar);
 	btnTlbrClose = gtk_tool_button_new (imgToolbar, _("Close"));
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM(btnTlbrClose), TRUE);
@@ -150,14 +147,14 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 			G_CALLBACK (gmlc_gui_connexions_evt_btnTlbrClose_clicked), pGmlcGuiCnxns);
 	gtk_widget_show(GTK_WIDGET(btnTlbrClose));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(btnTlbrClose), -1);
-	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM(btnTlbrClose), tooltips, _("Close window"), NULL);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(btnTlbrClose), _("Close window"));
 
-	hpaned = gtk_hpaned_new ();
+	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show (hpaned);
 	gtk_container_add (GTK_CONTAINER (vbxMain), hpaned);
 	gtk_paned_set_position (GTK_PANED (hpaned), 250);
 
-	vbox = gtk_vbox_new (FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
 	gtk_paned_pack1 (GTK_PANED (hpaned), vbox, TRUE, TRUE);
 
@@ -167,7 +164,6 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 
 	pGmlcGuiCnxns->lstListHosts = gtk_tree_view_new ();
 	gtk_widget_show (pGmlcGuiCnxns->lstListHosts);
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (pGmlcGuiCnxns->lstListHosts), TRUE);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiCnxns->lstListHosts);
 	g_signal_connect (G_OBJECT (pGmlcGuiCnxns->lstListHosts), "button-press-event", 
 			G_CALLBACK (gmlc_gui_connexions_evt_lstListHosts_btnpress), pGmlcGuiCnxns);
@@ -176,23 +172,23 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	g_signal_connect (G_OBJECT (select), "changed", 
 			G_CALLBACK (gmlc_gui_connexions_evt_lstListHosts_selected), pGmlcGuiCnxns);
 
-	hbox = gtk_hbox_new (TRUE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-	btnServerUp = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+	btnServerUp = gtk_button_new_from_icon_name("go-up", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnServerUp);
 	gtk_box_pack_start (GTK_BOX (hbox), btnServerUp, FALSE, FALSE, 0);
 	g_signal_connect (G_OBJECT (btnServerUp), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnServerUp_clicked), pGmlcGuiCnxns);
 
-	btnServerDown = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+	btnServerDown = gtk_button_new_from_icon_name("go-down", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnServerDown);
 	gtk_box_pack_start (GTK_BOX (hbox), btnServerDown, FALSE, FALSE, 0);
 	g_signal_connect (G_OBJECT (btnServerDown), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnServerDown_clicked), pGmlcGuiCnxns);
 
-	pGmlcGuiCnxns->vbxEditPart = gtk_vbox_new (FALSE, 0);
+	pGmlcGuiCnxns->vbxEditPart = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (pGmlcGuiCnxns->vbxEditPart);
 	gtk_paned_pack2 (GTK_PANED (hpaned), pGmlcGuiCnxns->vbxEditPart, TRUE, TRUE);
 
@@ -205,12 +201,12 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_frame_set_label_widget (GTK_FRAME (frame), label);
 	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
-	vbox = gtk_vbox_new (FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
 	gtk_container_add (GTK_CONTAINER (frame), vbox);
 	gtk_container_set_border_width (GTK_CONTAINER (vbox), 4);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -224,7 +220,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->txtName);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtName, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -238,7 +234,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->txtHost);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtHost, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -253,7 +249,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtPort, TRUE, TRUE, 2);
 	gtk_entry_set_max_length (GTK_ENTRY (pGmlcGuiCnxns->txtPort), 5);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -267,7 +263,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->txtLogin);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtLogin, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -281,7 +277,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->txtPasswd);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtPasswd, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -295,7 +291,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->txtLocalSock);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->txtLocalSock, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -304,7 +300,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->chkReadOnly);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->chkReadOnly, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
@@ -313,33 +309,33 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 	gtk_widget_show (pGmlcGuiCnxns->chkWriteWarning);
 	gtk_box_pack_start (GTK_BOX (hbox), pGmlcGuiCnxns->chkWriteWarning, TRUE, TRUE, 2);
 
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (pGmlcGuiCnxns->vbxEditPart), hbox, FALSE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 1);
 
-	btnNew = gtk_button_new_from_stock(GTK_STOCK_NEW);
+	btnNew = gtk_button_new_from_icon_name("document-new", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnNew);
 	gtk_box_pack_start (GTK_BOX (hbox), btnNew, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (btnNew), 2);
 	g_signal_connect (G_OBJECT (btnNew), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnNew_clicked), pGmlcGuiCnxns);
 
-	btnAdd = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	btnAdd = gtk_button_new_from_icon_name("list-add", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnAdd);
 	gtk_box_pack_start (GTK_BOX (hbox), btnAdd, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (btnAdd), 2);
 	g_signal_connect (G_OBJECT (btnAdd), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnAdd_clicked), pGmlcGuiCnxns);
 
-	btnEdit = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	btnEdit = gtk_button_new_from_icon_name("document-save", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnEdit);
 	gtk_box_pack_start (GTK_BOX (hbox), btnEdit, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (btnEdit), 2);
 	g_signal_connect (G_OBJECT (btnEdit), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnEdit_clicked), pGmlcGuiCnxns);
 
-	btnDel = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	btnDel = gtk_button_new_from_icon_name("list-remove", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnDel);
 	gtk_box_pack_start (GTK_BOX (hbox), btnDel, TRUE, TRUE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (btnDel), 2);

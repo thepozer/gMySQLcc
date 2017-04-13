@@ -21,17 +21,18 @@
 
 G_BEGIN_DECLS
 
+/*
 typedef struct _askFilenameInfos {
 	GtkWidget * dialog;
 	void * userData;
 } askFilenameInfos;
 typedef askFilenameInfos * p_askFilenameInfos;
-
+*/
 
 GString * askInfo(const gchar * title, const gchar * message, const gchar * defaultValue);
 gboolean askConfirmation(const gchar * title, const gchar * message);
 gboolean askYesno(const gchar * title, const gchar * message);
-gboolean askFilename(const gchar * title, const gchar * filename, void (*okevent) (GtkWidget *widget, gpointer user_data), gpointer user_data);
+//gboolean askFilename(const gchar * title, const gchar * filename, void (*okevent) (GtkWidget *widget, gpointer user_data), gpointer user_data);
 
 gchar * gmlc_helpers_protect_underscore (const gchar * str);
 

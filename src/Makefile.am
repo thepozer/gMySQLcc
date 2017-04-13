@@ -1,12 +1,8 @@
-## Process this file with automake to produce Makefile.in
-
-INCLUDES = \
-	$(GTK_CFLAGS) \
-	$(GTKSourceView_CFLAGS) \
-	$(MySQLc_CFLAGS)
-
 AM_CFLAGS =\
-	 -Wall 
+	 -Wall \
+	 -DGTK_DISABLE_SINGLE_INCLUDES \
+	 -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED \
+	 -DGSEAL_ENABLE \
 
 ## bin_PROGRAMS = gmysqlcc gdumptest
 bin_PROGRAMS = gmysqlcc
@@ -109,14 +105,28 @@ gmysqlcc_SOURCES = \
 	gmlc_dump_format_sql.c \
 	gmlc_dump_format_sql.h
 
-gmysqlcc_LDFLAGS = 
+gmysqlcc_CFLAGS = \
+	$(GMYSQLCC_CFLAGS) \
+	$(GTKSourceView_CFLAGS) \
+	$(MySQLc_CFLAGS)
 
 gmysqlcc_LDADD =  \
-	$(GTK_LIBS) \
+	$(GMYSQLCC_LIBS) \
 	$(GTKSourceView_LIBS) \
 	$(MySQLc_LIBS)
 
+gdumptest_CFLAGS = \
+	$(GMYSQLCC_CFLAGS) \
+	$(GTKSourceView_CFLAGS) \
+	$(MySQLc_CFLAGS)
+
 gdumptest_LDADD =  \
-	$(GTK_LIBS) \
+	$(GMYSQLCC_LIBS) \
 	$(GTKSourceView_LIBS) \
 	$(MySQLc_LIBS)
+	
+gmysqlcc_CFLAGS = $(GMYSQLCC_CFLAGS)
+
+gmysqlcc_LDADD = $(GMYSQLCC_LIBS)
+
+-include $(top_srcdir)/git.mk

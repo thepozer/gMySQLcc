@@ -32,7 +32,7 @@ static void gmlc_gui_server_init_widgets (GmlcGuiServer * pGmlcGuiSrv);
 
 
 static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data);
-static void gmlc_gui_server_evt_tab_selected (GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data);
+static void gmlc_gui_server_evt_tab_selected (GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data);
 static void gmlc_gui_server_evt_btnTlbrClose_clicked (GtkWidget *widget, gpointer user_data);
 static void gmlc_gui_server_evt_btnTlbrSqlServerList_clicked (GtkWidget *widget, gpointer user_data);
 
@@ -41,7 +41,7 @@ enum {
 	PROP_0,
 	PROP_SERVER,
 	PROP_TOOLBAR,
-	PROP_VBOX_TOOLBAR,
+	PROP_BOX_TOOLBAR,
 };
 
 G_DEFINE_TYPE (GmlcGuiServer, gmlc_gui_server, GTK_TYPE_WINDOW);
@@ -56,8 +56,8 @@ static void gmlc_gui_server_class_init (GmlcGuiServerClass * pClass) {
 	
 	g_object_class_install_property(pObjClass, PROP_SERVER, 
 		g_param_spec_object("server", "Server object", "Server object", GMLC_MYSQL_TYPE_SERVER, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-	g_object_class_install_property(pObjClass, PROP_VBOX_TOOLBAR, 
-		g_param_spec_object("toolbar-hbox", "HBox where is the toolbar object", "HBox where is the toolbar object", GTK_TYPE_HBOX, G_PARAM_READABLE));
+	g_object_class_install_property(pObjClass, PROP_BOX_TOOLBAR, 
+		g_param_spec_object("toolbar-hbox", "Box where is the toolbar object", "Box where is the toolbar object", GTK_TYPE_BOX, G_PARAM_READABLE));
 }
 
 static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec) {
@@ -67,7 +67,7 @@ static void gmlc_gui_server_get_property (GObject * object, guint prop_id, GValu
 		case PROP_SERVER :
 			g_value_set_object(value, pGmlcGuiSrv->pGmlcMysqlSrv);
 			break;
-		case PROP_VBOX_TOOLBAR :
+		case PROP_BOX_TOOLBAR :
 			g_value_set_object(value, pGmlcGuiSrv->poHBoxToolbar);
 			break;
 		default: {
@@ -139,15 +139,11 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	GtkWidget * imgBtn;
 	GtkWidget * poBtn;
 	
-	GtkTooltips * tooltips;
-	
-	tooltips = gtk_tooltips_new();
-
-	vbox = gtk_vbox_new (FALSE, 0);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
 	gtk_container_add (GTK_CONTAINER (pGmlcGuiSrv), vbox);
 	
-	pGmlcGuiSrv->poHBoxToolbar = gtk_hbox_new (FALSE, 0);
+	pGmlcGuiSrv->poHBoxToolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (pGmlcGuiSrv->poHBoxToolbar);
 	gtk_box_pack_start (GTK_BOX (vbox), pGmlcGuiSrv->poHBoxToolbar, FALSE, FALSE, 0);
 	
@@ -159,7 +155,7 @@ static void gmlc_gui_server_create_widgets (GmlcGuiServer * pGmlcGuiSrv) {
 	gtk_box_pack_end(GTK_BOX (pGmlcGuiSrv->poHBoxToolbar), poBtn, FALSE, FALSE, 0);
 	*/
 	
-	imgBtn = gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	imgBtn = gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show(imgBtn);
 	poBtn = gtk_button_new_with_label (_("Servers list"));
 	gtk_button_set_image(GTK_BUTTON(poBtn), imgBtn);
@@ -295,7 +291,7 @@ static void gmlc_gui_server_evt_destroy(GtkWidget *widget, gpointer user_data) {
 	}
 }
 
-static void gmlc_gui_server_evt_tab_selected (GtkNotebook *poNoteBook, GtkNotebookPage *page, guint iPageNum, gpointer user_data) {
+static void gmlc_gui_server_evt_tab_selected (GtkNotebook *poNoteBook, GtkWidget *page, guint iPageNum, gpointer user_data) {
 	GtkWidget * pChild = NULL;
 	gint iPrevPageNum = 0;
 	UNUSED_VAR(page);

@@ -39,9 +39,9 @@ int main(int argc, char *argv[]) {
 	gtk_init (&argc, &argv);
 	
 	/* Init gettext library */
-	bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
-	textdomain (PACKAGE);
-	bind_textdomain_codeset(PACKAGE, "UTF-8");
+	//bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+	//textdomain (PACKAGE);
+	//bind_textdomain_codeset(PACKAGE, "UTF-8");
 	
 	/* Init types list */
 	/*gmysqlcc_helpers_field_capability_init_array();*/
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	/* Add trigger to save configuration before the end of gmysqlcc */
-	gtk_quit_add(0, gmysqlcc_main_before_end, NULL);
+	//###### gtk_quit_add(0, gmysqlcc_main_before_end, NULL);
 	
 #ifdef USE_GTKSOURCEVIEW
 	/* Get Language Manager to select sql type */
