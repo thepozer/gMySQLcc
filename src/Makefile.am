@@ -2,7 +2,7 @@ AM_CFLAGS =\
 	 -Wall \
 	 -DGTK_DISABLE_SINGLE_INCLUDES \
 	 -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED \
-	 -DGSEAL_ENABLE \
+	 -DGSEAL_ENABLE
 
 ## bin_PROGRAMS = gmysqlcc gdumptest
 bin_PROGRAMS = gmysqlcc
@@ -107,26 +107,18 @@ gmysqlcc_SOURCES = \
 
 gmysqlcc_CFLAGS = \
 	$(GMYSQLCC_CFLAGS) \
-	$(GTKSourceView_CFLAGS) \
-	$(MySQLc_CFLAGS)
+	$(GTKSourceView_CFLAGS)
 
 gmysqlcc_LDADD =  \
 	$(GMYSQLCC_LIBS) \
-	$(GTKSourceView_LIBS) \
-	$(MySQLc_LIBS)
+	$(GTKSourceView_LIBS)
 
-gdumptest_CFLAGS = \
-	$(GMYSQLCC_CFLAGS) \
-	$(GTKSourceView_CFLAGS) \
-	$(MySQLc_CFLAGS)
+#gdumptest_CFLAGS = \
+#	$(GMYSQLCC_CFLAGS) \
+#	$(GTKSourceView_CFLAGS)
 
-gdumptest_LDADD =  \
-	$(GMYSQLCC_LIBS) \
-	$(GTKSourceView_LIBS) \
-	$(MySQLc_LIBS)
+#gdumptest_LDADD =  \
+#	$(GMYSQLCC_LIBS) \
+#	$(GTKSourceView_LIBS)
 	
-gmysqlcc_CFLAGS = $(GMYSQLCC_CFLAGS)
-
-gmysqlcc_LDADD = $(GMYSQLCC_LIBS)
-
 -include $(top_srcdir)/git.mk

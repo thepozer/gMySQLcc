@@ -26,12 +26,8 @@
 
 #include "gmlc_misc_config.h"
 
-
 #ifdef USE_GTKSOURCEVIEW
-	#include <gtksourceview/gtksourceview.h>
-	#include <gtksourceview/gtksourcebuffer.h>
-	#include <gtksourceview/gtksourcelanguage.h>
-	#include <gtksourceview/gtksourcelanguagemanager.h>
+	#include <gtksourceview/gtksource.h>
 #endif /* USE_GTKSOURCEVIEW */
 
 #ifndef __GMYSQLCC_MAIN_PART__

@@ -93,28 +93,19 @@ AX_CHECK_COMPILE_FLAG([-std=gnu11],
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-PKG_CHECK_MODULES(GMYSQLCC, [gio-2.0 >= 2.50 gtk+-3.0 >= 3.22])
+PKG_CHECK_MODULES(GMYSQLCC, [gio-2.0 >= 2.50 gtk+-3.0 >= 3.22 mysqlclient >= 20.0])
 
-AC_PATH_PROG(MYSQLCFG, mysql_config, [no])
-if test "$MYSQLCFG" = "no"; then
-	AC_MSG_ERROR([Sorry, cant found MySQL client library])
-fi
-MySQLc_CFLAGS=`$MYSQLCFG --cflags`
-MySQLc_LIBS=`$MYSQLCFG --libs`
-AC_SUBST([MySQLc_CFLAGS])
-AC_SUBST([MySQLc_LIBS])
-
-AC_ARG_WITH(gtksourceview,
-	[  --with-gtksourceview       Activate Gtk+ Source View 3.0 editor],
+AC_ARG_WITH([gtksourceview],
+	AS_HELP_STRING([--with-gtksourceview], [Activate Gtk+ Source View 3.0 editor]),
 	USE_GTKSOURCEVIEW="1"
 )
  
-if test "x${USE_GTKSOURCEVIEW}" = "x1"; then
-	PKG_CHECK_MODULES(GTKSourceView, gtksourceview-3.0, , exit)
-	AC_DEFINE(USE_GTKSOURCEVIEW, "1", [Activate Gtk+ Source View 3s.0 editor])
+AS_IF([test "x${USE_GTKSOURCEVIEW}" = "x1"], [
+	PKG_CHECK_MODULES(GTKSourceView, [gtksourceview-3.0], , exit)
+	AC_DEFINE(USE_GTKSOURCEVIEW, "1", [Activate Gtk+ Source View 3.0 editor])
 	AC_SUBST(GTKSourceView_LIBS)
 	AC_SUBST(GTKSourceView_CFLAGS)
-fi
+])
 
 
 dnl ***********************************************************************
