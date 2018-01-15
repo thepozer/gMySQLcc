@@ -1,6 +1,6 @@
-Features
+=Features=
 
-Working features
+==Working features==
     * Use gtk+ only (doesn't need Gnome)
     * Manage a mysql server list (Store in a XML file)
     * SQL Query window (with query duplication capabilities)
@@ -8,7 +8,7 @@ Working features
     * Multi-window system ... not all request in the same window
     * Dump SQL table|database|serveur|request into SQL, XML and CSV files 
 
-Planned features
+==Planned features==
     * Optimize multiple queries for big SQL file
     * Delete row directly in the result's table
     * Edit table structure in a windows

@@ -19,19 +19,19 @@ Installation of gmysqlcc from source
  * Download from site
 
 To download gmysqlcc from site, go to download section.
-http://gmysqlcc.thepozer.org/cgi-bin/trac.cgi/wiki/EnDownloadArea
+https://github.com/thepozer/gmysqlcc
 
- * Download from Subversion
+ * Download from Git
 
-To download gmysqlcc via Subversion, type these commands in a terminal :
+To download gmysqlcc via git, type these commands in a terminal :
 
-$ svn co http://gmysqlcc.thepozer.org/svn/trunk gmysqlcc
+$ git clone https://github.com/thepozer/gmysqlcc.git
 
  * Compile and Install 
 
-If you have got source from CVS, you need to do some steps before in gmysqlcc directory :
+If you have got source from git, you need to do some steps before in gmysqlcc directory :
 
-$ aclocale
+$ autogen.sh
 $ automake -a -c
 $ autoconf
 
