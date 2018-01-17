@@ -56,6 +56,7 @@ static void gmlc_gui_connexions_class_init (GmlcGuiConnexionsClass * pClass) {
 static void gmlc_gui_connexions_init (GmlcGuiConnexions * pGmlcGuiCnxns) {
 	
 	gtk_window_set_title (GTK_WINDOW(pGmlcGuiCnxns), _("GMySQLcc - Connections list"));
+	gtk_window_set_icon_name (GTK_WINDOW (pGmlcGuiCnxns), "gmysqlcc");
 	gtk_window_set_default_size (GTK_WINDOW(pGmlcGuiCnxns), 640, 480);
 	
 	/*g_signal_connect(G_OBJECT (pGmlcGuiCnxns), "destroy", G_CALLBACK (gmlc_gui_connexions_evt_destroy), NULL);*/

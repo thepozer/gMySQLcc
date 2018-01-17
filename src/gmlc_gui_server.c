@@ -111,6 +111,7 @@ static void gmlc_gui_server_init (GmlcGuiServer * pGmlcGuiSrv) {
 	GiNbrWnd ++;
 	
 	gtk_window_set_title (GTK_WINDOW(pGmlcGuiSrv), _("GMySQLcc - Server window : %s"));
+	gtk_window_set_icon_name (GTK_WINDOW (pGmlcGuiSrv), "gmysqlcc");
 	gtk_window_set_default_size (GTK_WINDOW(pGmlcGuiSrv), 640, 480);
 	
 	g_signal_connect(G_OBJECT (pGmlcGuiSrv), "destroy", G_CALLBACK (gmlc_gui_server_evt_destroy), NULL);
