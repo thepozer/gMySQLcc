@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "../config.h"
+/*#include "../config.h"*/
 
 #include "gmlc_mysql_server.h"
 
