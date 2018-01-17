@@ -151,7 +151,7 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 
 	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show (hpaned);
-	gtk_container_add (GTK_CONTAINER (vbxMain), hpaned);
+	gtk_box_pack_start (GTK_BOX (vbxMain), hpaned, TRUE, TRUE, 0);
 	gtk_paned_set_position (GTK_PANED (hpaned), 250);
 
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -178,13 +178,13 @@ static void gmlc_gui_connexions_create_widgets (GmlcGuiConnexions * pGmlcGuiCnxn
 
 	btnServerUp = gtk_button_new_from_icon_name("go-up", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnServerUp);
-	gtk_box_pack_start (GTK_BOX (hbox), btnServerUp, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), btnServerUp, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnServerUp), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnServerUp_clicked), pGmlcGuiCnxns);
 
 	btnServerDown = gtk_button_new_from_icon_name("go-down", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_show (btnServerDown);
-	gtk_box_pack_start (GTK_BOX (hbox), btnServerDown, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), btnServerDown, TRUE, TRUE, 0);
 	g_signal_connect (G_OBJECT (btnServerDown), "clicked", 
 			G_CALLBACK (gmlc_gui_connexions_evt_btnServerDown_clicked), pGmlcGuiCnxns);
 
