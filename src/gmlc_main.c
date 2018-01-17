@@ -37,9 +37,10 @@ int main(int argc, char *argv[]) {
 	gtk_init (&argc, &argv);
 	
 	/* Init gettext library */
-	//bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
-	//textdomain (PACKAGE);
-	//bind_textdomain_codeset(PACKAGE, "UTF-8");
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	
 	/* Init types list */
 	/*gmysqlcc_helpers_field_capability_init_array();*/
