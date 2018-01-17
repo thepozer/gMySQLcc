@@ -31,8 +31,6 @@ GtkWidget * GpGmlcGuiCnxns = NULL;
 	GtkSourceLanguageManager * LangManager;
 #endif /* USE_GTKSOURCEVIEW */
 
-gboolean gmysqlcc_main_before_end(gpointer data);
-
 int main(int argc, char *argv[]) {
 	
 	/* Init gtk library */
@@ -54,9 +52,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	
-	/* Add trigger to save configuration before the end of gmysqlcc */
-	//###### gtk_quit_add(0, gmysqlcc_main_before_end, NULL);
-	
 #ifdef USE_GTKSOURCEVIEW
 	/* Get Language Manager to select sql type */
 	LangManager = gtk_source_language_manager_new();
@@ -69,13 +64,7 @@ int main(int argc, char *argv[]) {
 	/* Start the application */
 	gtk_main ();
 	
-	return 0;
-}
-
-gboolean gmysqlcc_main_before_end(gpointer data) {
-	UNUSED_VAR(data);
-
 	gmlc_misc_config_write(GpGmlcMscCfg);
 	
-	return TRUE;
+	return 0;
 }
