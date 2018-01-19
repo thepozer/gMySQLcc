@@ -255,7 +255,6 @@ void gmlc_gui_server_tab_query_create_toolbar_items (GmlcGuiServerTabQuery * pGm
 void gmlc_gui_server_tab_query_create_widgets (GmlcGuiServerTabQuery * pGmlcGuiSrvTabQuery) {
 	GtkWidget *vpanedSQL;
 	GtkWidget *scrlwndSQLRequest;
-	PangoFontDescription * pCourierFontDesc = NULL;
 	glong lServerVersion = 0;
 	
 	/*GtkTreeSelection *select;*/
@@ -287,11 +286,7 @@ void gmlc_gui_server_tab_query_create_widgets (GmlcGuiServerTabQuery * pGmlcGuiS
 #endif /* USE_GTKSOURCEVIEW */
 	gtk_widget_show (pGmlcGuiSrvTabQuery->txtSQLRequest);
 	gtk_container_add (GTK_CONTAINER (scrlwndSQLRequest), pGmlcGuiSrvTabQuery->txtSQLRequest);
-	
-	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcQueryFontName);
-	gtk_widget_override_font(pGmlcGuiSrvTabQuery->txtSQLRequest, pCourierFontDesc);
-	pango_font_description_free(pCourierFontDesc);
-	
+
 	pGmlcGuiSrvTabQuery->tabSQLResult = gtk_notebook_new ();
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(pGmlcGuiSrvTabQuery->tabSQLResult), TRUE);
 	gtk_widget_show (pGmlcGuiSrvTabQuery->tabSQLResult);
@@ -589,7 +584,6 @@ void gmlc_gui_server_tab_query_display_one_info(GmlcGuiServerTabQuery * pGmlcGui
 	GtkWidget * sclSQLResult = NULL;
 	GtkWidget * txtSQLInfo = NULL;
 	GtkWidget * lblTabTitle = NULL;
-	PangoFontDescription * pCourierFontDesc = NULL;
 	GString * strTitle = NULL;
 	GString * strInfos = NULL;
 	
@@ -611,9 +605,6 @@ void gmlc_gui_server_tab_query_display_one_info(GmlcGuiServerTabQuery * pGmlcGui
 	gtk_notebook_append_page(GTK_NOTEBOOK(pGmlcGuiSrvTabQuery->tabSQLResult), sclSQLResult, lblTabTitle);
 	
 	txtSQLInfo = gtk_text_view_new ();
-	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcQueryFontName);
-	gtk_widget_override_font(txtSQLInfo, pCourierFontDesc);
-	pango_font_description_free(pCourierFontDesc);
 	gtk_widget_show (txtSQLInfo);
 	gtk_container_add (GTK_CONTAINER (sclSQLResult), txtSQLInfo);
 	

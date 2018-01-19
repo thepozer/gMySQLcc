@@ -140,9 +140,6 @@ void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrv
 	
 	GtkTreeSelection *select;
 	
-	PangoFontDescription * pCourierFontDesc = NULL;
-	
-	
 	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show (hpaned);
 	gtk_paned_set_position (GTK_PANED (hpaned), 200);
@@ -209,12 +206,9 @@ void gmlc_gui_server_tab_help_create_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrv
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
 	
 	pGmlcGuiSrvTabHelp->txvHelpTopic = gtk_text_view_new ();
-	pCourierFontDesc = pango_font_description_from_string(GpGmlcMscCfg->pcHelpFontName);
-	gtk_widget_override_font(pGmlcGuiSrvTabHelp->txvHelpTopic, pCourierFontDesc);
 	gtk_widget_show (pGmlcGuiSrvTabHelp->txvHelpTopic);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow), pGmlcGuiSrvTabHelp->txvHelpTopic);
 	gtk_text_view_set_editable (GTK_TEXT_VIEW (pGmlcGuiSrvTabHelp->txvHelpTopic), FALSE);
-	pango_font_description_free(pCourierFontDesc);
 }
 
 void gmlc_gui_server_tab_help_init_widgets (GmlcGuiServerTabHelp * pGmlcGuiSrvTabHelp) {
