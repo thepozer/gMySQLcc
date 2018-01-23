@@ -101,16 +101,8 @@ static void gmlc_misc_config_get_property (GObject * object, guint prop_id, GVal
 
 enum {
 	PROP_0,
-	PROP_NAME,
-	PROP_HOST,
-	PROP_PORT,
-	PROP_LOGIN,
-	PROP_PASSWORD,
-	PROP_LOCAL_SOCK,
-	PROP_ALLOWED_DBS,
-	PROP_READ_ONLY,
-	PROP_WRITE_WARNING,
-	PROP_VERSION
+	PROP_QUERY_FONT,
+	PROP_HELP_FONT
 };
 
 G_DEFINE_TYPE (GmlcMiscConfig, gmlc_misc_config, G_TYPE_OBJECT);
@@ -123,29 +115,11 @@ static void gmlc_misc_config_class_init (GmlcMiscConfigClass * pClass) {
 	pObjClass->get_property = gmlc_misc_config_get_property;
 	pObjClass->set_property = gmlc_misc_config_set_property;
 	
-/*
-	g_object_class_install_property(pObjClass, PROP_NAME, 
-		g_param_spec_string("name", "Server name", "Name (not host) of the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_HOST, 
-		g_param_spec_string("hostname", "Server host name", "Host name of the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_PORT, 
-		g_param_spec_uint("port", "Server port", "Port of the mysql server", 0, 65535, 3306, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_LOGIN, 
-		g_param_spec_string("login", "Server login", "Login for the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_PASSWORD, 
-		g_param_spec_string("password", "Server password", "Password for the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_LOCAL_SOCK, 
-		g_param_spec_string("local_socket", "Local socket file name", "Local socket file name used for access to the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_ALLOWED_DBS, 
-		g_param_spec_string("allowed_dbs", "Allowed databases", "Databases allowed to the login for the mysql server", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_READ_ONLY, 
-		g_param_spec_boolean("read_only", "Read only server", "The mysql server is marked as read only", FALSE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_WRITE_WARNING, 
-		g_param_spec_boolean("write_warning", "Write warning server", "Display write warning for this mysql server", FALSE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-	g_object_class_install_property(pObjClass, PROP_VERSION, 
-		g_param_spec_ulong("version", "Server version", "Version of the mysql server", 0, G_MAXULONG, 0, G_PARAM_READABLE));
-*/	
-	
+
+	g_object_class_install_property(pObjClass, PROP_QUERY_FONT, 
+		g_param_spec_string("query_font", "Query font", "Font used for query text area", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	g_object_class_install_property(pObjClass, PROP_HELP_FONT, 
+		g_param_spec_string("help_font", "Help Font", "Font used for help text area", "", G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void gmlc_misc_config_init (GmlcMiscConfig * pGmlcMscCfg) {
@@ -183,41 +157,14 @@ static void gmlc_misc_config_set_property (GObject * object, guint prop_id, cons
 	UNUSED_VAR(pGmlcMscCfg);
 	
 	switch (prop_id) {
-/*
-		case PROP_NAME :
-			g_free(pGmlcMscCfg->pcName);
-			pGmlcMscCfg->pcName = g_value_dup_string(value);
+		case PROP_QUERY_FONT :
+			g_free(pGmlcMscCfg->pcQueryFontName);
+			pGmlcMscCfg->pcQueryFontName = g_value_dup_string(value);
 			break;
-		case PROP_HOST :
-			g_free(pGmlcMscCfg->pcHost);
-			pGmlcMscCfg->pcHost = g_value_dup_string(value);
+		case PROP_HELP_FONT :
+			g_free(pGmlcMscCfg->pcHelpFontName);
+			pGmlcMscCfg->pcHelpFontName = g_value_dup_string(value);
 			break;
-		case PROP_PORT :
-			pGmlcMscCfg->iPort = g_value_get_uint (value);
-			break;
-		case PROP_LOGIN :
-			g_free(pGmlcMscCfg->pcLogin);
-			pGmlcMscCfg->pcLogin = g_value_dup_string(value);
-			break;
-		case PROP_PASSWORD :
-			g_free(pGmlcMscCfg->pcPassword);
-			pGmlcMscCfg->pcPassword = g_value_dup_string(value);
-			break;
-		case PROP_LOCAL_SOCK :
-			g_free(pGmlcMscCfg->pcLocalSock);
-			pGmlcMscCfg->pcLocalSock = g_value_dup_string(value);
-			break;
-		case PROP_ALLOWED_DBS :
-			g_free(pGmlcMscCfg->pcAllowedDbs);
-			pGmlcMscCfg->pcAllowedDbs = g_value_dup_string(value);
-			break;
-		case PROP_READ_ONLY :
-			pGmlcMscCfg->bReadOnly = g_value_get_boolean(value);
-			break;
-		case PROP_WRITE_WARNING :
-			pGmlcMscCfg->bWriteWarning = g_value_get_boolean(value);
-			break;
-*/
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 			break;
@@ -229,44 +176,12 @@ static void gmlc_misc_config_get_property (GObject * object, guint prop_id, GVal
 	UNUSED_VAR(pGmlcMscCfg);
 	
 	switch (prop_id) {
-/*
-		case PROP_NAME :
-			g_value_set_string(value, pGmlcMscCfg->pcName);
+		case PROP_QUERY_FONT :
+			g_value_set_string(value, pGmlcMscCfg->pcQueryFontName);
 			break;
-		case PROP_HOST :
-			g_value_set_string(value, pGmlcMscCfg->pcHost);
+		case PROP_HELP_FONT :
+			g_value_set_string(value, pGmlcMscCfg->pcHelpFontName);
 			break;
-		case PROP_PORT :
-			g_value_set_uint(value, pGmlcMscCfg->iPort);
-			break;
-		case PROP_LOGIN :
-			g_value_set_string(value, pGmlcMscCfg->pcLogin);
-			break;
-		case PROP_PASSWORD :
-			g_value_set_string(value, pGmlcMscCfg->pcPassword);
-			break;
-		case PROP_LOCAL_SOCK :
-			g_value_set_string(value, pGmlcMscCfg->pcLocalSock);
-			break;
-		case PROP_ALLOWED_DBS :
-			g_value_set_string(value, pGmlcMscCfg->pcAllowedDbs);
-			break;
-		case PROP_READ_ONLY :
-			g_value_set_boolean(value, pGmlcMscCfg->bReadOnly);
-			break;
-		case PROP_WRITE_WARNING :
-			g_value_set_boolean(value, pGmlcMscCfg->bWriteWarning);
-			break;
-		case PROP_VERSION :
-			if (pGmlcMscCfg->lVersion == 0) {
-				GmlcMysqlQuery * pGmlcMysqlQry = NULL;
-				pGmlcMysqlQry = gmlc_mysql_query_new(G_OBJECT(pGmlcMscCfg), NULL);
-				pGmlcMscCfg->lVersion = gmlc_mysql_query_get_version(pGmlcMysqlQry);
-				g_object_unref(G_OBJECT(pGmlcMysqlQry));
-			}
-			g_value_set_ulong(value, pGmlcMscCfg->lVersion);
-			break;
-*/
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 			break;
