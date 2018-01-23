@@ -97,59 +97,6 @@ gboolean askYesno(const gchar * title, const gchar * message) {
 	return retVal;
 }
 
-/*
-gboolean askFilename(const gchar * title, const gchar * filename, void (*okevent) (GtkWidget *widget, gpointer user_data), gpointer user_data) {
-    GtkWidget *oDlgFile;
-    gint iRes;
-    
-    oDlgFile = gtk_file_chooser_dialog_new(title, null, GTK_FILE_CHOOSER_ACTION_OPEN, _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Open"), GTK_RESPONSE_ACCEPT, NULL);
-	if (filename != (gchar *)NULL) {
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(oDlgFile), filename);
-	}
-	
-    
-    iRes = gtk_dialog_run(GTK_DIALOG(oDlgFile));
-    
-    if (iRes == GTK_RESPONSE_ACCEPT) {
-        gchar *
-    }
-    
-	p_askFilenameInfos paskFnInf;
-	
-	paskFnInf = (p_askFilenameInfos) g_try_malloc(sizeof(askFilenameInfos));
-	
-	if (paskFnInf == (p_askFilenameInfos)NULL) {
-		return FALSE;
-	}
-	
-	paskFnInf->userData = user_data;
-	
-	paskFnInf->dialog = gtk_file_selection_new (title);
-	
-	g_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (paskFnInf->dialog)->ok_button),
-					"clicked", G_CALLBACK (okevent), paskFnInf);
-	
-  /* Ensure that the dialog box is destroyed when the user clicks a button. * /
-	g_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (paskFnInf->dialog)->ok_button),
-					"clicked", G_CALLBACK (closeAskFilename), paskFnInf); 
-	
-	g_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (paskFnInf->dialog)->cancel_button),
-					"clicked", G_CALLBACK (closeAskFilename), paskFnInf); 
-  
-	/* Display that dialog * /
-	gtk_widget_show (paskFnInf->dialog);
-	
-	return TRUE;
-}
-
-void closeAskFilename (GtkWidget *widget, gpointer user_data) {
-	p_askFilenameInfos paskFnInf = (p_askFilenameInfos)user_data;
-	
-	gtk_widget_destroy(paskFnInf->dialog);
-	
-	g_free(paskFnInf);
-}
-*/
 gchar * gmlc_helpers_protect_underscore (const gchar * str) {
 	GString * strRet = NULL;
 	gchar * pcRet = NULL;
