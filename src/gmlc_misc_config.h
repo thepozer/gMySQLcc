@@ -25,8 +25,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-/*#include "../config.h"*/
-
 #include "gmlc_mysql_server.h"
 
 #define GMYSQLCC_CONF_DIR "gmysqlcc"

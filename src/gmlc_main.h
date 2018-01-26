@@ -22,8 +22,6 @@
 
 #include <libintl.h>
 
-/*#include "../config.h"*/
-
 #include "gmlc_misc_config.h"
 
 #ifdef USE_GTKSOURCEVIEW
