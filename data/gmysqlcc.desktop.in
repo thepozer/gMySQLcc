@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.1
+Encoding=UTF-8
+Type=Application
+_Name=GMySQLcc
+_Comment=Gtk+ MySQL Control Center
+Icon=accessories-text-editor
+Exec=gmysqlcc
+StartupNotify=false
+Terminal=false
+Categories=GTK;Development;Utility;Database
