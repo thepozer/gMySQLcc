@@ -1,5 +1,5 @@
 AC_INIT([gmysqlcc], [0.5.0], [Didier prolhac <dev@thepozer.net>])
-AC_CONFIG_SRCDIR([src/gmysqlcc-main.c])
+AC_CONFIG_SRCDIR([src/gmysqlcc_main.c])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AM_SILENT_RULES([yes])
 

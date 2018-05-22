@@ -3,7 +3,8 @@ AM_CPPFLAGS = -DLOCALEDIR=\""$(localedir)"\"
 bin_PROGRAMS = gmysqlcc
 
 gmysqlcc_LDADD = $(GMYSQLCC_LIBS)
-gmysqlcc_SOURCES = gmysqlcc-main.c \
+gmysqlcc_SOURCES = gmysqlcc_main.c \
+gmysqlcc_app.c \
 gmysqlcc.gresources.h \
 gmysqlcc.gresources.c
 

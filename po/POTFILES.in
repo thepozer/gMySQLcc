@@ -1,2 +1,3 @@
-src/gmysqlcc-main.c
+src/gmysqlcc_main.c
+src/gmysqlcc_app.c
 data/gmysqlcc.desktop.in
