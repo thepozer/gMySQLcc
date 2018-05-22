@@ -18,6 +18,7 @@
 /missing
 /data/Makefile
 /data/Makefile.in
+/data/gmysqlcc.desktop
 /po/*.gmo
 /po/*.header
 /po/*.mo
@@ -37,3 +38,6 @@
 /src/Makefile
 /src/Makefile.in
 /src/gmysqlcc
+/src/gmysqlcc.gresources.c
+/src/gmysqlcc.gresources.h
+/src/net.thepozer.gmysqlcc.gschema.valid
