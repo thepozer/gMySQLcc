@@ -1,5 +1,7 @@
 *.o
 *~
+/0_keep
+/ABOUT-NLS
 /Makefile
 /Makefile.in
 /aclocal.m4

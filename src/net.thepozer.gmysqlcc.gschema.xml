@@ -1,66 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema path="/net/thepozer/gmysqlcc/" id="net.thepozer.gmysqlcc">
-    <key name="font" type="s">
-      <default>'Monospace 12'</default>
-      <summary>Font</summary>
-      <description>The font to be used for content.</description>
+    <key name="font-query" type="s">
+      <default>'courier 9'</default>
+      <summary>Font of query editor</summary>
+      <description>Font of query editor</description>
     </key>
-    <key name="highlight-current-line" type="b">
+    <key name="font-help" type="s">
+      <default>'courier 9'</default>
+      <summary>Font of help viewer</summary>
+      <description>Font of help viewer</description>
+    </key>
+  </schema>
+  <schema id="net.thepozer.gmysqlcc.config">
+    <key name="name" type="s">
+      <default>''</default>
+      <summary>Name of the configuration</summary>
+      <description></description>
+    </key>
+    <key name="host" type="s">
+      <default>'localhost'</default>
+      <summary>Hostname of the mysql server</summary>
+      <description></description>
+    </key>
+    <key name="port" type="i">
+      <default>3306</default>
+      <summary>Port of the mysql server</summary>
+      <description></description>
+    </key>
+    <key name="username" type="s">
+      <default>'root'</default>
+      <summary>User name to connect on the mysql server</summary>
+      <description></description>
+    </key>
+    <key name="password" type="s">
+      <default>''</default>
+      <summary>Password to connect on the mysql server</summary>
+      <description></description>
+    </key>
+    <key name="socketfile" type="s">
+      <default>'/var/run/mysql.sock'</default>
+      <summary>Socket file of the mysql server</summary>
+      <description></description>
+    </key>
+    <key name="read-only" type="b">
       <default>false</default>
-      <summary>Highlight the current line</summary>
+      <summary>Connection on mysql server in read-only mode</summary>
       <description></description>
     </key>
-    <key name="show-line-marks" type="b">
+    <key name="warn-write" type="b">
       <default>false</default>
-      <summary>Show Line Marks</summary>
-      <description>Display line marks in the editor.</description>
-    </key>
-    <key name="show-line-numbers" type="b">
-      <default>false</default>
-      <summary>Line Number</summary>
-      <description>Display line number in the editor.</description>
-    </key>
-    
-    <key name="show-right-margin" type="b">
-      <default>false</default>
-      <summary>Show the right margin</summary>
-      <description></description>
-    </key>
-    <key name="right-margin-position" type="u">
-      <default>72</default>
-      <summary>Set the position of the right margin</summary>
-      <description></description>
-    </key>
-    
-    <key name="auto-indent" type="b">
-      <default>false</default>
-      <summary>Auto indentation</summary>
-      <description>Activate auto-indentation in the editor.</description>
-    </key>
-    <key name="indent-on-tab" type="b">
-      <default>true</default>
-      <summary>Tab key indent code</summary>
-      <description></description>
-    </key>
-    <key name="indent-width" type="i">
-      <default>4</default>
-      <summary>Space size of indent</summary>
-      <description></description>
-    </key>
-    <key name="insert-spaces-instead-of-tabs" type="b">
-      <default>true</default>
-      <summary>Insert spaces  instead of tabs for indent</summary>
-      <description></description>
-    </key>
-    <key name="tab-width" type="u">
-      <default>4</default>
-      <summary>Space size of tab</summary>
-      <description></description>
-    </key>
-    <key name="smart-backspace" type="b">
-      <default>false</default>
-      <summary>Smart backspace to unindent</summary>
+      <summary>Warn when write on mysql server</summary>
       <description></description>
     </key>
   </schema>

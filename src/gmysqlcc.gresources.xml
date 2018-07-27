@@ -2,5 +2,6 @@
 <gresources>
   <gresource prefix="/net/thepozer/gmysqlcc">
     <file>gmysqlcc.wnd-connect.glade</file>
+    <file>gmysqlcc.wnd-execsql.glade</file>
   </gresource>
 </gresources>
