@@ -1,6 +1,9 @@
 
 #include "gmysqlcc_app.h"
 
+#include "gmysqlcc_connect_window.h"
+
+
 struct _GmysqlccApp {
 	GtkApplication parent;
   
@@ -12,7 +15,10 @@ G_DEFINE_TYPE(GmysqlccApp, gmysqlcc_app, GTK_TYPE_APPLICATION);
 static void gmysqlcc_app_init (GmysqlccApp * pApp) {}
 
 static void gmysqlcc_app_activate (GApplication * pApp) {
+	GmysqlccConnectWindow * pWindow;
 
+	pWindow = gmysqlcc_connect_window_new(GMYSQLCC_APP(pApp));
+	gtk_window_present (GTK_WINDOW(pWindow));
 }
 
 static void gmysqlcc_app_open (GApplication * pApp, GFile **files, gint n_files, const gchar * hint) {
@@ -40,6 +46,5 @@ GSettings * gmysqlcc_app_get_settings (GmysqlccApp * pApp) {
 }
 
 void gmysqlcc_app_quit (GmysqlccApp * pApp) {
-	
 	g_application_quit(G_APPLICATION(pApp));
 }

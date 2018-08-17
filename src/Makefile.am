@@ -6,7 +6,8 @@ gmysqlcc_LDADD = $(GTK_LIBS) $(MYSQL_LIBS) $(SOURCEVIEW_LIBS) $(DCONF_LIBS)
 gmysqlcc_SOURCES = gmysqlcc.gresources.h \
 gmysqlcc.gresources.c \
 gmysqlcc_main.c \
-gmysqlcc_app.c
+gmysqlcc_app.c \
+gmysqlcc_connect_window.c 
 
 
 gmysqlcc.gresources.c: gmysqlcc.gresources.xml gmysqlcc.wnd-connect.glade gmysqlcc.gresources.h
