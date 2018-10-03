@@ -7,7 +7,7 @@
 #include "gmysqlcc_main.h"
 #include "gmysqlcc_app.h"
 
-#define GMYSQLCC_CONNECT_WINDOW_TYPE (gmysqlcc_connect_window_get_type ())
+#define GMYSQLCC_TYPE_CONNECT_WINDOW (gmysqlcc_connect_window_get_type ())
 G_DECLARE_FINAL_TYPE (GmysqlccConnectWindow, gmysqlcc_connect_window, GMYSQLCC, CONNECT_WINDOW, GtkApplicationWindow)
 
 
